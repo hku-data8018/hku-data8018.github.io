@@ -646,7 +646,7 @@
             const diffTime = Math.abs(today - itemDate);
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
             
-            if (diffDays <= 5 & today <= itemDate) {
+            if (diffDays <= 5 & Math.ceil((today - itemDate) / (1000 * 60 * 60 * 24)) <= 1) {
                 item.classList.add('current-week');
                 item.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
