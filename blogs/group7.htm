@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<!-- saved from url=(0033)https://jiuqu3513.github.io/vicl/ -->
+<html lang="en-US"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">  <meta http-equiv="X-UA-Compatible" content="IE=Edge"> <link rel="stylesheet" href="./group7_files/just-the-docs-default.css"> <link rel="stylesheet" href="./group7_files/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet" disabled=""> <style id="jtd-nav-activation"> .site-nav > ul.nav-list:first-child > li:not(:nth-child(1)) > a, .site-nav > ul.nav-list:first-child > li > ul > li a { background-image: none; } .site-nav > ul.nav-list:not(:first-child) a, .site-nav li.external a { background-image: none; } .site-nav > ul.nav-list:first-child > li:nth-child(1) > a { font-weight: 600; text-decoration: none; } .site-nav > ul.nav-category-list > li > button svg, .site-nav > ul.nav-list:first-child > li:nth-child(1) > button svg { transform: rotate(-90deg); } .site-nav > ul.nav-category-list > li.nav-list-item > ul.nav-list, .site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list { display: block; } </style> <script src="./group7_files/lunr.min.js"></script> <script src="./group7_files/just-the-docs.js"></script> <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- Begin Jekyll SEO tag v2.8.0 --> <title>VICL | Visual In-Context Learning Survey</title> <meta name="generator" content="Jekyll v3.10.0"> <meta property="og:title" content="VICL"> <meta property="og:locale" content="en_US"> <meta name="description" content="Visual In-Context Learning Survey"> <meta property="og:description" content="Visual In-Context Learning Survey"> <link rel="canonical" href="https://jiuqu3513.github.io/vicl/"> <meta property="og:url" content="https://jiuqu3513.github.io/vicl/"> <meta property="og:site_name" content="VICL"> <meta property="og:type" content="website"> <meta name="twitter:card" content="summary"> <meta property="twitter:title" content="VICL"> <script type="application/ld+json"> {"@context":"https://schema.org","@type":"WebSite","description":"Visual In-Context Learning Survey","headline":"VICL","name":"VICL","url":"https://jiuqu3513.github.io/vicl/"}</script> <!-- End Jekyll SEO tag --> <script src="./group7_files/polyfill.min.js"></script> <script id="MathJax-script" async="" src="./group7_files/tex-mml-chtml.js"></script> <script> window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] } }; </script> <style type="text/css">.CtxtMenu_InfoClose {  top:.2em; right:.2em;}
+.CtxtMenu_InfoContent {  overflow:auto; text-align:left; font-size:80%;  padding:.4em .6em; border:1px inset; margin:1em 0px;  max-height:20em; max-width:30em; background-color:#EEEEEE;  white-space:normal;}
+.CtxtMenu_Info.CtxtMenu_MousePost {outline:none;}
+.CtxtMenu_Info {  position:fixed; left:50%; width:auto; text-align:center;  border:3px outset; padding:1em 2em; background-color:#DDDDDD;  color:black;  cursor:default; font-family:message-box; font-size:120%;  font-style:normal; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 15px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius:15px;               /* Safari and Chrome */  -moz-border-radius:15px;                  /* Firefox */  -khtml-border-radius:15px;                /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */  filter:progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color="gray", Positive="true"); /* IE */}
+</style><style type="text/css">.CtxtMenu_MenuClose {  position:absolute;  cursor:pointer;  display:inline-block;  border:2px solid #AAA;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  font-family: "Courier New", Courier;  font-size:24px;  color:#F0F0F0}
+.CtxtMenu_MenuClose span {  display:block; background-color:#AAA; border:1.5px solid;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  line-height:0;  padding:8px 0 6px     /* may need to be browser-specific */}
+.CtxtMenu_MenuClose:hover {  color:white!important;  border:2px solid #CCC!important}
+.CtxtMenu_MenuClose:hover span {  background-color:#CCC!important}
+.CtxtMenu_MenuClose:hover:focus {  outline:none}
+</style><style type="text/css">.CtxtMenu_Menu {  position:absolute;  background-color:white;  color:black;  width:auto; padding:5px 0px;  border:1px solid #CCCCCC; margin:0; cursor:default;  font: menu; text-align:left; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 5px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius: 5px;             /* Safari and Chrome */  -moz-border-radius: 5px;                /* Firefox */  -khtml-border-radius: 5px;              /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */}
+.CtxtMenu_MenuItem {  padding: 1px 2em;  background:transparent;}
+.CtxtMenu_MenuArrow {  position:absolute; right:.5em; padding-top:.25em; color:#666666;  font-family: null; font-size: .75em}
+.CtxtMenu_MenuActive .CtxtMenu_MenuArrow {color:white}
+.CtxtMenu_MenuArrow.CtxtMenu_RTL {left:.5em; right:auto}
+.CtxtMenu_MenuCheck {  position:absolute; left:.7em;  font-family: null}
+.CtxtMenu_MenuCheck.CtxtMenu_RTL { right:.7em; left:auto }
+.CtxtMenu_MenuRadioCheck {  position:absolute; left: .7em;}
+.CtxtMenu_MenuRadioCheck.CtxtMenu_RTL {  right: .7em; left:auto}
+.CtxtMenu_MenuInputBox {  padding-left: 1em; right:.5em; color:#666666;  font-family: null;}
+.CtxtMenu_MenuInputBox.CtxtMenu_RTL {  left: .1em;}
+.CtxtMenu_MenuComboBox {  left:.1em; padding-bottom:.5em;}
+.CtxtMenu_MenuSlider {  left: .1em;}
+.CtxtMenu_SliderValue {  position:absolute; right:.1em; padding-top:.25em; color:#333333;  font-size: .75em}
+.CtxtMenu_SliderBar {  outline: none; background: #d3d3d3}
+.CtxtMenu_MenuLabel {  padding: 1px 2em 3px 1.33em;  font-style:italic}
+.CtxtMenu_MenuRule {  border-top: 1px solid #DDDDDD;  margin: 4px 3px;}
+.CtxtMenu_MenuDisabled {  color:GrayText}
+.CtxtMenu_MenuActive {  background-color: #606872;  color: white;}
+.CtxtMenu_MenuDisabled:focus {  background-color: #E8E8E8}
+.CtxtMenu_MenuLabel:focus {  background-color: #E8E8E8}
+.CtxtMenu_ContextMenu:focus {  outline:none}
+.CtxtMenu_ContextMenu .CtxtMenu_MenuItem:focus {  outline:none}
+.CtxtMenu_SelectionMenu {  position:relative; float:left;  border-bottom: none; -webkit-box-shadow:none; -webkit-border-radius:0px; }
+.CtxtMenu_SelectionItem {  padding-right: 1em;}
+.CtxtMenu_Selection {  right: 40%; width:50%; }
+.CtxtMenu_SelectionBox {  padding: 0em; max-height:20em; max-width: none;  background-color:#FFFFFF;}
+.CtxtMenu_SelectionDivider {  clear: both; border-top: 2px solid #000000;}
+.CtxtMenu_Menu .CtxtMenu_MenuClose {  top:-10px; left:-10px}
+</style><style id="MJX-CHTML-styles">
+mjx-container[jax="CHTML"] {
+  line-height: 0;
+}
+
+mjx-container [space="1"] {
+  margin-left: .111em;
+}
+
+mjx-container [space="2"] {
+  margin-left: .167em;
+}
+
+mjx-container [space="3"] {
+  margin-left: .222em;
+}
+
+mjx-container [space="4"] {
+  margin-left: .278em;
+}
+
+mjx-container [space="5"] {
+  margin-left: .333em;
+}
+
+mjx-container [rspace="1"] {
+  margin-right: .111em;
+}
+
+mjx-container [rspace="2"] {
+  margin-right: .167em;
+}
+
+mjx-container [rspace="3"] {
+  margin-right: .222em;
+}
+
+mjx-container [rspace="4"] {
+  margin-right: .278em;
+}
+
+mjx-container [rspace="5"] {
+  margin-right: .333em;
+}
+
+mjx-container [size="s"] {
+  font-size: 70.7%;
+}
+
+mjx-container [size="ss"] {
+  font-size: 50%;
+}
+
+mjx-container [size="Tn"] {
+  font-size: 60%;
+}
+
+mjx-container [size="sm"] {
+  font-size: 85%;
+}
+
+mjx-container [size="lg"] {
+  font-size: 120%;
+}
+
+mjx-container [size="Lg"] {
+  font-size: 144%;
+}
+
+mjx-container [size="LG"] {
+  font-size: 173%;
+}
+
+mjx-container [size="hg"] {
+  font-size: 207%;
+}
+
+mjx-container [size="HG"] {
+  font-size: 249%;
+}
+
+mjx-container [width="full"] {
+  width: 100%;
+}
+
+mjx-box {
+  display: inline-block;
+}
+
+mjx-block {
+  display: block;
+}
+
+mjx-itable {
+  display: inline-table;
+}
+
+mjx-row {
+  display: table-row;
+}
+
+mjx-row > * {
+  display: table-cell;
+}
+
+mjx-mtext {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-mstyle {
+  display: inline-block;
+}
+
+mjx-merror {
+  display: inline-block;
+  color: red;
+  background-color: yellow;
+}
+
+mjx-mphantom {
+  visibility: hidden;
+}
+
+_::-webkit-full-page-media, _:future, :root mjx-container {
+  will-change: opacity;
+}
+
+mjx-assistive-mml {
+  position: absolute !important;
+  top: 0px;
+  left: 0px;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 1px 0px 0px 0px !important;
+  border: 0px !important;
+  display: block !important;
+  width: auto !important;
+  overflow: hidden !important;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+mjx-assistive-mml[display="block"] {
+  width: 100% !important;
+}
+
+mjx-math {
+  display: inline-block;
+  text-align: left;
+  line-height: 0;
+  text-indent: 0;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 100%;
+  font-size-adjust: none;
+  letter-spacing: normal;
+  border-collapse: collapse;
+  word-wrap: normal;
+  word-spacing: normal;
+  white-space: nowrap;
+  direction: ltr;
+  padding: 1px 0;
+}
+
+mjx-container[jax="CHTML"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="CHTML"][display="true"][width="full"] {
+  display: flex;
+}
+
+mjx-container[jax="CHTML"][display="true"] mjx-math {
+  padding: 0;
+}
+
+mjx-container[jax="CHTML"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="CHTML"][justify="right"] {
+  text-align: right;
+}
+
+mjx-mo {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-stretchy-h {
+  display: inline-table;
+  width: 100%;
+}
+
+mjx-stretchy-h > * {
+  display: table-cell;
+  width: 0;
+}
+
+mjx-stretchy-h > * > mjx-c {
+  display: inline-block;
+  transform: scalex(1.0000001);
+}
+
+mjx-stretchy-h > * > mjx-c::before {
+  display: inline-block;
+  width: initial;
+}
+
+mjx-stretchy-h > mjx-ext {
+  /* IE */ overflow: hidden;
+  /* others */ overflow: clip visible;
+  width: 100%;
+}
+
+mjx-stretchy-h > mjx-ext > mjx-c::before {
+  transform: scalex(500);
+}
+
+mjx-stretchy-h > mjx-ext > mjx-c {
+  width: 0;
+}
+
+mjx-stretchy-h > mjx-beg > mjx-c {
+  margin-right: -.1em;
+}
+
+mjx-stretchy-h > mjx-end > mjx-c {
+  margin-left: -.1em;
+}
+
+mjx-stretchy-v {
+  display: inline-block;
+}
+
+mjx-stretchy-v > * {
+  display: block;
+}
+
+mjx-stretchy-v > mjx-beg {
+  height: 0;
+}
+
+mjx-stretchy-v > mjx-end > mjx-c {
+  display: block;
+}
+
+mjx-stretchy-v > * > mjx-c {
+  transform: scaley(1.0000001);
+  transform-origin: left center;
+  overflow: hidden;
+}
+
+mjx-stretchy-v > mjx-ext {
+  display: block;
+  height: 100%;
+  box-sizing: border-box;
+  border: 0px solid transparent;
+  /* IE */ overflow: hidden;
+  /* others */ overflow: visible clip;
+}
+
+mjx-stretchy-v > mjx-ext > mjx-c::before {
+  width: initial;
+  box-sizing: border-box;
+}
+
+mjx-stretchy-v > mjx-ext > mjx-c {
+  transform: scaleY(500) translateY(.075em);
+  overflow: visible;
+}
+
+mjx-mark {
+  display: inline-block;
+  height: 0px;
+}
+
+mjx-c {
+  display: inline-block;
+}
+
+mjx-utext {
+  display: inline-block;
+  padding: .75em 0 .2em 0;
+}
+
+mjx-msub {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-mi {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-mn {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-msup {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-TeXAtom {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-mspace {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-munderover {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-munderover:not([limits="false"]) {
+  padding-top: .1em;
+}
+
+mjx-munderover:not([limits="false"]) > * {
+  display: block;
+}
+
+mjx-msubsup {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-script {
+  display: inline-block;
+  padding-right: .05em;
+  padding-left: .033em;
+}
+
+mjx-script > mjx-spacer {
+  display: block;
+}
+
+mjx-c::before {
+  display: block;
+  width: 0;
+}
+
+.MJX-TEX {
+  font-family: MJXZERO, MJXTEX;
+}
+
+.TEX-B {
+  font-family: MJXZERO, MJXTEX-B;
+}
+
+.TEX-I {
+  font-family: MJXZERO, MJXTEX-I;
+}
+
+.TEX-MI {
+  font-family: MJXZERO, MJXTEX-MI;
+}
+
+.TEX-BI {
+  font-family: MJXZERO, MJXTEX-BI;
+}
+
+.TEX-S1 {
+  font-family: MJXZERO, MJXTEX-S1;
+}
+
+.TEX-S2 {
+  font-family: MJXZERO, MJXTEX-S2;
+}
+
+.TEX-S3 {
+  font-family: MJXZERO, MJXTEX-S3;
+}
+
+.TEX-S4 {
+  font-family: MJXZERO, MJXTEX-S4;
+}
+
+.TEX-A {
+  font-family: MJXZERO, MJXTEX-A;
+}
+
+.TEX-C {
+  font-family: MJXZERO, MJXTEX-C;
+}
+
+.TEX-CB {
+  font-family: MJXZERO, MJXTEX-CB;
+}
+
+.TEX-FR {
+  font-family: MJXZERO, MJXTEX-FR;
+}
+
+.TEX-FRB {
+  font-family: MJXZERO, MJXTEX-FRB;
+}
+
+.TEX-SS {
+  font-family: MJXZERO, MJXTEX-SS;
+}
+
+.TEX-SSB {
+  font-family: MJXZERO, MJXTEX-SSB;
+}
+
+.TEX-SSI {
+  font-family: MJXZERO, MJXTEX-SSI;
+}
+
+.TEX-SC {
+  font-family: MJXZERO, MJXTEX-SC;
+}
+
+.TEX-T {
+  font-family: MJXZERO, MJXTEX-T;
+}
+
+.TEX-V {
+  font-family: MJXZERO, MJXTEX-V;
+}
+
+.TEX-VB {
+  font-family: MJXZERO, MJXTEX-VB;
+}
+
+mjx-stretchy-v mjx-c, mjx-stretchy-h mjx-c {
+  font-family: MJXZERO, MJXTEX-S1, MJXTEX-S4, MJXTEX, MJXTEX-A ! important;
+}
+
+@font-face /* 0 */ {
+  font-family: MJXZERO;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Zero.woff") format("woff");
+}
+
+@font-face /* 1 */ {
+  font-family: MJXTEX;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Regular.woff") format("woff");
+}
+
+@font-face /* 2 */ {
+  font-family: MJXTEX-B;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Bold.woff") format("woff");
+}
+
+@font-face /* 3 */ {
+  font-family: MJXTEX-I;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-Italic.woff") format("woff");
+}
+
+@font-face /* 4 */ {
+  font-family: MJXTEX-MI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Italic.woff") format("woff");
+}
+
+@font-face /* 5 */ {
+  font-family: MJXTEX-BI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-BoldItalic.woff") format("woff");
+}
+
+@font-face /* 6 */ {
+  font-family: MJXTEX-S1;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size1-Regular.woff") format("woff");
+}
+
+@font-face /* 7 */ {
+  font-family: MJXTEX-S2;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size2-Regular.woff") format("woff");
+}
+
+@font-face /* 8 */ {
+  font-family: MJXTEX-S3;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size3-Regular.woff") format("woff");
+}
+
+@font-face /* 9 */ {
+  font-family: MJXTEX-S4;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size4-Regular.woff") format("woff");
+}
+
+@font-face /* 10 */ {
+  font-family: MJXTEX-A;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_AMS-Regular.woff") format("woff");
+}
+
+@font-face /* 11 */ {
+  font-family: MJXTEX-C;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Regular.woff") format("woff");
+}
+
+@font-face /* 12 */ {
+  font-family: MJXTEX-CB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Bold.woff") format("woff");
+}
+
+@font-face /* 13 */ {
+  font-family: MJXTEX-FR;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Regular.woff") format("woff");
+}
+
+@font-face /* 14 */ {
+  font-family: MJXTEX-FRB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Bold.woff") format("woff");
+}
+
+@font-face /* 15 */ {
+  font-family: MJXTEX-SS;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Regular.woff") format("woff");
+}
+
+@font-face /* 16 */ {
+  font-family: MJXTEX-SSB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Bold.woff") format("woff");
+}
+
+@font-face /* 17 */ {
+  font-family: MJXTEX-SSI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Italic.woff") format("woff");
+}
+
+@font-face /* 18 */ {
+  font-family: MJXTEX-SC;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Script-Regular.woff") format("woff");
+}
+
+@font-face /* 19 */ {
+  font-family: MJXTEX-T;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Typewriter-Regular.woff") format("woff");
+}
+
+@font-face /* 20 */ {
+  font-family: MJXTEX-V;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Regular.woff") format("woff");
+}
+
+@font-face /* 21 */ {
+  font-family: MJXTEX-VB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Bold.woff") format("woff");
+}
+
+mjx-c.mjx-c28::before {
+  padding: 0.75em 0.389em 0.25em 0;
+  content: "(";
+}
+
+mjx-c.mjx-c1D465.TEX-I::before {
+  padding: 0.442em 0.572em 0.011em 0;
+  content: "x";
+}
+
+mjx-c.mjx-c31::before {
+  padding: 0.666em 0.5em 0 0;
+  content: "1";
+}
+
+mjx-c.mjx-c2C::before {
+  padding: 0.121em 0.278em 0.194em 0;
+  content: ",";
+}
+
+mjx-c.mjx-c1D466.TEX-I::before {
+  padding: 0.442em 0.49em 0.205em 0;
+  content: "y";
+}
+
+mjx-c.mjx-c29::before {
+  padding: 0.75em 0.389em 0.25em 0;
+  content: ")";
+}
+
+mjx-c.mjx-c2026::before {
+  padding: 0.12em 1.172em 0 0;
+  content: "\2026";
+}
+
+mjx-c.mjx-c1D458.TEX-I::before {
+  padding: 0.694em 0.521em 0.011em 0;
+  content: "k";
+}
+
+mjx-c.mjx-c2217::before {
+  padding: 0.465em 0.5em 0 0;
+  content: "\2217";
+}
+
+mjx-c.mjx-c1D703.TEX-I::before {
+  padding: 0.705em 0.469em 0.01em 0;
+  content: "\3B8";
+}
+
+mjx-c.mjx-c1D45D.TEX-I::before {
+  padding: 0.442em 0.503em 0.194em 0;
+  content: "p";
+}
+
+mjx-c.mjx-c32::before {
+  padding: 0.666em 0.5em 0 0;
+  content: "2";
+}
+
+mjx-c.mjx-c1D45B.TEX-I::before {
+  padding: 0.442em 0.6em 0.011em 0;
+  content: "n";
+}
+
+mjx-c.mjx-c223C::before {
+  padding: 0.367em 0.778em 0 0;
+  content: "\223C";
+}
+
+mjx-c.mjx-c22C5::before {
+  padding: 0.31em 0.278em 0 0;
+  content: "\22C5";
+}
+
+mjx-c.mjx-c2223::before {
+  padding: 0.75em 0.278em 0.249em 0;
+  content: "\2223";
+}
+
+mjx-c.mjx-c1D436.TEX-I::before {
+  padding: 0.705em 0.76em 0.022em 0;
+  content: "C";
+}
+
+mjx-c.mjx-c3D::before {
+  padding: 0.583em 0.778em 0.082em 0;
+  content: "=";
+}
+
+mjx-c.mjx-c222B.TEX-S2::before {
+  padding: 1.36em 0.944em 0.862em 0;
+  content: "\222B";
+}
+
+mjx-c.mjx-c398::before {
+  padding: 0.705em 0.778em 0.022em 0;
+  content: "\398";
+}
+
+mjx-c.mjx-c1D451.TEX-I::before {
+  padding: 0.694em 0.52em 0.01em 0;
+  content: "d";
+}
+
+mjx-c.mjx-c2E::before {
+  padding: 0.12em 0.278em 0 0;
+  content: ".";
+}
+
+mjx-c.mjx-c7C::before {
+  padding: 0.75em 0.278em 0.249em 0;
+  content: "|";
+}
+
+mjx-c.mjx-c62::before {
+  padding: 0.694em 0.556em 0.011em 0;
+  content: "b";
+}
+
+mjx-c.mjx-c61::before {
+  padding: 0.448em 0.5em 0.011em 0;
+  content: "a";
+}
+
+mjx-c.mjx-c64::before {
+  padding: 0.694em 0.556em 0.011em 0;
+  content: "d";
+}
+
+mjx-c.mjx-c221D::before {
+  padding: 0.442em 0.778em 0.011em 0;
+  content: "\221D";
+}
+
+mjx-c.mjx-c220F.TEX-S2::before {
+  padding: 0.95em 1.278em 0.45em 0;
+  content: "\220F";
+}
+
+mjx-c.mjx-c1D456.TEX-I::before {
+  padding: 0.661em 0.345em 0.011em 0;
+  content: "i";
+}
+
+mjx-c.mjx-c4E.TEX-C::before {
+  padding: 0.789em 0.979em 0.05em 0;
+  content: "N";
+}
+
+mjx-c.mjx-c1D707.TEX-I::before {
+  padding: 0.442em 0.603em 0.216em 0;
+  content: "\3BC";
+}
+
+mjx-c.mjx-c1D461.TEX-I::before {
+  padding: 0.626em 0.361em 0.011em 0;
+  content: "t";
+}
+
+mjx-c.mjx-c3A3::before {
+  padding: 0.683em 0.722em 0 0;
+  content: "\3A3";
+}
+
+mjx-c.mjx-cD7::before {
+  padding: 0.491em 0.778em 0 0;
+  content: "\D7";
+}
+</style></head> <body> <a class="skip-to-main" href="https://jiuqu3513.github.io/vicl/#main-content">Skip to main content</a> <svg xmlns="http://www.w3.org/2000/svg" class="d-none"> <symbol id="svg-link" viewBox="0 0 24 24"> <title>Link</title> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link"> <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path> </svg> </symbol> <symbol id="svg-menu" viewBox="0 0 24 24"> <title>Menu</title> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"> <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line> </svg> </symbol> <symbol id="svg-arrow-right" viewBox="0 0 24 24"> <title>Expand</title> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"> <polyline points="9 18 15 12 9 6"></polyline> </svg> </symbol> <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE --> <symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link"> <title id="svg-external-link-title">(external link)</title> <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line> </symbol> <symbol id="svg-doc" viewBox="0 0 24 24"> <title>Document</title> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file"> <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline> </svg> </symbol> <symbol id="svg-search" viewBox="0 0 24 24"> <title>Search</title> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"> <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> </symbol> <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md --> <symbol id="svg-copy" viewBox="0 0 16 16"> <title>Copy</title> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16"> <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"></path> <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"></path> </svg> </symbol> <symbol id="svg-copied" viewBox="0 0 16 16"> <title>Copied</title> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16"> <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"></path> <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"></path> </svg> </symbol> </svg> <header class="side-bar"> <div class="site-header"> <a href="https://jiuqu3513.github.io/vicl/" class="site-title lh-tight"> VICL </a> <button id="menu-button" class="site-button btn-reset" aria-label="Menu" aria-expanded="false"> <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg> </button> </div> <nav aria-label="Main" id="site-nav" class="site-nav"> <ul class="nav-list"><li class="nav-list-item active"><a class="nav-list-link active">VICL</a></li></ul> <ul class="nav-list"><li class="nav-list-item external"> <a href="https://github.com/jiuqu3513/vicl" class="nav-list-link external"> GitHub <svg viewBox="0 0 24 24" aria-labelledby="svg-external-link-title"><use xlink:href="#svg-external-link"></use></svg> </a> </li></ul> <div class="nav-category">Pages</div> <ul class="nav-list"><li class="nav-list-item"><a href="https://jiuqu3513.github.io/vicl/" class="nav-list-link">VICL</a></li></ul> </nav> <div class="d-md-block d-none site-footer"> This site uses <a href="https://github.com/just-the-docs/just-the-docs">Just the Docs</a>, a documentation theme for Jekyll. </div> </header> <div class="main" id="top"> <div id="main-header" class="main-header"> <div class="search" role="search"> <div class="search-input-wrap"> <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Search VICL" autocomplete="off"> <label for="search-input" class="search-label"> <span class="sr-only">Search VICL</span> <svg viewBox="0 0 24 24" class="search-icon" aria-hidden="true"><use xlink:href="#svg-search"></use></svg> </label> </div> <div id="search-results" class="search-results"></div> </div> </div> <div class="main-content-wrap"> <div id="main-content" class="main-content"> <main> <h1 id="data8018-final_report-vicl"> <a href="https://jiuqu3513.github.io/vicl/#data8018-final_report-vicl" class="anchor-heading" aria-labelledby="data8018-final_report-vicl"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> DATA8018-Final_report-VICL </h1> <h1 id="visual-in-context-learning-from-pixel-prompts-to-bayesian-task-inference"> <a href="https://jiuqu3513.github.io/vicl/#visual-in-context-learning-from-pixel-prompts-to-bayesian-task-inference" class="anchor-heading" aria-labelledby="visual-in-context-learning-from-pixel-prompts-to-bayesian-task-inference"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Visual In-Context Learning: From Pixel Prompts to Bayesian Task Inference </h1> <blockquote> <p>A literature review tracing the evolution of Visual In-Context Learning (VICL), the emerging paradigm that lets frozen or mostly frozen vision foundation models perform new visual tasks from a handful of demonstration pairs, often with little or no task-specific training.</p> </blockquote><hr> <h2 id="table-of-contents"> <a href="https://jiuqu3513.github.io/vicl/#table-of-contents" class="anchor-heading" aria-labelledby="table-of-contents"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table of Contents </h2> <ol> <li><a href="https://jiuqu3513.github.io/vicl/#why-vicl-matters">Why VICL Matters</a></li> <li><a href="https://jiuqu3513.github.io/vicl/#part-i---theoretical-foundations">Part I - Theoretical Foundations</a> <ul> <li>2.1 The Bayesian Lens</li> <li>2.2 ICL as Posterior Predictive Distribution</li> <li>2.3 Visualising the Posterior Update</li> <li>2.4 Bayesian Scaling Laws</li> <li>2.5 ICL as Kalman Filtering</li> </ul> </li> <li><a href="https://jiuqu3513.github.io/vicl/#part-ii---application-evolution-2022-2025-with-2026-outlook">Part II - Application Evolution (2022-2025, with 2026 Outlook)</a> <ul> <li>Phase 0: Visual Prompting via Image Inpainting</li> <li>Phase I: Visual Prompting as Sequence Modeling</li> <li>Phase II: In-Context Diffusion</li> <li>Phase III: Unified Multimodal Generation</li> <li>Phase IV: Personalised and Robust VICL</li> </ul> </li> <li><a href="https://jiuqu3513.github.io/vicl/#cross-cutting-challenges">Cross-Cutting Challenges</a></li> <li><a href="https://jiuqu3513.github.io/vicl/#future-research-questions">Future Research Questions</a></li> <li><a href="https://jiuqu3513.github.io/vicl/#references">References</a></li> </ol><hr> <h2 id="why-vicl-matters"> <a href="https://jiuqu3513.github.io/vicl/#why-vicl-matters" class="anchor-heading" aria-labelledby="why-vicl-matters"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Why VICL Matters </h2> <p>Before the recent wave of visual prompting, deploying a vision model on a new task usually meant one of three things: (i) collect labels and fine-tune, (ii) train an adapter or LoRA on top of a frozen backbone, or (iii) hand-craft an inductive prior or task-specific pipeline. All three routes rely on some form of parameter update, auxiliary module, or task-specific engineering.</p> <p>Large language models challenged that habit of thought. GPT-3 showed that, given a frozen network and a few input-output examples in the prompt, a model could solve unseen tasks at inference time. This is In-Context Learning (ICL): the network’s weights do not change; the task is induced from the context.</p> <p>Visual In-Context Learning (VICL) asks the analogous question for vision:</p> <blockquote> <p>Can we condition a large generative vision model on a few demonstration pairs <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="0" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-msub><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mn class="mjx-n" size="s"><mjx-c class="mjx-c31"></mjx-c></mjx-mn></mjx-script></mjx-msub><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo><mjx-msub space="2"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D466 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mn class="mjx-n" size="s"><mjx-c class="mjx-c31"></mjx-c></mjx-mn></mjx-script></mjx-msub><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo><mjx-mo class="mjx-n" space="2"><mjx-c class="mjx-c2026"></mjx-c></mjx-mo><mjx-mo class="mjx-n" space="2"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo><mjx-mo class="mjx-n" space="2"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-msub><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mi class="mjx-i" size="s"><mjx-c class="mjx-c1D458 TEX-I"></mjx-c></mjx-mi></mjx-script></mjx-msub><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo><mjx-msub space="2"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D466 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mi class="mjx-i" size="s"><mjx-c class="mjx-c1D458 TEX-I"></mjx-c></mjx-mi></mjx-script></mjx-msub><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mo stretchy="false">(</mo><msub><mi>x</mi><mn>1</mn></msub><mo>,</mo><msub><mi>y</mi><mn>1</mn></msub><mo stretchy="false">)</mo><mo>,</mo><mo>…</mo><mo>,</mo><mo stretchy="false">(</mo><msub><mi>x</mi><mi>k</mi></msub><mo>,</mo><msub><mi>y</mi><mi>k</mi></msub><mo stretchy="false">)</mo></math></mjx-assistive-mml></mjx-container> and a query <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="1" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-msup><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: 0.363em;"><mjx-mo class="mjx-n" size="s"><mjx-c class="mjx-c2217"></mjx-c></mjx-mo></mjx-script></mjx-msup></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mi>x</mi><mo>∗</mo></msup></math></mjx-assistive-mml></mjx-container> , and have it produce <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="2" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-msup><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D466 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: 0.363em;"><mjx-mo class="mjx-n" size="s"><mjx-c class="mjx-c2217"></mjx-c></mjx-mo></mjx-script></mjx-msup></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mi>y</mi><mo>∗</mo></msup></math></mjx-assistive-mml></mjx-container> for a new task - segmentation, matting, sketch-to-photo, dehazing, identity-preserving editing - without task-specific tuning?</p> </blockquote> <p>Recent systems give a partial yes, with important caveats. The useful way to read that progress is in two halves: a theoretical lens for why context can specify a visual task, and an application timeline showing how researchers have built that idea into working systems.</p> <p>The Bayesian framing is not the only possible explanation of ICL, but it gives a compact language for the rest of the post: prior, context evidence, posterior concentration, and uncertainty.</p><hr> <h2 id="part-i---theoretical-foundations"> <a href="https://jiuqu3513.github.io/vicl/#part-i---theoretical-foundations" class="anchor-heading" aria-labelledby="part-i---theoretical-foundations"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Part I - Theoretical Foundations </h2> <p>A common pitfall in ICL discussions is to treat the phenomenon as “the model just figures it out.” A more useful view is conditional and probabilistic. Under a hierarchical latent-task assumption, ICL can be modelled as approximate Bayesian inference over a hidden task variable; scaling laws, context-selection sensitivity, many-shot re-emergence, and some robustness failures then become easier to reason about. This section should therefore be read as a theoretical lens, not as a proof that every VICL system literally runs Bayes’ rule internally.</p> <h3 id="21-the-bayesian-lens---setup"> <a href="https://jiuqu3513.github.io/vicl/#21-the-bayesian-lens---setup" class="anchor-heading" aria-labelledby="21-the-bayesian-lens---setup"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.1 The Bayesian Lens - Setup </h3> <p>Assume pre-training data is generated by a hierarchical latent-variable process:</p> <ol> <li>A latent task or concept <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="3" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>θ</mi></math></mjx-assistive-mml></mjx-container> is sampled from a prior <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="4" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>p</mi><mo stretchy="false">(</mo><mi>θ</mi><mo stretchy="false">)</mo></math></mjx-assistive-mml></mjx-container>. Examples of <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="5" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>θ</mi></math></mjx-assistive-mml></mjx-container> include “edge-to-photo translation,” “remove glasses while preserving identity,” and “binary segmentation of cats.”</li> <li>Conditioned on <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="6" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>θ</mi></math></mjx-assistive-mml></mjx-container>, a coherent document of paired observations is generated: <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="7" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-msub><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mn class="mjx-n" size="s"><mjx-c class="mjx-c31"></mjx-c></mjx-mn></mjx-script></mjx-msub><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo><mjx-msub space="2"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D466 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mn class="mjx-n" size="s"><mjx-c class="mjx-c31"></mjx-c></mjx-mn></mjx-script></mjx-msub><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo><mjx-mo class="mjx-n" space="2"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-msub><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mn class="mjx-n" size="s"><mjx-c class="mjx-c32"></mjx-c></mjx-mn></mjx-script></mjx-msub><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo><mjx-msub space="2"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D466 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mn class="mjx-n" size="s"><mjx-c class="mjx-c32"></mjx-c></mjx-mn></mjx-script></mjx-msub><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo><mjx-mo class="mjx-n" space="2"><mjx-c class="mjx-c2026"></mjx-c></mjx-mo><mjx-mo class="mjx-n" space="2"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo><mjx-mo class="mjx-n" space="2"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-msub><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mi class="mjx-i" size="s"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi></mjx-script></mjx-msub><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo><mjx-msub space="2"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D466 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mi class="mjx-i" size="s"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi></mjx-script></mjx-msub><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c223C"></mjx-c></mjx-mo><mjx-mi class="mjx-i" space="4"><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-mo class="mjx-n"><mjx-c class="mjx-c22C5"></mjx-c></mjx-mo><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c2223"></mjx-c></mjx-mo><mjx-mi class="mjx-i" space="4"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mo stretchy="false">(</mo><msub><mi>x</mi><mn>1</mn></msub><mo>,</mo><msub><mi>y</mi><mn>1</mn></msub><mo stretchy="false">)</mo><mo>,</mo><mo stretchy="false">(</mo><msub><mi>x</mi><mn>2</mn></msub><mo>,</mo><msub><mi>y</mi><mn>2</mn></msub><mo stretchy="false">)</mo><mo>,</mo><mo>…</mo><mo>,</mo><mo stretchy="false">(</mo><msub><mi>x</mi><mi>n</mi></msub><mo>,</mo><msub><mi>y</mi><mi>n</mi></msub><mo stretchy="false">)</mo><mo>∼</mo><mi>p</mi><mo stretchy="false">(</mo><mo>⋅</mo><mo>∣</mo><mi>θ</mi><mo stretchy="false">)</mo></math></mjx-assistive-mml></mjx-container>.</li> <li>The model never sees <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="8" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>θ</mi></math></mjx-assistive-mml></mjx-container> directly; it only sees the resulting flat sequence.</li> </ol> <p>Pre-training minimises the cross-entropy of the next-token or next-patch distribution over these sequences. If the data really is organised this way, then a model that predicts the sequence well has an incentive to infer which latent task generated the current context, because otherwise it cannot extrapolate beyond the first few examples.</p> <p><img src="./group7_files/1.png" alt="examples"></p> <p>Why this matters: in this stylised setting, ICL is not an unexplained trick. It is the test-time use of a latent-task inference capability encouraged by the training objective. The foundational reference here is Xie et al., <em>An Explanation of In-Context Learning as Implicit Bayesian Inference</em> (ICLR 2022). The same argument does not automatically prove VICL, but it gives a clean vocabulary for talking about visual demonstrations as evidence about a hidden task.</p> <h3 id="22-icl-as-posterior-predictive-distribution"> <a href="https://jiuqu3513.github.io/vicl/#22-icl-as-posterior-predictive-distribution" class="anchor-heading" aria-labelledby="22-icl-as-posterior-predictive-distribution"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.2 ICL as Posterior Predictive Distribution </h3> <p>At inference time, we feed the model a context <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="9" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D436 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c3D"></mjx-c></mjx-mo><mjx-texatom space="4" texclass="ORD"><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-msub><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mn class="mjx-n" size="s"><mjx-c class="mjx-c31"></mjx-c></mjx-mn></mjx-script></mjx-msub><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo><mjx-msub space="2"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D466 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mn class="mjx-n" size="s"><mjx-c class="mjx-c31"></mjx-c></mjx-mn></mjx-script></mjx-msub><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo><mjx-mo class="mjx-n" space="2"><mjx-c class="mjx-c2026"></mjx-c></mjx-mo><mjx-mo class="mjx-n" space="2"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo><mjx-mo class="mjx-n" space="2"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-msub><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mi class="mjx-i" size="s"><mjx-c class="mjx-c1D458 TEX-I"></mjx-c></mjx-mi></mjx-script></mjx-msub><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo><mjx-msub space="2"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D466 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mi class="mjx-i" size="s"><mjx-c class="mjx-c1D458 TEX-I"></mjx-c></mjx-mi></mjx-script></mjx-msub><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo></mjx-texatom></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>C</mi><mo>=</mo><mrow data-mjx-texclass="ORD"><mo stretchy="false">(</mo><msub><mi>x</mi><mn>1</mn></msub><mo>,</mo><msub><mi>y</mi><mn>1</mn></msub><mo stretchy="false">)</mo><mo>,</mo><mo>…</mo><mo>,</mo><mo stretchy="false">(</mo><msub><mi>x</mi><mi>k</mi></msub><mo>,</mo><msub><mi>y</mi><mi>k</mi></msub><mo stretchy="false">)</mo></mrow></math></mjx-assistive-mml></mjx-container> and a query <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="10" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-msup><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: 0.363em;"><mjx-mo class="mjx-n" size="s"><mjx-c class="mjx-c2217"></mjx-c></mjx-mo></mjx-script></mjx-msup></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mi>x</mi><mo>∗</mo></msup></math></mjx-assistive-mml></mjx-container>. Under the Bayesian view, the target prediction is the posterior predictive distribution:</p> <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" display="true" tabindex="0" ctxtmenu_counter="11" style="font-size: 119%; position: relative;"><mjx-math display="true" class="MJX-TEX" aria-hidden="true" style="margin-left: 0px; margin-right: 0px;"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-msup><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D466 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: 0.413em;"><mjx-mo class="mjx-n" size="s"><mjx-c class="mjx-c2217"></mjx-c></mjx-mo></mjx-script></mjx-msup><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c2223"></mjx-c></mjx-mo><mjx-msup space="4"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: 0.413em;"><mjx-mo class="mjx-n" size="s"><mjx-c class="mjx-c2217"></mjx-c></mjx-mo></mjx-script></mjx-msup><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo><mjx-mi class="mjx-i" space="2"><mjx-c class="mjx-c1D436 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c3D"></mjx-c></mjx-mo><mjx-msub space="4"><mjx-mo class="mjx-lop"><mjx-c class="mjx-c222B TEX-S2"></mjx-c></mjx-mo><mjx-script style="vertical-align: -0.896em; margin-left: -0.388em;"><mjx-texatom size="s" texclass="ORD"><mjx-mi class="mjx-n"><mjx-c class="mjx-c398"></mjx-c></mjx-mi></mjx-texatom></mjx-script></mjx-msub><mjx-mi class="mjx-i" space="2"><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-msup><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D466 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: 0.413em;"><mjx-mo class="mjx-n" size="s"><mjx-c class="mjx-c2217"></mjx-c></mjx-mo></mjx-script></mjx-msup><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c2223"></mjx-c></mjx-mo><mjx-msup space="4"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: 0.413em;"><mjx-mo class="mjx-n" size="s"><mjx-c class="mjx-c2217"></mjx-c></mjx-mo></mjx-script></mjx-msup><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo><mjx-mi class="mjx-i" space="2"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo><mjx-mstyle><mjx-mspace style="width: 0.167em;"></mjx-mspace></mjx-mstyle><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c2223"></mjx-c></mjx-mo><mjx-mi class="mjx-i" space="4"><mjx-c class="mjx-c1D436 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo><mjx-mstyle><mjx-mspace style="width: 0.167em;"></mjx-mspace></mjx-mstyle><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D451 TEX-I"></mjx-c></mjx-mi><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c2E"></mjx-c></mjx-mo></mjx-math><mjx-assistive-mml unselectable="on" display="block"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mi>p</mi><mo stretchy="false">(</mo><msup><mi>y</mi><mo>∗</mo></msup><mo>∣</mo><msup><mi>x</mi><mo>∗</mo></msup><mo>,</mo><mi>C</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mo data-mjx-texclass="OP">∫</mo><mrow data-mjx-texclass="ORD"><mi mathvariant="normal">Θ</mi></mrow></msub><mi>p</mi><mo stretchy="false">(</mo><msup><mi>y</mi><mo>∗</mo></msup><mo>∣</mo><msup><mi>x</mi><mo>∗</mo></msup><mo>,</mo><mi>θ</mi><mo stretchy="false">)</mo><mstyle scriptlevel="0"><mspace width="0.167em"></mspace></mstyle><mi>p</mi><mo stretchy="false">(</mo><mi>θ</mi><mo>∣</mo><mi>C</mi><mo stretchy="false">)</mo><mstyle scriptlevel="0"><mspace width="0.167em"></mspace></mstyle><mi>d</mi><mi>θ</mi><mo>.</mo></math></mjx-assistive-mml></mjx-container> <p>Two pieces are doing the work:</p> <ul> <li>The posterior <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="12" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c2223"></mjx-c></mjx-mo><mjx-mi class="mjx-i" space="4"><mjx-c class="mjx-c1D436 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>p</mi><mo stretchy="false">(</mo><mi>θ</mi><mo>∣</mo><mi>C</mi><mo stretchy="false">)</mo></math></mjx-assistive-mml></mjx-container> is the model’s belief, after seeing <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="13" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D458 TEX-I"></mjx-c></mjx-mi></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>k</mi></math></mjx-assistive-mml></mjx-container> demonstrations, about which task is being requested.</li> <li>The likelihood <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="14" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-msup><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D466 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: 0.363em;"><mjx-mo class="mjx-n" size="s"><mjx-c class="mjx-c2217"></mjx-c></mjx-mo></mjx-script></mjx-msup><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c2223"></mjx-c></mjx-mo><mjx-msup space="4"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: 0.363em;"><mjx-mo class="mjx-n" size="s"><mjx-c class="mjx-c2217"></mjx-c></mjx-mo></mjx-script></mjx-msup><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo><mjx-mi class="mjx-i" space="2"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>p</mi><mo stretchy="false">(</mo><msup><mi>y</mi><mo>∗</mo></msup><mo>∣</mo><msup><mi>x</mi><mo>∗</mo></msup><mo>,</mo><mi>θ</mi><mo stretchy="false">)</mo></math></mjx-assistive-mml></mjx-container> says what output is plausible for the query once the task is fixed.</li> </ul> <p>This decomposition produces three useful predictions:</p> <div class="table-wrapper"><table> <thead> <tr> <th>Observation</th> <th>Bayesian interpretation</th> <th>Practical implication</th> </tr> </thead> <tbody> <tr> <td>More informative demonstrations help more than redundant ones.</td> <td>They concentrate <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="15" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c2223"></mjx-c></mjx-mo><mjx-mi class="mjx-i" space="4"><mjx-c class="mjx-c1D436 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>p</mi><mo stretchy="false">(</mo><mi>θ</mi><mo>∣</mo><mi>C</mi><mo stretchy="false">)</mo></math></mjx-assistive-mml></mjx-container> faster.</td> <td>Context selection can matter as much as model scale.</td> </tr> <tr> <td>Ambiguous demonstrations produce unstable outputs.</td> <td>Posterior mass remains spread over multiple plausible tasks.</td> <td>Evaluation should report sensitivity to context choice.</td> </tr> <tr> <td>Long contexts can overcome a weak prior in the model.</td> <td>The likelihood product can dominate the prior under favourable assumptions.</td> <td>Long-context VICL may improve adaptation, but it also raises safety questions.</td> </tr> </tbody> </table></div> <p>That last row deserves emphasis, with caution: it is a prediction of this modelling framework under particular assumptions, not an unconditional theorem about every deployed model. Still, it has direct safety implications which we will return to.</p> <h3 id="23-visualising-the-posterior-update"> <a href="https://jiuqu3513.github.io/vicl/#23-visualising-the-posterior-update" class="anchor-heading" aria-labelledby="23-visualising-the-posterior-update"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.3 Visualising the Posterior Update </h3> <p>A useful mental picture: every demonstration pair you append to the prompt is one Bayesian update. Tasks consistent with all the pairs retain mass; tasks inconsistent with any pair lose mass.</p> <p><img src="./group7_files/2.png" alt="tasks inconsistent"></p> <p>This is also why context selection is so consequential: the information a pair contributes to disambiguating <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="16" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>θ</mi></math></mjx-assistive-mml></mjx-container> varies wildly across pairs. Two examples of “photo of a cat with mask” might collapse onto almost the same posterior, whereas one example of a cat and one of a dog with masks can pin down “binary segmentation” more sharply.</p> <p>For deployment, example selection is not a minor prompt detail; it is part of the task specification.</p> <h3 id="24-bayesian-scaling-laws"> <a href="https://jiuqu3513.github.io/vicl/#24-bayesian-scaling-laws" class="anchor-heading" aria-labelledby="24-bayesian-scaling-laws"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.4 Bayesian Scaling Laws </h3> <p>Recent work by Arora et al. (2025) formalises relationships between context length, model size, and task performance through Bayesian scaling laws. Two key quantities are:</p> <ul> <li>Task prior <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="17" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>p</mi><mo stretchy="false">(</mo><mi>θ</mi><mo stretchy="false">)</mo></math></mjx-assistive-mml></mjx-container>: how likely the model thinks task <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="18" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>θ</mi></math></mjx-assistive-mml></mjx-container> is before seeing any examples, as shaped by pre-training data composition and post-training.</li> <li>Learning efficiency: how quickly <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="19" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c2223"></mjx-c></mjx-mo><mjx-mi class="mjx-i" space="4"><mjx-c class="mjx-c1D436 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>p</mi><mo stretchy="false">(</mo><mi>θ</mi><mo>∣</mo><mi>C</mi><mo stretchy="false">)</mo></math></mjx-assistive-mml></mjx-container> concentrates on the intended task as <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="20" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mo class="mjx-n"><mjx-c class="mjx-c7C"></mjx-c></mjx-mo><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D436 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c7C"></mjx-c></mjx-mo></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mo data-mjx-texclass="ORD" fence="false" stretchy="false">|</mo><mi>C</mi><mo data-mjx-texclass="ORD" fence="false" stretchy="false">|</mo></math></mjx-assistive-mml></mjx-container> grows.</li> </ul> <p>One prediction of this framework is many-shot re-emergence. If a model has been aligned away from some task <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="21" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-msub><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-texatom size="s" texclass="ORD"><mjx-mtext class="mjx-n"><mjx-c class="mjx-c62"></mjx-c><mjx-c class="mjx-c61"></mjx-c><mjx-c class="mjx-c64"></mjx-c></mjx-mtext></mjx-texatom></mjx-script></mjx-msub></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>θ</mi><mrow data-mjx-texclass="ORD"><mtext>bad</mtext></mrow></msub></math></mjx-assistive-mml></mjx-container>, one can model that alignment as suppressing the prior <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="22" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-msub><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-texatom size="s" texclass="ORD"><mjx-mtext class="mjx-n"><mjx-c class="mjx-c62"></mjx-c><mjx-c class="mjx-c61"></mjx-c><mjx-c class="mjx-c64"></mjx-c></mjx-mtext></mjx-texatom></mjx-script></mjx-msub><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>p</mi><mo stretchy="false">(</mo><msub><mi>θ</mi><mrow data-mjx-texclass="ORD"><mtext>bad</mtext></mrow></msub><mo stretchy="false">)</mo></math></mjx-assistive-mml></mjx-container>. A sufficiently consistent and sufficiently long context may still move posterior mass back toward <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="23" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-msub><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-texatom size="s" texclass="ORD"><mjx-mtext class="mjx-n"><mjx-c class="mjx-c62"></mjx-c><mjx-c class="mjx-c61"></mjx-c><mjx-c class="mjx-c64"></mjx-c></mjx-mtext></mjx-texatom></mjx-script></mjx-msub></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>θ</mi><mrow data-mjx-texclass="ORD"><mtext>bad</mtext></mrow></msub></math></mjx-assistive-mml></mjx-container>, because</p> <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" display="true" tabindex="0" ctxtmenu_counter="24" style="font-size: 119%; position: relative;"><mjx-math display="true" class="MJX-TEX" aria-hidden="true" style="margin-left: 0px; margin-right: 0px;"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c2223"></mjx-c></mjx-mo><mjx-mi class="mjx-i" space="4"><mjx-c class="mjx-c1D436 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c221D"></mjx-c></mjx-mo><mjx-mi class="mjx-i" space="4"><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo><mjx-munderover space="2"><mjx-over style="padding-bottom: 0.192em; padding-left: 0.455em;"><mjx-texatom size="s" texclass="ORD"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D458 TEX-I"></mjx-c></mjx-mi></mjx-texatom></mjx-over><mjx-box><mjx-munder><mjx-row><mjx-base><mjx-mo class="mjx-lop"><mjx-c class="mjx-c220F TEX-S2"></mjx-c></mjx-mo></mjx-base></mjx-row><mjx-row><mjx-under style="padding-top: 0.167em; padding-left: 0.065em;"><mjx-texatom size="s" texclass="ORD"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D456 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c3D"></mjx-c></mjx-mo><mjx-mn class="mjx-n"><mjx-c class="mjx-c31"></mjx-c></mjx-mn></mjx-texatom></mjx-under></mjx-row></mjx-munder></mjx-box></mjx-munderover><mjx-mi class="mjx-i" space="2"><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-msub><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mi class="mjx-i" size="s"><mjx-c class="mjx-c1D456 TEX-I"></mjx-c></mjx-mi></mjx-script></mjx-msub><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo><mjx-msub space="2"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D466 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mi class="mjx-i" size="s"><mjx-c class="mjx-c1D456 TEX-I"></mjx-c></mjx-mi></mjx-script></mjx-msub><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c2223"></mjx-c></mjx-mo><mjx-mi class="mjx-i" space="4"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo><mjx-mo class="mjx-n"><mjx-c class="mjx-c2E"></mjx-c></mjx-mo></mjx-math><mjx-assistive-mml unselectable="on" display="block"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mi>p</mi><mo stretchy="false">(</mo><mi>θ</mi><mo>∣</mo><mi>C</mi><mo stretchy="false">)</mo><mo>∝</mo><mi>p</mi><mo stretchy="false">(</mo><mi>θ</mi><mo stretchy="false">)</mo><munderover><mo data-mjx-texclass="OP">∏</mo><mrow data-mjx-texclass="ORD"><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mrow data-mjx-texclass="ORD"><mi>k</mi></mrow></munderover><mi>p</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>,</mo><msub><mi>y</mi><mi>i</mi></msub><mo>∣</mo><mi>θ</mi><mo stretchy="false">)</mo><mo>.</mo></math></mjx-assistive-mml></mjx-container> <p>The likelihood term compounds with <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="25" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D458 TEX-I"></mjx-c></mjx-mi></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>k</mi></math></mjx-assistive-mml></mjx-container>, while the prior is a fixed multiplicative factor. This is one proposed mechanism behind many-shot jailbreaking in language models. For VICL, the analogous risk is still speculative: a long sequence of benign-looking image pairs might steer a visual generator toward a disallowed visual transformation. The point is not that visual many-shot jailbreaking is already fully demonstrated at scale, but that the Bayesian story gives a concrete place to look.</p> <h3 id="25-icl-as-kalman-filtering---a-2026-perspective"> <a href="https://jiuqu3513.github.io/vicl/#25-icl-as-kalman-filtering---a-2026-perspective" class="anchor-heading" aria-labelledby="25-icl-as-kalman-filtering---a-2026-perspective"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.5 ICL as Kalman Filtering - A 2026 Perspective </h3> <p>A more recent theoretical thread, represented by Kiruluta’s 2026 preprint <em>Filtering Beats Fine Tuning: A Bayesian Kalman View of In Context Learning in LLMs</em>, reframes in-context learning as sequential Bayesian state estimation. The paper is about LLMs rather than VICL, so I treat it here as an analogy rather than direct visual evidence.</p> <ul> <li>Treat <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="26" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>θ</mi></math></mjx-assistive-mml></mjx-container> as a continuous latent state with a Gaussian belief <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="27" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-texatom texclass="ORD"><mjx-mi class="mjx-cal mjx-i"><mjx-c class="mjx-c4E TEX-C"></mjx-c></mjx-mi></mjx-texatom><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-msub><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D707 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mi class="mjx-i" size="s"><mjx-c class="mjx-c1D461 TEX-I"></mjx-c></mjx-mi></mjx-script></mjx-msub><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo><mjx-msub space="2"><mjx-mi class="mjx-n"><mjx-c class="mjx-c3A3"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mi class="mjx-i" size="s"><mjx-c class="mjx-c1D461 TEX-I"></mjx-c></mjx-mi></mjx-script></mjx-msub><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mi data-mjx-variant="-tex-calligraphic" mathvariant="script">N</mi></mrow><mo stretchy="false">(</mo><msub><mi>μ</mi><mi>t</mi></msub><mo>,</mo><msub><mi mathvariant="normal">Σ</mi><mi>t</mi></msub><mo stretchy="false">)</mo></math></mjx-assistive-mml></mjx-container>.</li> <li>Each demonstration acts like an observation; with linear-Gaussian assumptions, Bayes’ rule gives the standard Kalman update.</li> <li>The covariance <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="28" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-msub><mjx-mi class="mjx-n"><mjx-c class="mjx-c3A3"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mi class="mjx-i" size="s"><mjx-c class="mjx-c1D461 TEX-I"></mjx-c></mjx-mi></mjx-script></mjx-msub></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi mathvariant="normal">Σ</mi><mi>t</mi></msub></math></mjx-assistive-mml></mjx-container> may shrink as informative observations arrive, giving a formal version of “the model is becoming more certain about the task.”</li> </ul> <p><img src="./group7_files/3.png" alt="coveriance"></p> <p>Why this matters: the Kalman view suggests an optimisation-inference duality. It sits beside another common explanatory tradition in which ICL resembles fitting a simple predictor on the in-context examples; filtering views show that, under restrictive assumptions, least-squares-style updates arise as a limiting case of Bayesian state estimation. That does not make all ICL literally Kalman filtering, but it gives a useful bridge between two explanatory traditions.</p> <p>For VICL, the practical lesson is the uncertainty handle. If a system could estimate something like posterior covariance from attention entropy, denoiser variance, or ensemble disagreement, that signal might support selective prediction or abstention when the context is ambiguous.</p> <h3 id="26-putting-theory-to-work"> <a href="https://jiuqu3513.github.io/vicl/#26-putting-theory-to-work" class="anchor-heading" aria-labelledby="26-putting-theory-to-work"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.6 Putting Theory to Work </h3> <p>The ideas above - implicit Bayesian inference, posterior concentration, scaling laws, and covariance shrinkage - suggest design heuristics without requiring every VICL system to literally implement Bayes’ rule:</p> <ul> <li>Diverse task or tuning data can broaden the support of <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="29" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>p</mi><mo stretchy="false">(</mo><mi>θ</mi><mo stretchy="false">)</mo></math></mjx-assistive-mml></mjx-container>, which is useful if we want VICL to assign mass to held-out tasks. PICO is a useful example at the data-construction and tuning level rather than a direct pre-training result.</li> <li>Diverse, disambiguating contexts at test time accelerate posterior concentration.</li> <li>Long contexts can override weak priors under favourable assumptions. That is a feature for generalisation and a possible vulnerability for safety.</li> <li>Uncertainty estimates, even approximate ones, could become useful signals for selective prediction or abstention.</li> </ul> <p>With this scaffolding in mind, we now turn to how the field has actually built VICL systems.</p> <h3 id="27-theory-to-application-map"> <a href="https://jiuqu3513.github.io/vicl/#27-theory-to-application-map" class="anchor-heading" aria-labelledby="27-theory-to-application-map"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.7 Theory-to-Application Map </h3> <p>One way to read the application papers is to ask which part of the Bayesian story they improve: the prior over tasks, the context format, the image likelihood, or the reliability signal.</p><hr> <h2 id="part-ii---application-evolution-2022-2025-with-2026-outlook"> <a href="https://jiuqu3513.github.io/vicl/#part-ii---application-evolution-2022-2025-with-2026-outlook" class="anchor-heading" aria-labelledby="part-ii---application-evolution-2022-2025-with-2026-outlook"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Part II - Application Evolution (2022-2025, with 2026 Outlook) </h2> <p>The applied side of VICL has moved through several overlapping paradigms. The dividing lines are not sharp, and many papers straddle phases, but the dominant architectural commitment changes meaningfully over time.</p> <p><img src="./group7_files/4.png" alt="timeline"></p> <div class="table-wrapper"><table> <thead> <tr> <th>Year</th> <th>Phase</th> <th>Representative papers</th> <th>What changed</th> </tr> </thead> <tbody> <tr> <td>2022</td> <td>Visual prompting</td> <td>Visual Prompting via Image Inpainting</td> <td>The task becomes a spatial relation inside an image prompt.</td> </tr> <tr> <td>2023</td> <td>Sequence modelling</td> <td>Painter, SegGPT, What Makes Good Examples</td> <td>Grid and completion formats become general visual task interfaces; context choice becomes a measured variable.</td> </tr> <tr> <td>2023-2025</td> <td>Diffusion VICL</td> <td>Prompt Diffusion, IconMatting, SD-VICL</td> <td>Strong diffusion priors and attention manipulation make visual prediction and image-to-image tasks more practical.</td> </tr> <tr> <td>2024-2025</td> <td>Unified multimodal</td> <td>IMProv, CoDi-2, OmniGen, OmniGen2, VisualCloze</td> <td>Context expands from visual exemplars to interleaved text-image sequences and cloze-style training.</td> </tr> <tr> <td>2025 onward</td> <td>Robust and personalised VICL</td> <td>PICO, VICT, 2026 theory outlook</td> <td>The field shifts toward task diversity, personalisation, distribution shift, and test-time adaptation.</td> </tr> </tbody> </table></div> <p>The high-level arc is: define the task in pixels, use stronger generative priors, fuse modalities where useful, and then address distribution shift and personalisation.</p> <h3 id="phase-0---visual-prompting-via-image-inpainting-2022"> <a href="https://jiuqu3513.github.io/vicl/#phase-0---visual-prompting-via-image-inpainting-2022" class="anchor-heading" aria-labelledby="phase-0---visual-prompting-via-image-inpainting-2022"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Phase 0 - Visual Prompting via Image Inpainting (2022) </h3> <p>Before Painter made the grid interface widely recognisable, <em>Visual Prompting via Image Inpainting</em> (NeurIPS 2022) showed a simple but important trick: cast a visual task as image inpainting. Put an input-output example and a query into a visual prompt, leave the answer region blank, and ask an inpainting model to complete it. This paper matters because it makes the prompt itself a spatial object rather than a string of text.</p> <p>The idea is simple compared with later foundation-model VICL, but conceptually it is the seed: the task is not named by a label; it is demonstrated by a visual relation.</p> <h3 id="phase-i---visual-prompting-as-sequence-modeling-2023"> <a href="https://jiuqu3513.github.io/vicl/#phase-i---visual-prompting-as-sequence-modeling-2023" class="anchor-heading" aria-labelledby="phase-i---visual-prompting-as-sequence-modeling-2023"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Phase I - Visual Prompting as Sequence Modeling (2023) </h3> <p>The move: treat an image as a sequence of patches or tokens, define a task as “complete the sequence,” and let a single model handle many tasks via the format of the input.</p> <p>Painter (CVPR 2023) is the canonical example. Arrange a demonstration pair <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="30" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-msub><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mn class="mjx-n" size="s"><mjx-c class="mjx-c31"></mjx-c></mjx-mn></mjx-script></mjx-msub><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo><mjx-msub space="2"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D466 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mn class="mjx-n" size="s"><mjx-c class="mjx-c31"></mjx-c></mjx-mn></mjx-script></mjx-msub><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mo stretchy="false">(</mo><msub><mi>x</mi><mn>1</mn></msub><mo>,</mo><msub><mi>y</mi><mn>1</mn></msub><mo stretchy="false">)</mo></math></mjx-assistive-mml></mjx-container> and a query <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="31" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-msup><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: 0.363em;"><mjx-mo class="mjx-n" size="s"><mjx-c class="mjx-c2217"></mjx-c></mjx-mo></mjx-script></mjx-msup></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mi>x</mi><mo>∗</mo></msup></math></mjx-assistive-mml></mjx-container> as a <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="32" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mn class="mjx-n"><mjx-c class="mjx-c32"></mjx-c></mjx-mn><mjx-mo class="mjx-n" space="3"><mjx-c class="mjx-cD7"></mjx-c></mjx-mo><mjx-mn class="mjx-n" space="3"><mjx-c class="mjx-c32"></mjx-c></mjx-mn></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mn>2</mn><mo>×</mo><mn>2</mn></math></mjx-assistive-mml></mjx-container> grid image and ask the model to in-paint the missing fourth quadrant.</p> <div class="table-wrapper"><table> <thead> <tr> <th>Position</th> <th>Left cell</th> <th>Right cell</th> </tr> </thead> <tbody> <tr> <td>Top row</td> <td>Demonstration input <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="33" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-msub><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mn class="mjx-n" size="s"><mjx-c class="mjx-c31"></mjx-c></mjx-mn></mjx-script></mjx-msub></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>x</mi><mn>1</mn></msub></math></mjx-assistive-mml></mjx-container></td> <td>Demonstration output <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="34" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-msub><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D466 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mn class="mjx-n" size="s"><mjx-c class="mjx-c31"></mjx-c></mjx-mn></mjx-script></mjx-msub></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>y</mi><mn>1</mn></msub></math></mjx-assistive-mml></mjx-container></td> </tr> <tr> <td>Bottom row</td> <td>Query input <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="35" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-msup><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: 0.363em;"><mjx-mo class="mjx-n" size="s"><mjx-c class="mjx-c2217"></mjx-c></mjx-mo></mjx-script></mjx-msup></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mi>x</mi><mo>∗</mo></msup></math></mjx-assistive-mml></mjx-container></td> <td>Masked output slot, completed as <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="36" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-msup><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D466 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: 0.363em;"><mjx-mo class="mjx-n" size="s"><mjx-c class="mjx-c2217"></mjx-c></mjx-mo></mjx-script></mjx-msup></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mi>y</mi><mo>∗</mo></msup></math></mjx-assistive-mml></mjx-container></td> </tr> </tbody> </table></div> <p>The task - depth estimation, semantic segmentation, denoising, low-light enhancement - is communicated by the visual relationship between the top two cells. No text prompt, task-id embedding, or task-specific head is required at inference time.</p> <p>SegGPT (ICCV 2023) specialises this idea for universal segmentation. Its key generalisation is random colouring of mask labels at training time, which forces the model to read the colour-to-class mapping from the in-context exemplar. As a result, SegGPT can perform semantic, instance, panoptic, and video object segmentation with a single set of weights.</p> <p><em>What Makes Good Examples for Visual In-Context Learning?</em> (NeurIPS 2023) adds a crucial empirical lesson: the choice of demonstration examples can change performance dramatically. In the Bayesian vocabulary above, good examples are those that concentrate the posterior over the intended task quickly.</p> <p>What Phase I made clear:</p> <ol> <li>The grid or completion format is a workable interface for visual tasks.</li> <li>Masked-image-modelling backbones can support visual task transfer through context.</li> <li>Detail consistency remains hard: producing the right kind of output is easier than preserving fine boundaries, texture, and geometry.</li> </ol> <h3 id="phase-ii---the-rise-of-in-context-diffusion-2023-2025"> <a href="https://jiuqu3513.github.io/vicl/#phase-ii---the-rise-of-in-context-diffusion-2023-2025" class="anchor-heading" aria-labelledby="phase-ii---the-rise-of-in-context-diffusion-2023-2025"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Phase II - The Rise of In-Context Diffusion (2023-2025) </h3> <p>The move: replace or augment masked-image-modelling backbones with large diffusion models. Diffusion models bring a much richer generative prior over natural images, and their attention layers provide a natural place for context information to interact with query generation.</p> <p>Prompt Diffusion, introduced in <em>In-Context Learning Unlocked for Diffusion Models</em> (2023), is an important bridge here. It trains a diffusion framework for in-context visual prompting, showing that diffusion-based generation can learn from prompt examples rather than only from text instructions.</p> <p>IconMatting / In-Context Matting (CVPR 2024) ports VICL into one of the most precision-sensitive vision tasks: alpha matting. Its setting uses a reference image with guided priors such as points, scribbles, or masks, then estimates alpha mattes for target images from the same foreground category without requiring a per-image trimap. This is useful evidence that VICL is not limited to coarse, discrete tasks, but the category and guidance assumptions matter.</p> <p>SD-VICL (<em>Stable Diffusion Models are Secretly Good at Visual In-Context Learning</em>, ICCV 2025) pushes a sharper claim: a frozen Stable Diffusion model can perform several visual prediction and image-to-image tasks, including foreground segmentation, single-object detection, semantic segmentation, keypoint detection, edge detection, and colorization, when prompted in the right spatial layout and guided through attention-map manipulation, without fine-tuning, ControlNet, or LoRA.</p> <p>In Bayesian language, the diffusion denoiser supplies a strong conditional image prior, while attention gives the context <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="37" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D436 TEX-I"></mjx-c></mjx-mi></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>C</mi></math></mjx-assistive-mml></mjx-container> a path to influence the query output.</p> <p>What Phase II showed:</p> <ol> <li>Strong generative priors make VICL useful beyond grid completion.</li> <li>Test-time attention engineering can unlock surprising behaviour in frozen diffusion models.</li> <li>A new design question appears: which layers and timesteps actually carry task identity?</li> </ol> <h3 id="phase-iii---unified-multimodal-and-early-fusion-2024-2025"> <a href="https://jiuqu3513.github.io/vicl/#phase-iii---unified-multimodal-and-early-fusion-2024-2025" class="anchor-heading" aria-labelledby="phase-iii---unified-multimodal-and-early-fusion-2024-2025"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Phase III - Unified Multimodal and Early Fusion (2024-2025) </h3> <p>The move: use mixed text-image context directly rather than treating text conditioning and image generation as separate stages. Not every paper in this phase is pure V-ICL in the strict image-pair task-learning sense; some are adjacent multimodal ICL or unified generation systems that broaden what “visual context” can mean.</p> <p>IMProv (arXiv 2023; TMLR 2024) and CoDi-2 (CVPR 2024) are useful stepping stones: they move from a single visual exemplar toward mixed sequences of text, image, and other modalities.</p> <p>OmniGen (2024) is a clear example of this direction: references, controls, and instructions become part of the input sequence rather than separate adapters or task heads.</p> <p>OmniGen2 (<em>Towards Instruction-Aligned Multimodal Generation</em>, first released in 2025 and revised in 2026) keeps the broad goal of flexible multimodal generation, but introduces more structured text and image decoding pathways. The VICL lesson is architectural rather than literal: visual context can be absorbed into a general generation interface, while modality-specific processing may still help.</p> <p>VisualCloze (ICCV 2025) goes further by formulating image generation as a “Visual Cloze” problem: given related image-text context with one missing slot, fill in the blank. This is the visual analogue of a cloze objective, with task-conditional coherence encouraged by the interface.</p> <p>Why this matters theoretically: VisualCloze can be read as reducing a format mismatch between training and downstream in-context use, rather than treating visual demonstrations as an afterthought. It is a cleaner empirical platform for testing whether better context alignment improves learning from demonstrations.</p> <h3 id="phase-iv---personalised-and-robust-generation-2025-onward"> <a href="https://jiuqu3513.github.io/vicl/#phase-iv---personalised-and-robust-generation-2025-onward" class="anchor-heading" aria-labelledby="phase-iv---personalised-and-robust-generation-2025-onward"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Phase IV - Personalised and Robust Generation (2025 Onward) </h3> <p>The move: ask when VICL breaks under personalisation and distribution shift.</p> <p>PICO (<em>Personalized Vision via Visual In-Context Learning</em>, 2025) argues that task diversity can beat sheer data volume. In Bayesian language, diverse task structures broaden the support of <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="38" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>p</mi><mo stretchy="false">(</mo><mi>θ</mi><mo stretchy="false">)</mo></math></mjx-assistive-mml></mjx-container>, which helps posterior inference on held-out tasks.</p> <p>VICT (<em>Test-Time Visual In-Context Tuning</em>, CVPR 2025) confronts distribution shift directly. Pure VICL can degrade when the query differs from the demonstration distribution. VICT proposes cycle-consistency-based test-time optimisation of model parameters conditioned on the in-context examples themselves. This is a hybrid of ICL and fine-tuning, and it is interesting precisely because it admits that context inference alone is sometimes not enough when the likelihood model <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="39" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D466 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c2223"></mjx-c></mjx-mo><mjx-mi class="mjx-i" space="4"><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo><mjx-mi class="mjx-i" space="2"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>p</mi><mo stretchy="false">(</mo><mi>y</mi><mo>∣</mo><mi>x</mi><mo>,</mo><mi>θ</mi><mo stretchy="false">)</mo></math></mjx-assistive-mml></mjx-container> is poorly matched to the test query.</p> <p>What Phase IV signals: the field is moving from “show that it works” toward “characterise where it breaks,” especially under personalisation and distribution shift.</p> <h3 id="a-compact-comparison"> <a href="https://jiuqu3513.github.io/vicl/#a-compact-comparison" class="anchor-heading" aria-labelledby="a-compact-comparison"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> A Compact Comparison </h3> <div class="table-wrapper"><table> <thead> <tr> <th>Phase</th> <th>Representative work</th> <th>Main interface</th> <th>Parameter update at test time?</th> <th>Main limitation</th> </tr> </thead> <tbody> <tr> <td>Visual prompting</td> <td>Visual Prompting via Image Inpainting</td> <td>Spatial prompt with blank region</td> <td>No</td> <td>Limited by the inpainting prior and prompt design</td> </tr> <tr> <td>Sequence modelling</td> <td>Painter, SegGPT</td> <td>Grid or cloze completion</td> <td>No</td> <td>Detail fidelity and context sensitivity</td> </tr> <tr> <td>Diffusion VICL</td> <td>Prompt Diffusion, IconMatting, SD-VICL</td> <td>Diffusion sampling with visual context</td> <td>Usually no</td> <td>Attention/timestep choices and consistency</td> </tr> <tr> <td>Unified multimodal</td> <td>IMProv, CoDi-2, OmniGen, VisualCloze</td> <td>Interleaved text-image context</td> <td>Usually no</td> <td>Format alignment and controllability</td> </tr> <tr> <td>Robust/personalised VICL</td> <td>PICO, VICT</td> <td>Diverse task context or test-time tuning</td> <td>VICT uses test-time parameter optimisation</td> <td>Distribution shift and task coverage</td> </tr> </tbody> </table></div> <h2 id="cross-cutting-challenges"> <a href="https://jiuqu3513.github.io/vicl/#cross-cutting-challenges" class="anchor-heading" aria-labelledby="cross-cutting-challenges"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Cross-Cutting Challenges </h2> <p>Several issues cut across all phases and remain open.</p> <h3 id="detail-consistency"> <a href="https://jiuqu3513.github.io/vicl/#detail-consistency" class="anchor-heading" aria-labelledby="detail-consistency"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Detail Consistency </h3> <p>Unlike text, where a token is a discrete, low-bandwidth unit, images carry enormous fine-grained information per element: skin texture, material reflectance, identity-defining facial features, and geometric boundaries. Even a model that infers the correct task <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="40" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>θ</mi></math></mjx-assistive-mml></mjx-container> can produce outputs that fail at the pixel level because the likelihood <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="41" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-msup><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D466 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: 0.363em;"><mjx-mo class="mjx-n" size="s"><mjx-c class="mjx-c2217"></mjx-c></mjx-mo></mjx-script></mjx-msup><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c2223"></mjx-c></mjx-mo><mjx-msup space="4"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: 0.363em;"><mjx-mo class="mjx-n" size="s"><mjx-c class="mjx-c2217"></mjx-c></mjx-mo></mjx-script></mjx-msup><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo><mjx-mi class="mjx-i" space="2"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>p</mi><mo stretchy="false">(</mo><msup><mi>y</mi><mo>∗</mo></msup><mo>∣</mo><msup><mi>x</mi><mo>∗</mo></msup><mo>,</mo><mi>θ</mi><mo stretchy="false">)</mo></math></mjx-assistive-mml></mjx-container> has high entropy in detail space. This is essentially a resolution mismatch between a compact latent task variable and a high-dimensional output.</p> <p>Promising directions include identity-preserving losses, reference attention, and explicit feature matching during sampling.</p> <h3 id="the-context-selection-problem"> <a href="https://jiuqu3513.github.io/vicl/#the-context-selection-problem" class="anchor-heading" aria-labelledby="the-context-selection-problem"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> The Context-Selection Problem </h3> <p>Part I suggests that posterior concentration depends on which demonstrations you provide, not just how many. In practice, this means a VICL system at deployment needs an answer to:</p> <blockquote> <p>Given a query <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="42" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-msup><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: 0.363em;"><mjx-mo class="mjx-n" size="s"><mjx-c class="mjx-c2217"></mjx-c></mjx-mo></mjx-script></mjx-msup></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mi>x</mi><mo>∗</mo></msup></math></mjx-assistive-mml></mjx-container>, which <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="43" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D458 TEX-I"></mjx-c></mjx-mi></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>k</mi></math></mjx-assistive-mml></mjx-container> pairs from a candidate pool maximally disambiguate <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="44" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>θ</mi></math></mjx-assistive-mml></mjx-container>?</p> </blockquote> <p>Example-selection work casts this as active in-context selection. The Bayesian target is clear: choose examples that minimise the expected entropy of <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="45" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c2223"></mjx-c></mjx-mo><mjx-mi class="mjx-i" space="4"><mjx-c class="mjx-c1D436 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>p</mi><mo stretchy="false">(</mo><mi>θ</mi><mo>∣</mo><mi>C</mi><mo stretchy="false">)</mo></math></mjx-assistive-mml></mjx-container>. In practice, systems approximate this with retrieval or learned scorers.</p> <h3 id="in-context-jailbreaking"> <a href="https://jiuqu3513.github.io/vicl/#in-context-jailbreaking" class="anchor-heading" aria-labelledby="in-context-jailbreaking"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> In-Context Jailbreaking </h3> <p>The same mechanism that makes VICL useful - long contexts shifting the inferred task - can also make it risky. A sequence of benign-looking image pairs could, in principle, steer the model toward a disallowed visual transformation. The literature surveyed here does not yet provide published large-scale red-team evidence for this VICL-specific failure mode, so it should be treated as an open risk rather than an established failure.</p> <h3 id="evaluation"> <a href="https://jiuqu3513.github.io/vicl/#evaluation" class="anchor-heading" aria-labelledby="evaluation"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Evaluation </h3> <p>Current benchmarks lean heavily on dense-prediction tasks such as segmentation, depth, and matting, where ground truth is available. But the stronger VICL claim is generalisation to tasks that the model has not explicitly seen. Progress will require held-out task families and context sensitivity analysis, not only larger benchmark lists.</p><hr> <h2 id="future-research-questions"> <a href="https://jiuqu3513.github.io/vicl/#future-research-questions" class="anchor-heading" aria-labelledby="future-research-questions"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Future Research Questions </h2> <p>Four questions seem especially useful.</p> <ol> <li>Can pre-training be designed specifically for faster in-context task identification, rather than only next-token or next-patch prediction? VisualCloze is a suggestive step, but the objective could target context efficiency more directly.</li> <li>How should VICL systems choose demonstrations? Retrieval is a practical baseline, but the Bayesian target is information gain about <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="46" style="font-size: 119%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D703 TEX-I"></mjx-c></mjx-mi></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>θ</mi></math></mjx-assistive-mml></mjx-container>.</li> <li>Can uncertainty proxies such as attention entropy, denoiser variance, or ensemble disagreement support abstention when the context is ambiguous or shifted?</li> <li>How robust is VICL outside natural images? Medical, satellite, microscopy, and other sensor domains are high-value tests because labelled data is scarce and task distributions are heterogeneous.</li> </ol><hr> <h2 id="closing-thoughts"> <a href="https://jiuqu3513.github.io/vicl/#closing-thoughts" class="anchor-heading" aria-labelledby="closing-thoughts"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Closing Thoughts </h2> <p>VICL has moved from spatial prompt tricks to stronger diffusion priors, multimodal context, and robustness-oriented test-time adaptation. The Bayesian view is useful because it keeps the main design questions explicit: what tasks are in the prior, how much evidence the context provides, and when the posterior is too uncertain to trust. The next stage of the field will be less about showing that visual prompts can work at all, and more about measuring when they work reliably.</p><hr> <h2 id="references"> <a href="https://jiuqu3513.github.io/vicl/#references" class="anchor-heading" aria-labelledby="references"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> References </h2> <p>Papers are grouped by phase for easy reference. arXiv IDs are provided where available.</p> <p><strong>Theory</strong></p> <ul> <li><em>An Explanation of In-Context Learning as Implicit Bayesian Inference.</em> Xie et al., ICLR 2022. arXiv:2111.02080</li> <li><em>Bayesian Scaling Laws for In-Context Learning.</em> Arora et al., COLM 2025. arXiv:2410.16531</li> <li><em>Filtering Beats Fine Tuning: A Bayesian Kalman View of In Context Learning in LLMs.</em> Kiruluta, 2026. arXiv:2601.06100</li> </ul> <p><strong>Phase 0 - Visual Prompting</strong></p> <ul> <li><em>Visual Prompting via Image Inpainting.</em> Bar et al., NeurIPS 2022. arXiv:2209.00647</li> </ul> <p><strong>Phase I - Visual Prompting as Sequence Modeling</strong></p> <ul> <li><em>Images Speak in Images: A Generalist Painter for In-Context Visual Learning.</em> CVPR 2023. arXiv:2212.02499</li> <li><em>SegGPT: Towards Segmenting Everything in Context.</em> ICCV 2023. arXiv:2304.03284</li> <li><em>What Makes Good Examples for Visual In-Context Learning?</em> NeurIPS 2023. arXiv:2301.13670</li> </ul> <p><strong>Phase II - In-Context Diffusion</strong></p> <ul> <li><em>In-Context Learning Unlocked for Diffusion Models.</em> Wang et al., NeurIPS 2023. arXiv:2305.01115</li> <li><em>In-Context Matting (IconMatting).</em> CVPR 2024. arXiv:2403.15789</li> <li><em>Stable Diffusion Models are Secretly Good at Visual In-Context Learning (SD-VICL).</em> ICCV 2025. arXiv:2508.09949</li> </ul> <p><strong>Phase III - Unified Multimodal</strong></p> <ul> <li><em>IMProv: Inpainting-based Multimodal Prompting for Computer Vision Tasks.</em> arXiv 2023; TMLR 2024. arXiv:2312.01771</li> <li><em>CoDi-2: In-Context, Interleaved, and Interactive Any-to-Any Generation.</em> CVPR 2024. arXiv:2311.18775</li> <li><em>OmniGen: Unified Image Generation.</em> 2024. arXiv:2409.11340</li> <li><em>OmniGen2: Towards Instruction-Aligned Multimodal Generation.</em> arXiv 2025; revised 2026. arXiv:2506.18871</li> <li><em>VisualCloze: A Universal Image Generation Framework via Visual In-Context Learning.</em> ICCV 2025. arXiv:2504.07960</li> </ul> <p><strong>Phase IV - Personalised and Robust</strong></p> <ul> <li><em>PICO: Personalized Vision via Visual In-Context Learning.</em> 2025. arXiv:2509.25172</li> <li><em>Test-Time Visual In-Context Tuning (VICT).</em> CVPR 2025. arXiv:2503.21777</li> </ul> </main> <hr> <footer> <div class="d-md-none mt-4 fs-2"> This site uses <a href="https://github.com/just-the-docs/just-the-docs">Just the Docs</a>, a documentation theme for Jekyll. </div> </footer> </div> </div> <div class="search-overlay"></div> </div>  
+</body></html>

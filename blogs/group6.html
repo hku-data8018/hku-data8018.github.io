@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dreaming in Pixels: Generative World Models for Digital Agents</title>
+
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true,
+    tags: 'none'
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+<style>
+  :root {
+    --text: #1a1a1a;
+    --muted: #5a5a5a;
+    --accent: #b04040;
+    --link: #3b5998;
+    --bg: #fbfbf8;
+    --code-bg: #f3f1ec;
+    --border: #e2ddd2;
+    --sidebar: #fff9e6;
+    --sidebar-border: #e8d68a;
+  }
+  * { box-sizing: border-box; }
+  html { font-size: 17px; }
+  body {
+    font-family: "Source Serif Pro", "Crimson Text", Georgia, "Times New Roman", serif;
+    line-height: 1.65;
+    color: var(--text);
+    background: var(--bg);
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 6rem;
+  }
+  header { margin-bottom: 3rem; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; }
+  h1 {
+    font-size: 2.2rem;
+    line-height: 1.2;
+    margin: 0 0 0.5rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .subtitle { color: var(--muted); font-size: 1.05rem; font-style: italic; margin-bottom: 1rem; }
+  .byline { color: var(--muted); font-size: 0.95rem; }
+  h2 {
+    font-size: 1.55rem;
+    margin-top: 3.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.3rem;
+    font-weight: 600;
+  }
+  h3 { font-size: 1.2rem; margin-top: 2.2rem; margin-bottom: 0.6rem; font-weight: 600; }
+  h4 { font-size: 1.05rem; margin-top: 1.5rem; margin-bottom: 0.4rem; font-weight: 600; color: #333; }
+  p { margin: 0.8rem 0; }
+  a { color: var(--link); text-decoration: none; border-bottom: 1px dotted var(--link); }
+  a:hover { border-bottom-style: solid; }
+  em { color: #2a2a2a; }
+  strong { color: #111; }
+
+  code {
+    font-family: "JetBrains Mono", Menlo, "SF Mono", Consolas, monospace;
+    font-size: 0.88em;
+    background: var(--code-bg);
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+  }
+  pre {
+    background: var(--code-bg);
+    padding: 1rem;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    border: 1px solid var(--border);
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+
+  blockquote {
+    border-left: 3px solid var(--accent);
+    margin: 1.5rem 0;
+    padding: 0.2rem 0 0.2rem 1.2rem;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .sidenote {
+    background: var(--sidebar);
+    border: 1px solid var(--sidebar-border);
+    border-radius: 6px;
+    padding: 0.9rem 1.1rem;
+    margin: 1.5rem 0;
+    font-size: 0.93rem;
+    line-height: 1.55;
+  }
+  .sidenote .label {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: #8b6914;
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+
+  figure {
+    margin: 2rem 0;
+    text-align: center;
+  }
+  figure svg, figure img { max-width: 100%; height: auto; }
+  figcaption {
+    margin-top: 0.7rem;
+    color: var(--muted);
+    font-size: 0.88rem;
+    font-style: italic;
+    text-align: left;
+  }
+
+  .math-display {
+    overflow-x: auto;
+    padding: 0.5rem 0;
+    margin: 1rem 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.92rem;
+  }
+  th, td {
+    padding: 0.55rem 0.7rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th {
+    background: var(--code-bg);
+    font-weight: 600;
+    border-bottom: 2px solid var(--text);
+  }
+  tr:hover { background: rgba(0,0,0,0.02); }
+
+  .toc {
+    background: var(--code-bg);
+    border-radius: 6px;
+    padding: 1rem 1.3rem;
+    margin: 2rem 0;
+    font-size: 0.95rem;
+  }
+  .toc h3 { margin: 0 0 0.6rem; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+  .toc ol { margin: 0; padding-left: 1.2rem; }
+  .toc li { margin: 0.2rem 0; }
+
+  .refs { font-size: 0.9rem; color: var(--muted); }
+  .refs li { margin-bottom: 0.5rem; }
+  .refs li:target { background: var(--sidebar); padding: 0.2rem 0.4rem; border-radius: 3px; }
+
+  a.cite {
+    color: var(--link);
+    text-decoration: none;
+    border-bottom: none;
+    font-size: 0.85em;
+    padding: 0 0.05em;
+    white-space: nowrap;
+  }
+  a.cite:hover { text-decoration: underline; }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 3rem 0; }
+
+  .act-label {
+    display: inline-block;
+    background: var(--accent);
+    color: white;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 0.15em 0.6em;
+    border-radius: 3px;
+    margin-right: 0.6rem;
+    vertical-align: middle;
+    font-weight: 600;
+  }
+
+  .figure-ascii {
+    font-family: "JetBrains Mono", Menlo, monospace;
+    font-size: 0.78rem;
+    line-height: 1.35;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem;
+    white-space: pre;
+    overflow-x: auto;
+    text-align: left;
+  }
+
+  /* ===== Presentation mode ===== */
+  #open-pres {
+    position: fixed;
+    top: 1.2rem;
+    right: 1.2rem;
+    z-index: 80;
+    background: var(--text);
+    color: #fbfbf8;
+    border: none;
+    padding: 0.55rem 1.05rem;
+    font-family: inherit;
+    font-size: 0.92rem;
+    font-weight: 600;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    letter-spacing: 0.02em;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  #open-pres:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,0.2); }
+
+  #presentation {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: #fbfbf8;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  #presentation.open { display: flex; }
+
+  #presentation .slide {
+    flex: 1 1 auto;
+    display: none;
+    flex-direction: column;
+    padding: 4rem 6rem 5rem;
+    overflow: auto;
+    color: #1a1a1a;
+  }
+  #presentation .slide.active { display: flex; }
+
+  #presentation .slide h1 {
+    font-size: 2.8rem;
+    line-height: 1.15;
+    margin: 0 0 1.4rem;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: #1a1a1a;
+    border-bottom: none;
+  }
+  #presentation .slide h2 {
+    font-size: 1.55rem;
+    margin: 0 0 0.8rem;
+    color: var(--accent);
+    font-weight: 600;
+    border: none;
+    padding: 0;
+  }
+  #presentation .slide .body {
+    font-size: 1.35rem;
+    line-height: 1.55;
+    max-width: 80ch;
+  }
+  #presentation .slide .body.large { font-size: 1.55rem; }
+  #presentation .slide .body p { margin: 0.7rem 0; }
+  #presentation .slide .body ul, #presentation .slide .body ol {
+    padding-left: 1.4em;
+    margin: 0.8rem 0;
+  }
+  #presentation .slide .body li { margin: 0.55rem 0; }
+  #presentation .slide .body code {
+    font-family: "JetBrains Mono", Menlo, monospace;
+    font-size: 0.92em;
+    background: var(--code-bg);
+    padding: 0.05em 0.32em;
+    border-radius: 3px;
+  }
+  #presentation .slide .body em { color: #2a2a2a; font-style: italic; }
+  #presentation .slide .body strong { color: #111; }
+  #presentation .slide .body img {
+    display: block;
+    max-width: 100%;
+    max-height: 55vh;
+    margin: 1rem auto;
+    border-radius: 6px;
+  }
+  #presentation .slide .columns {
+    display: flex;
+    gap: 2.5rem;
+    align-items: flex-start;
+  }
+  #presentation .slide .columns > * { flex: 1 1 0; min-width: 0; }
+  #presentation .slide .center {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  #presentation .slide .center h1 { font-size: 3.4rem; }
+  #presentation .slide .center .subtitle {
+    font-size: 1.4rem;
+    color: var(--muted);
+    font-style: italic;
+    margin-top: 0.5rem;
+  }
+  #presentation .slide .center .byline {
+    font-size: 1.05rem;
+    color: var(--muted);
+    margin-top: 2rem;
+  }
+  #presentation .slide .math-display {
+    font-size: 1.35rem;
+    margin: 1.2rem 0;
+  }
+  #presentation .slide .figure-ascii {
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+  #presentation .slide table { font-size: 1rem; }
+
+  #pres-controls {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3.2rem;
+    background: rgba(251, 251, 248, 0.94);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.2rem;
+    z-index: 210;
+    backdrop-filter: blur(6px);
+  }
+  #pres-controls button {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 50%;
+    font-size: 1.15rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+  #pres-controls button:hover { background: var(--code-bg); }
+  #pres-counter {
+    font-family: "JetBrains Mono", Menlo, monospace;
+    font-size: 0.88rem;
+    color: var(--muted);
+    min-width: 5rem;
+    text-align: center;
+  }
+  #close-pres {
+    position: fixed;
+    top: 1rem;
+    right: 1.2rem;
+    z-index: 220;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 50%;
+    font-size: 1.3rem;
+    cursor: pointer;
+  }
+  #close-pres:hover { background: var(--code-bg); }
+
+  #pres-progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: var(--accent);
+    z-index: 215;
+    transition: width 0.2s ease;
+  }
+
+  @media (max-width: 720px) {
+    #presentation .slide { padding: 2.2rem 1.4rem 4.5rem; }
+    #presentation .slide h1 { font-size: 1.9rem; }
+    #presentation .slide .body { font-size: 1.05rem; }
+    #presentation .slide .center h1 { font-size: 2.2rem; }
+    #presentation .slide .columns { flex-direction: column; gap: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Dreaming in Pixels: Generative World Models for Digital Agents</h1>
+  <p class="subtitle">A progressive survey of how agents learned to imagine, from Atari to browsers to app screens.</p>
+  <p class="byline">Bowen Wang · DATA8018 Deep Generative Models · Spring 2026</p>
+</header>
+
+<p>A <strong>world model</strong> is a learned distribution</p>
+
+<div class="math-display">
+$$ p_\theta(s_{t+1} \mid s_t, a_t) $$
+</div>
+
+<p>over the next observation given the current one and an action, fit from interaction data. With a sufficiently accurate $p_\theta$, an agent can plan, search, and improve a policy using rollouts drawn from the model rather than from costly interaction with the real environment. This substitution — one expensive sample from the world replaced by many cheap samples from a network — is the central premise of model-based reinforcement learning, and the premise this post is about.</p>
+
+<p>The premise has paid off in games and continuous control. The Dreamer line of latent-dynamics models — Ha &amp; Schmidhuber <a href="#ref-1" class="cite">[1]</a>, PlaNet <a href="#ref-2" class="cite">[2]</a>, DreamerV3 <a href="#ref-3" class="cite">[3]</a> — trains agents almost entirely on rollouts produced by the learned model, and now matches or exceeds model-free baselines on Atari, DeepMind Control, and Crafter while using far fewer environment samples. Diffusion has since extended what these models can predict: DIAMOND <a href="#ref-4" class="cite">[4]</a> shows that preserving multimodal pixel detail is what makes inside-model policy learning work on Atari, not a stylistic preference, and GameNGen <a href="#ref-5" class="cite">[5]</a> fine-tunes Stable Diffusion into a playable DOOM engine running at 20 FPS.</p>
+
+<p>The same idea has barely reached the environments where contemporary software agents — web agents, computer-use agents, GUI agents — operate. Browsers, mobile apps, and operating systems differ from games and continuous control in ways that matter for generative modeling:</p>
+
+<ul>
+  <li>Transitions are determined by software logic, not physics, so the inductive biases that make image-based dynamics tractable do not transfer.</li>
+  <li>State contains <em>exact</em> symbolic content (URLs, prices, error strings) that pixel-space predictors blur or hallucinate.</li>
+  <li>Action spaces are unbounded and tied to the current screen — every visible element multiplied by every gesture — rather than a fixed control vector.</li>
+  <li>Many actions have effects that a single rendered frame cannot disambiguate (a deletion that succeeded and one that silently failed can look identical).</li>
+</ul>
+
+<p>This post traces how the field is starting to close that gap. It is organized as four chapters that build on one another: latent-dynamics foundations <a href="#ref-1" class="cite">[1]</a><a href="#ref-2" class="cite">[2]</a><a href="#ref-3" class="cite">[3]</a>, the diffusion turn in games <a href="#ref-4" class="cite">[4]</a><a href="#ref-5" class="cite">[5]</a><a href="#ref-6" class="cite">[6]</a>, text-based world models for the web <a href="#ref-7" class="cite">[7]</a><a href="#ref-8" class="cite">[8]</a><a href="#ref-9" class="cite">[9]</a>, and the first visual world models for GUIs <a href="#ref-10" class="cite">[10]</a><a href="#ref-11" class="cite">[11]</a>. Each chapter develops the math, the architectural choices, and the failure modes that motivate the next.</p>
+
+<div class="toc">
+  <h3>Contents</h3>
+  <ol>
+    <li><a href="#act1">Latent-dynamics world models (2018–2023)</a></li>
+    <li><a href="#act2">Diffusion enters world modeling (2024)</a></li>
+    <li><a href="#act3">LLMs as world models for the web (2024–2025)</a></li>
+    <li><a href="#act4">Visual world models for GUIs (2025–2026)</a></li>
+    <li><a href="#outlook">Outlook: an inflection point</a></li>
+    <li><a href="#refs">References</a></li>
+  </ol>
+</div>
+
+<hr>
+
+<h2 id="act1"><span class="act-label">Ch. 1</span> Latent-dynamics world models (2018–2023)</h2>
+
+<p>The idea behind latent-dynamics world models is small enough to state in one sentence: encode each observation into a low-dimensional latent $z_t$, learn a recurrent transition $p(z_{t+1} \mid z_t, a_t)$ in that space, and let the agent plan inside the resulting simulator. Three things had to be worked out before this became a reliable recipe, and the line now widely associated with the Dreamer name is the record of that work.</p>
+
+<p><strong>Does it work at all?</strong> Ha &amp; Schmidhuber's <em>World Models</em> <a href="#ref-1" class="cite">[1]</a> showed it could. Their agent was deliberately modular — a ConvVAE for perception, an LSTM with a mixture-density head for the next-latent distribution, and a 1k-parameter linear controller chosen by CMA-ES on cumulative reward — but the controller was trained <em>entirely</em> on rollouts produced inside the learned model and then transferred back to VizDoom <em>Take Cover</em>. The lesson is what this rules out: an agent can be competent without ever being trained on real frames, once the model exists. The bottleneck for control is representation and dynamics, not policy.</p>
+
+<figure>
+  <img src="group6_figures/ha_schmidhuber/architecture.svg" alt="V-M-C modular architecture" loading="lazy" style="max-width: 78%;">
+  <figcaption><strong>Figure 1.</strong> The Vision–Memory–Controller decomposition. V (ConvVAE) compresses each frame into a latent $z_t$; M (MDN-RNN) predicts the next-step latent distribution $p(z_{t+1} \mid z_t, a_t, h_t)$; C is a 1k-parameter linear controller on $[z_t, h_t]$ optimized by CMA-ES. Source: Ha &amp; Schmidhuber, 2018.</figcaption>
+</figure>
+
+<figure>
+  <img src="group6_figures/ha_schmidhuber/rollout.png" alt="Dream rollouts on CarRacing and VizDoom" loading="lazy" style="max-width: 78%;">
+  <figcaption><strong>Figure 2.</strong> Frames generated inside the learned world model: CarRacing (left) and VizDoom: Take Cover (right). The controller is trained entirely on these VAE-decoded rollouts, then transferred back to the real environment without further adaptation. Source: Ha &amp; Schmidhuber, 2018.</figcaption>
+</figure>
+
+<p>The modular setup left two visible gaps. Because perception and dynamics were trained in isolation, the dynamics model never saw which latent dimensions actually mattered for control; and the mixture-of-Gaussians head represented branching futures only crudely, with a fixed number of components per step. Closing both required training perception and dynamics together.</p>
+
+<p><strong>Joint training, but stochasticity tends to wash out memory.</strong> PlaNet <a href="#ref-2" class="cite">[2]</a> introduced the <strong>Recurrent State-Space Model (RSSM)</strong>, in which every timestep carries two states: a deterministic GRU hidden state $h_t$ that preserves long-range memory, and a stochastic latent $s_t$ that represents uncertainty about the next observation. The split is the whole design choice. A purely deterministic RNN cannot express stochastic transitions and averages branching futures into a blurry mean; a purely stochastic state-space model resamples noise every step and quickly forgets the past. RSSM keeps both, fits them jointly with a single sequential ELBO, and decides by running CEM over action sequences entirely in latent space — no model-free actor. This was enough to match D4PG and SAC on continuous control with roughly 50× fewer environment episodes.</p>
+
+<figure>
+  <img src="group6_figures/planet/rssm.png" alt="Deterministic vs stochastic vs RSSM comparison" loading="lazy">
+  <figcaption><strong>Figure 3.</strong> Three latent-dynamics designs compared. (a) A pure deterministic RNN cannot represent stochastic transitions; (b) a fully stochastic SSM can, but loses long-range information in the sampling noise; (c) RSSM splits the state into a deterministic $h_t$ (reliable memory) and a stochastic $s_t$ (uncertainty). Source: Hafner et al., 2019.</figcaption>
+</figure>
+
+<p><strong>One configuration across many tasks.</strong> Two iterations later, DreamerV3 <a href="#ref-3" class="cite">[3]</a> kept RSSM and asked how to make the recipe tune-free. The Gaussian latent became a $32{\times}32$ grid of categoricals (the straight-through gradient trick familiar from VQ-VAE); CEM was replaced by an actor–critic trained on imagined latent trajectories, which is cheaper and amortizable across decisions; and three numerical adjustments were added so that the same hyperparameters work despite very different reward and observation scales:</p>
+
+<ul>
+  <li>A <strong>symlog</strong> transform $\operatorname{symlog}(x) = \operatorname{sign}(x)\log(1 + |x|)$ applied to pixels and rewards, so heavy-tailed targets become bounded.</li>
+  <li>A <strong>discrete two-hot critic</strong> that predicts return as a classification distribution over symlog-spaced bins, sidestepping the regression instability that long-tailed returns cause.</li>
+  <li><strong>KL balancing with free bits</strong> — splitting the usual single prior/posterior KL into two stop-gradient terms (one updates the prior toward the posterior, the other does the reverse) and clipping each at 1 nat, which keeps the posterior informative without collapsing.</li>
+</ul>
+
+<figure>
+  <img src="group6_figures/dreamerv3/architecture.png" alt="DreamerV3 world model architecture" loading="lazy">
+  <figcaption><strong>Figure 4.</strong> The DreamerV3 world model. An encoder maps each observation to a discrete stochastic latent $z_t$; a GRU carries the deterministic recurrent state $h_t$ conditioned on $(z_{t-1}, a_{t-1})$; a decoder reconstructs $\hat x_t$ from $(h_t, z_t)$. The paired actor–critic (not shown) is trained entirely on latent rollouts. Source: Hafner et al., 2025.</figcaption>
+</figure>
+
+<p>The empirical result is that one configuration matches or beats tuned domain-specific baselines across Atari, ProcGen, DMLab, Crafter, BSuite, and both proprioceptive and visual DMC, and is the first agent to mine a diamond from scratch in Minecraft.</p>
+
+<figure>
+  <img src="group6_figures/dreamerv3/results.png" alt="DreamerV3 cross-domain results" loading="lazy">
+  <figcaption><strong>Figure 5.</strong> One set of hyperparameters beats tuned domain-specific baselines across eight benchmarks — Atari, ProcGen, DMLab, Minecraft, Atari 100k, proprioceptive and visual DMC, and BSuite. Source: Hafner et al., 2025.</figcaption>
+</figure>
+
+<p>By the end of this line, latent-dynamics world models are reliable on games and proprioceptive control. The reconstruction is still done by a learned Gaussian or categorical decoder, however, and that decoder collapses branching futures into their mean. When the relevant content lives in a few pixels — the ball in Pong, an ammo counter, a thin sprite — the mean is unusable: the object disappears or smears, and a policy trained inside the model has nothing to react to. Diffusion is the natural next step because it does not collapse to a mean.</p>
+
+
+<hr>
+
+<h2 id="act2"><span class="act-label">Ch. 2</span> Diffusion enters world modeling (2024)</h2>
+
+<p>Three lines of work in 2024 take the same swap seriously: replace the Gaussian or categorical decoder with a diffusion model. They differ in scale (DIAMOND on Atari vs GameNGen fine-tuning Stable Diffusion on DOOM), in where the action label comes from (recorded for DIAMOND and GameNGen, learned from unlabeled video for Genie), and in what they aim to demonstrate. The shared thread is what Chapter 1 ended on: when the relevant content lives in a few high-information pixels, you cannot afford a decoder that returns the conditional mean.</p>
+
+<p><strong>Replace the decoder, keep the recipe.</strong> DIAMOND <a href="#ref-4" class="cite">[4]</a> is the most direct read of "DreamerV3 with a diffusion decoder." A U-Net denoiser is trained in the EDM framework <a href="#ref-12" class="cite">[12]</a> on Atari trajectories: context frames $x_{\leq t}$ are channel-concatenated with the noisy target, actions $a_{\leq t}$ are injected through adaptive group normalization, and the noise level $\sigma(\tau)$ enters as a learned embedding. An actor–critic is then trained entirely on rollouts produced by the denoiser, the same way DreamerV3's actor–critic is trained on its categorical decoder's rollouts. The headline number is mean human-normalized score 1.46 on Atari 100k — at the time, SOTA among in-world-model agents — but the more useful demonstration is visual: in a VAE-decoded Pong rollout the ball vanishes between frames; in a DIAMOND rollout it survives. A policy trained on the first will never learn anything; one trained on the second can.</p>
+
+<figure>
+  <img src="group6_figures/diamond/architecture.png" alt="DIAMOND two-axis imagination diagram" loading="lazy">
+  <figcaption><strong>Figure 6.</strong> DIAMOND unrolls imagination along two time axes. The horizontal axis is environment time: a policy emits actions, and each new frame is produced by iteratively denoising along the vertical diffusion axis conditioned on past observations and the chosen action. The denoiser is a 2D U-Net with action conditioning injected via AdaGN in the residual blocks. Source: Alonso et al., 2024.</figcaption>
+</figure>
+
+<figure>
+  <img src="group6_figures/diamond/pong_comparison.png" alt="IRIS blurry vs DIAMOND sharp on Atari Boxing" loading="lazy">
+  <figcaption><strong>Figure 7.</strong> Consecutive frames imagined by IRIS (left) and DIAMOND (right) on Atari Boxing. The token-based VAE decoder in IRIS smears small, high-information objects — the ball, the punch animation, the player's posture — into blurry averages; the EDM-style diffusion decoder in DIAMOND preserves them. For a policy learned purely inside imagination, this is the difference between training signal and noise. Source: Alonso et al., 2024 (Figure 5).</figcaption>
+</figure>
+
+<p>One ablation in DIAMOND is worth flagging because it explains the operating point: <strong>$n=3$ denoising steps per environment step</strong> is what the paper uses. With $n=1$ the denoiser still hedges across modes (the opponent could go up or down) and the prediction is blurry; with $n=3$ it commits to a mode. More steps stop helping. This is the regime where diffusion is cheap enough for inside-model RL but sharp enough to be useful.</p>
+
+<p><strong>Scaling up: long horizons fight back.</strong> GameNGen <a href="#ref-5" class="cite">[5]</a> keeps the same recipe but pushes scale. A fine-tuned Stable Diffusion 1.4 plays DOOM at 20 FPS on a single TPU, and human raters pick the real engine over GameNGen at only ~58–60% accuracy on short clips. Three changes to SD 1.4 do the architectural work: text cross-attention is replaced by action-token cross-attention (one embedding per discrete DOOM action); the previous $N{=}64$ frame latents are channel-concatenated as context (≈3.2 s at 20 FPS); inference uses v-prediction with 4 DDIM steps. None of this is what makes the system actually run for more than a few seconds.</p>
+
+<p>The blocker is autoregressive drift: the model's own outputs become its next-step inputs, and small errors compound. A naive version drifts off the manifold the engine ever produces and never recovers. The fix is <strong>noise-augmented context conditioning</strong>: each context frame's latent is corrupted at training time by Gaussian noise $\alpha_i \eta_i$ at a random level $\alpha_i \sim \mathcal{U}(0, 0.7)$, with the level fed in as an embedding. The model learns to denoise from arbitrarily corrupted contexts, and at inference its own slightly-wrong rollouts look like exactly that distribution. This is the pixel-space counterpart of PlaNet's latent overshooting <a href="#ref-2" class="cite">[2]</a> — the same compounding-error problem solved at a different layer of abstraction.</p>
+
+<figure>
+  <img src="group6_figures/gamengen/architecture.png" alt="GameNGen method overview" loading="lazy">
+  <figcaption><strong>Figure 8.</strong> GameNGen method overview. Stable-Diffusion-v1.4 is fine-tuned to denoise the next frame conditioned on a stack of noise-augmented past frames (concatenated into the latent) and a sequence of past actions (cross-attended). Noise augmentation of the context is the crucial ingredient that keeps long autoregressive rollouts from drifting off-manifold. Source: Valevski et al., 2024 (Figure 3).</figcaption>
+</figure>
+
+<figure>
+  <img src="group6_figures/gamengen/doom_frames.png" alt="GameNGen model predictions vs real DOOM" loading="lazy">
+  <figcaption><strong>Figure 9.</strong> Model predictions versus ground-truth DOOM frames along a rollout. GameNGen holds up frame-for-frame against the real engine at short horizons; degradation appears as drift in distant geometry and HUD numerals rather than catastrophic loss of structure. Source: Valevski et al., 2024 (Figure 5).</figcaption>
+</figure>
+
+<p><strong>Where do the actions come from?</strong> DIAMOND and GameNGen condition on action labels recorded by the environments they trained on. Genie <a href="#ref-6" class="cite">[6]</a> takes the question one step further: can the action vocabulary itself be learned from unlabeled video? Its <strong>Latent Action Model (LAM)</strong> is a small VQ-VAE with a deliberately tiny codebook ($|\mathcal{A}|{=}8$). The encoder sees both $x_{1:t}$ and $x_{t+1}$ and outputs a quantized latent $\tilde a_t$; the decoder must reconstruct $x_{t+1}$ from $x_{1:t}$ and $\tilde a_t$ alone. The bottleneck forces $\tilde a_t$ to carry the one thing that changed between frames, which on filtered gameplay video is what a human controller pressed. A separate MaskGIT dynamics model then predicts video tokens conditioned on stop-grad latent actions. Trained on ~30k hours of YouTube gameplay with no button labels, the eight learned actions become a joystick at inference: the user "plays" a generated 2D-platformer world from a single image prompt, and the same latent code produces the same effect (jump, move right, …) across visually distinct worlds.</p>
+
+<figure>
+  <img src="group6_figures/genie/lam.png" alt="Genie Latent Action Model diagram" loading="lazy">
+  <figcaption><strong>Figure 10.</strong> The Latent Action Model. Given an unlabelled frame sequence $x_{1:t+1}$, an encoder produces a discrete latent $\tilde a_t$ that, together with $x_{1:t}$, lets a decoder reconstruct $x_{t+1}$. Because the bottleneck is small and quantized, $\tilde a_t$ is forced to carry exactly the information a human controller would supply — it becomes a de facto action label, learned without any action annotation. Source: Bruce et al., 2024 (Figure 4).</figcaption>
+</figure>
+
+<figure>
+  <img src="group6_figures/genie/playable_worlds.png" alt="Playable 2D platformer worlds generated by Genie" loading="lazy" style="max-width: 70%;">
+  <figcaption><strong>Figure 11.</strong> Playable 2D-platformer worlds generated by Genie from single image prompts. Each row shows the same latent action applied to different prompt frames; the action's effect (jump, move right, etc.) transfers across visually distinct worlds, evidence that the latent action code is world-agnostic rather than world-specific. Source: Bruce et al., 2024.</figcaption>
+</figure>
+
+<div class="figure-ascii">
+            past context                 predicted
+    x_{t-L} … x_{t-1}  x_t          ┌──>   x_{t+1}
+         │      │       │           │
+         └──────┴───────┴──┐        │
+                           v        │
+                  ┌───────────────┐ │
+    action  a_t──>│   F_θ (U-Net  │─┘
+                  │  or ST-trans) │
+    σ(τ)        ─>│   denoiser    │
+                  └───────────────┘
+                           ^
+      feedback from prior step's sample — compounding error
+      ────── mitigated by noise-augmented context ───────
+</div>
+<p><em><strong>Figure 12.</strong> The canonical diffusion world-model circuit shared by all three papers. Context frames are channel-concatenated with the noisy target; the action enters via AdaGN (DIAMOND), cross-attention (GameNGen), or a learned latent token (Genie). The feedback loop is where compounding error lives, and noise-augmented context is each paper's first line of defense.</em></p>
+
+<p><strong>What diffusion buys, and what it doesn't.</strong> Across these three papers, what diffusion contributes is consistent. It preserves multimodal pixel detail that a Gaussian decoder collapses to a blurry mean (the Pong ball; the DOOM HUD digits); it produces sharp samples without GAN-style adversarial instability; and it absorbs heterogeneous conditioning — discrete actions through cross-attention or AdaGN, continuous context through channel concatenation, noise level as an embedding — without architectural changes. None of the three required a custom denoising backbone; the same U-Net or transformer core worked across Atari, DOOM, and YouTube gameplay.</p>
+
+<p>What it does not buy is the ability to model the environments that software agents act in. Three concrete failure modes:</p>
+
+<ul>
+  <li><strong>Text rendering.</strong> Diffusion models are notoriously poor at sharp glyphs. A misrendered menu label on a GUI is a semantic error, not a cosmetic one — "Save" rendered as "Sove" leads the agent to a different action. GameNGen had to specifically fine-tune its autoencoder to keep the DOOM ammo counter legible, and that is for fixed-position digits in a single font.</li>
+  <li><strong>Exact symbolic state.</strong> Web pages and apps have a ground-truth DOM; "close enough" pixels are wrong. Pixel diffusion has no representation of the underlying tree.</li>
+  <li><strong>Compositional action spaces.</strong> DOOM has ~56 keys with fixed semantics; a browser has an unbounded action vocabulary in which every visible element multiplied by every gesture is its own action, and the meaning of "click here" depends on the DOM the model itself produced.</li>
+</ul>
+
+<p>These are why the first wave of world models for browsers, mobile apps, and operating systems skipped pixels entirely.</p>
+
+<hr>
+
+<h2 id="act3"><span class="act-label">Ch. 3</span> LLMs as world models for the web (2024–2025)</h2>
+
+<p>Browsers, mobile apps, and operating systems are predominantly text-shaped. The DOM is text. The accessibility tree is text. Element IDs, URLs, button labels, error messages, and page titles are all text. Large language models are also text-shaped, and have been pretrained on enough of the public web to have absorbed something about how pages respond to clicks. The most direct way to build a world model in this space is to ask one: hand an LLM the current page and an action, and have it produce a description of the next page.</p>
+
+<p>The first wave of work in 2024–2025 — WMA <a href="#ref-7" class="cite">[7]</a>, WebDreamer <a href="#ref-8" class="cite">[8]</a>, R-WoM <a href="#ref-9" class="cite">[9]</a> — took this premise seriously, and the order in which the three papers appeared lines up with the obstacles each one ran into.</p>
+
+<p><strong>Obstacle 1: the next page is too long to predict.</strong> A typical web page is thousands of DOM nodes, but the difference between two consecutive pages is usually small — a banner appears, a row is removed, a price changes. Asking an LLM to regenerate the entire next page makes most of the supervision signal noise. WMA <a href="#ref-7" class="cite">[7]</a> takes the obvious shortcut: predict only what changed. The training pipeline aligns DOM elements between $o_t$ and $o_{t+1}$ via Hungarian matching, tags each element as ADDED / UPDATED / DELETED, and asks GPT-4o-mini to compress the result into a single natural-language diff — for example, <em>"a red banner was added saying 'Out of stock'; the Buy button was removed."</em> A Llama-3.1-8B-Instruct model is then fine-tuned on ~14.2K such (state, action, diff) triples synthesized from WebArena and Mind2Web. At inference, the agent samples $k$ candidate actions, rolls each through the fine-tuned world model once, scores the resulting diffs with a value function, and takes the argmax.</p>
+
+<figure>
+  <img src="group6_figures/wma/architecture.png" alt="WMA framework overview" loading="lazy">
+  <figcaption><strong>Figure 13.</strong> WMA framework overview. Top: the world model is trained on trajectories from a web environment, with observations abstracted into transition-focused natural-language diffs. Bottom: at inference the frozen policy proposes candidate actions, the world model imagines each resulting state, and a value function scores them — the best-scoring action is executed. Source: Chae et al., 2025 (Figure 3).</figcaption>
+</figure>
+
+<figure>
+  <img src="group6_figures/wma/example.png" alt="Transition-focused abstraction example" loading="lazy">
+  <figcaption><strong>Figure 14.</strong> Transition-focused abstraction on a concrete web page. DOM nodes between consecutive observations are aligned via Hungarian matching, tagged ADDED / UPDATED / DELETED, then compressed into a short natural-language diff. This sidesteps HTML length blowup and gives the world model a sharper supervision signal than full-page regeneration. Source: Chae et al., 2025 (Figure 5).</figcaption>
+</figure>
+
+<p>The numbers are encouraging. WebArena success rate goes from 13.1% (GPT-4o reactive) to 16.6% with WMA, and from 9.4% to 13.5% with GPT-4o-mini — closing roughly half the gap to tree-search agents (19.2%) at a fraction of the cost. The win is real; it is also constrained. WMA needs the abstraction pipeline (DOM matching, GPT-4o-mini rewriting), it needs the fine-tuning corpus, and the value of the prediction is bounded by what a diff can express.</p>
+
+<p><strong>A different angle on the same problem: maybe no specialized training is needed.</strong> WebDreamer <a href="#ref-8" class="cite">[8]</a> reads the situation differently. If a frontier LLM has already absorbed enough of the web's mechanics from its pretraining corpus, then prompting it to describe the next state in natural language might be enough — no fine-tuning, no abstraction pipeline, no DOM matching. Their planning loop is one-step MPC: enumerate top-$k$ candidate actions, prune by self-refinement, ask the world model "what would the page look like after each one," score the imagined outcomes on a 3-level scale (complete = 1.0 / on-track = 0.5 / incorrect = 0.0), take the argmax. The same off-the-shelf GPT-4o serves as policy, world model, and scorer.</p>
+
+<figure>
+  <img src="group6_figures/webdreamer/example.png" alt="Reactive vs tree-search vs model-based web agents" loading="lazy">
+  <figcaption><strong>Figure 15.</strong> Three search strategies for web agents. Reactive agents commit to one action per page with no lookahead; tree search explores the real environment (risking irreversible clicks on production websites); WebDreamer's model-based planning explores an imagined tree entirely in the LLM's head, getting lookahead benefits without side effects. Source: Gu et al., 2025 (Figure 1).</figcaption>
+</figure>
+
+<figure>
+  <img src="group6_figures/webdreamer/pipeline.png" alt="WebDreamer MPC planning pipeline" loading="lazy">
+  <figcaption><strong>Figure 16.</strong> WebDreamer's MPC-style loop. The LLM enumerates candidate actions from the current page, simulates each one forward in natural language for a few steps, scores the imagined trajectories, then takes the argmax — using the LLM as both policy and world model without any external simulator. Source: Gu et al., 2025 (Figure 2).</figcaption>
+</figure>
+
+<p>The relative gains over reactive baselines are substantial: <strong>+34.1% on VisualWebArena</strong>, <strong>+23.8% on Mind2Web-Live</strong> (104 tasks across 69 live sites), <strong>+42.3% on Online-Mind2Web</strong>, all at roughly 4–5× less compute than real-environment tree search at comparable success. The paper also includes a Dreamer-7B variant fine-tuned on top of Qwen2-VL-7B with a synthesized 3.1M-instance corpus — useful when efficiency or specialization matters, and it does outperform GPT-4o-as-world-model with only 25K in-domain instances on VisualWebArena. But the more striking finding is the zero-shot one. Pretraining had carried more of the world-model signal than the supervised approach assumed, and at this point the natural conclusion would be: just use a strong enough LLM.</p>
+
+<p><strong>The catch: local accuracy doesn't mean global reliability.</strong> Both WMA and WebDreamer report single-step planning gains. R-WoM <a href="#ref-9" class="cite">[9]</a> is the paper that measures what happens at longer horizons, and the answer is uncomfortable. LLM world models hit ~86% on single-step next-state prediction; full-procedure alignment over multi-step trajectories falls to 50–65%. The drop is not random degradation — it is hallucinated UI elements that compound. The model invents a button that does not exist, the next imagined step proceeds as if it did, and the trajectory diverges from anything the real environment would produce.</p>
+
+<p>The proposed fix is grounding rather than scale: retrieve real procedural knowledge before each rollout. R-WoM's setup is a ~30K-chunk corpus of software tutorials (WikiHow plus vendor documentation for Chrome, GIMP, VS Code, Ubuntu, Thunderbird, VLC, LibreOffice, GitLab, and Adobe Commerce), a Qwen-3-Embedding-8B dense retriever over FAISS with query rewriting and an LLM reranker, and the retrieved evidence injected into both the LongCoT state-prediction rollout and a listwise reward ranker over candidate trajectories.</p>
+
+<figure>
+  <img src="group6_figures/rwom/architecture.png" alt="R-WoM retrieval-augmented pipeline" loading="lazy">
+  <figcaption><strong>Figure 17.</strong> R-WoM grounds the LLM world model with retrieved tutorials. For each candidate action, relevant docs are retrieved from a tutorial corpus and injected into the world model's context before it rolls out $k$ steps and scores the trajectory. The retrieval corrects for parametric knowledge drift that otherwise compounds over long horizons. Source: Mei et al., 2025 (Figure 2).</figcaption>
+</figure>
+
+<p>The grounding pays off across two strong backbones — absolute task success rates, with R-WoM's relative gain in parentheses:</p>
+
+<table>
+  <thead>
+    <tr><th>Backbone</th><th>Method</th><th>OSWorld</th><th>WebArena</th></tr>
+  </thead>
+  <tbody>
+    <tr><td rowspan="2">Qwen-2.5-VL-72B</td><td>Vanilla</td><td>26.4%</td><td>21.8%</td></tr>
+    <tr><td><strong>R-WoM</strong></td><td><strong>37.5%</strong> (+42.0% rel.)</td><td><strong>28.5%</strong> (+30.7% rel.)</td></tr>
+    <tr><td rowspan="2">Claude-3.7-Sonnet</td><td>Vanilla</td><td>28.5%</td><td>28.9%</td></tr>
+    <tr><td><strong>R-WoM</strong></td><td><strong>38.5%</strong> (+35.1% rel.)</td><td><strong>34.6%</strong> (+19.7% rel.)</td></tr>
+  </tbody>
+</table>
+
+<figure>
+  <img src="group6_figures/rwom/horizon.png" alt="R-WoM horizon analysis on OSWorld" loading="lazy" style="max-width: 60%;">
+  <figcaption><strong>Figure 18.</strong> Horizon analysis on OSWorld. The ungrounded world model (WoM) edges up at horizon 2 then collapses as compounding prediction errors outweigh lookahead value. R-WoM keeps climbing through horizon 3 before tapering — tutorial grounding stabilizes rollouts over the longer imagination windows that planning actually needs. Source: Mei et al., 2025 (Figure 4a).</figcaption>
+</figure>
+
+<p>The horizon plot is the load-bearing one. WebDreamer's ungrounded rollouts plateau after about two imagined steps; past that, the hallucination rate grows faster than the lookahead value. R-WoM keeps improving through horizon three before tapering. Read together with WebDreamer's zero-shot result, the picture sharpens: pretrained LLMs really do contain a lot of structural knowledge about web interaction, but the parametric copy is not faithful enough to support multi-step planning on its own. Retrieved evidence is what makes long-horizon imagination viable, and "long-horizon" here means three.</p>
+
+<p><strong>What this approach still doesn't see.</strong> Even a perfectly-grounded LLM world model is consuming an accessibility tree, not a screen. That choice carries real costs:</p>
+
+<ul>
+  <li><strong>Lost layout.</strong> A11y trees flatten visual hierarchy. A "Confirm" button immediately adjacent to a destructive "Delete" looks textually identical to one across the page, so spatial reasoning tasks become invisible to the model.</li>
+  <li><strong>Icons and canvas content.</strong> Design tools (Figma, Photoshop, Blender), games, video editors, and any canvas-based application have minimal meaningful DOM. A text world model has nothing to predict.</li>
+  <li><strong>Mismatch with deployed agents.</strong> Production computer-use agents — Claude Computer Use, OpenAI's operator, every screenshot-based GUI agent — consume pixels. A text-only world model cannot simulate what those agents see, and therefore cannot plan for them.</li>
+</ul>
+
+<p>The next chapter is about the first attempts to close that last gap.</p>
+
+<hr>
+
+<h2 id="act4"><span class="act-label">Ch. 4</span> Visual world models for GUIs (2025–2026)</h2>
+
+<p>Two papers, ViMo <a href="#ref-10" class="cite">[10]</a> and MobileDreamer <a href="#ref-11" class="cite">[11]</a>, published within nine months of each other, are the first serious attempts at a world model that consumes a screen rather than a DOM. They agree on the goal — close the visual gap that the text-based work in Chapter 3 left open — and disagree on something fundamental: should a GUI world model generate the pixels of the next screen, or is a structured abstraction enough?</p>
+
+<p>The disagreement is not stylistic. It traces directly to which of Chapter 2's failure modes you treat as load-bearing. If the unacceptable cost is being unable to plan for a screenshot-consuming agent, you keep the pixels and fight the text-rendering problem. If the unacceptable cost is generating pixels you don't need, you throw them away.</p>
+
+<p><strong>Keep the pixels; route around text.</strong> ViMo <a href="#ref-10" class="cite">[10]</a> reads the situation as follows: a deployed computer-use agent (Claude Computer Use, OpenAI's operator) consumes screenshots, so to plan for it the world model must also produce screenshots. The blocker, identified clearly in Chapter 2, is that diffusion models cannot render legible text — and a GUI is mostly text. The fix is not to make diffusion better at glyphs but to remove glyphs from the diffusion target altogether.</p>
+
+<p>The mechanism is <strong>Symbolic Text Representation (STR)</strong>. Before training, every text region in every screenshot is replaced by a colored rectangular placeholder. The diffusion model — Stable Diffusion fine-tuned InstructPix2Pix-style, with the current STR-ified screenshot as image condition channel-concatenated with the noisy latent and a natural-language action ("click the plus icon") routed through the SD text encoder — learns to predict these STR images, never raw screenshots. At inference, an LLM reads the predicted STR image plus context and writes the appropriate string into each placeholder; the strings are then composited back onto the STR canvas to recover a legible screenshot. Diffusion does layout, widget shape, and icon appearance; the LLM does glyphs.</p>
+
+<figure>
+  <img src="group6_figures/vimo/pipeline.png" alt="ViMo STR pipeline" loading="lazy">
+  <figcaption><strong>Figure 19.</strong> The ViMo pipeline. Given the current GUI $x_k$, an OCR pass detects every text region and overlays it with a black-bordered white rectangle, producing the Symbolic Text Representation $\mathrm{STR}_{x_k}$. A fine-tuned Stable Diffusion STR Predictor takes $\mathrm{STR}_{x_k}$ plus the action $a$ and predicts the next STR; a GUI-text Predictor (LLM) then fills a string into each placeholder, which is composited back onto the STR canvas. The diffusion model never has to render legible glyphs. Source: Luo et al., 2025 (Figure 2).</figcaption>
+</figure>
+
+<p>Training data is ~19 apps / 3,550 episodes / 23.6K screenshots pooled from <em>Android Control</em> and <em>Android in the Wild</em>. Evaluation reports three automatic metrics — GUI Consistency (DINO feature similarity), Instructional Accuracy (does the prediction reflect the action), Action Readiness (is the next action still groundable) — plus a 70-participant user study. Downstream, agents augmented with ViMo rollouts gain ~14% step accuracy.</p>
+
+<figure>
+  <img src="group6_figures/vimo/comparison.png" alt="ViMo vs baselines on timer and app drawer tasks" loading="lazy">
+  <figcaption><strong>Figure 20.</strong> Qualitative comparison on two action types: "Open app drawer" (top) and three timer-setting commands (bottom). ViMo produces legible timer strings (<code>00h 20m 00s</code>, <code>12m 00s</code>, <code>01h 00m 00s</code>) while IP2P fine-tuned to paint every pixel collapses the digits into garbled glyphs, HTML-vision mangles the layout, and UI-Diffuser loses the app identity entirely. Decoupling text rendering from pixel synthesis is what lets ViMo stay readable where pure diffusion fails. Source: Luo et al., 2025 (Figure 3).</figcaption>
+</figure>
+
+<p>Figure 20 carries the qualitative argument. A vanilla IP2P fine-tune asked to paint every pixel collapses timer digits into garbled glyphs; HTML-vision baselines mangle the layout; UI-Diffuser loses the app identity. ViMo stays readable because it never asked diffusion to do glyphs in the first place. What ViMo does not solve is cost: each rollout is a full diffusion call followed by an LLM compositor, and the ~14% step-accuracy gain is bought at a per-step compute that puts deep tree search through the world model out of reach.</p>
+
+<p><strong>Throw away the pixels.</strong> MobileDreamer <a href="#ref-11" class="cite">[11]</a> takes the opposite reading. Most pixels in a GUI are not planning-relevant — backgrounds, gradients, decorative imagery, exact font rendering. What an agent actually needs to act on is <em>which clickable element is where, and what does it say</em>. So drop pixels entirely and predict, for each screen, a set of tuples $\{(\text{label}, \text{text}, \text{bbox})\}$ — for example, <code>{label: "text", text: "Totals", bbox: [50, 343, 285, 467]}</code>. Textures, icons, gradients are gone. What remains is exactly the planning-relevant semantics.</p>
+
+<figure>
+  <div style="display: flex; gap: 1rem; justify-content: center; align-items: flex-start; flex-wrap: wrap;">
+    <img src="group6_figures/mobiledreamer/sketch_real.png" alt="Real GUI screenshot" loading="lazy" style="max-width: 45%; height: auto;">
+    <img src="group6_figures/mobiledreamer/sketch_pred.png" alt="Textual sketch prediction rendered" loading="lazy" style="max-width: 45%; height: auto;">
+  </div>
+  <figcaption><strong>Figure 21.</strong> Real GUI screenshot (left) versus its predicted textual sketch rendered for visualization (right). Every element is reduced to a <code>(label, text, bbox)</code> tuple — e.g. <code>label=text; text="Totals"; bbox=[50, 343, 285, 467]</code>. Textures, icons, and decorative content are discarded; the world model only has to predict what is planning-relevant. Source: Cao et al., 2026 (Figure 3).</figcaption>
+</figure>
+
+<p>Choosing this representation reshapes the modeling problem in two ways. First, the next screen is no longer a sequence — it is an unordered set of elements, and reshuffling tuple order should not be penalized. MobileDreamer fine-tunes Qwen3-8B with LoRA against a composite loss that uses optimal-transport matching between predicted and ground-truth element sets, with bbox IoU, label classification, and text-embedding similarity as the per-match cost. Second, because predicting a sketch is cheap and structured, planning can run multi-step rollouts in a <strong>tree of prediction</strong>: propose multiple candidate actions per screen, expand each into a predicted next-sketch, recurse to configurable depth, feed the imagined trajectories back to the agent as textual context for action selection. This is the multi-step lookahead that ViMo's per-step compute precludes.</p>
+
+<figure>
+  <img src="group6_figures/mobiledreamer/tree_of_prediction.png" alt="MobileDreamer two-stage framework" loading="lazy">
+  <figcaption><strong>Figure 22.</strong> The two-stage MobileDreamer framework. Stage 1 trains a Textual Sketch World Model with an order-invariant, IoU-aware objective so element matches are robust to permutation and small position shifts. Stage 2 uses the trained TSWM as a callable function: the agent proposes candidate actions, the world model imagines their resulting sketches, and this recursion builds a tree of prediction. The agent then picks an action by looking several steps ahead rather than greedily. Source: Cao et al., 2026 (Figure 2).</figcaption>
+</figure>
+
+<p>Training data is 110.1K (sketch, action, next-sketch) triples — 61.7K from Android Control plus 50.5K manually annotated, with 2.1K held out. On Android World, MobileDreamer lifts task success rate by +5.25% over reactive baselines, and the gain is consistent across five different LLM agent backbones (Qwen, GPT-4.1, GPT-4o, Gemini, Claude). The cross-backbone consistency is the more useful indicator: the world model is contributing signal independent of which agent calls it.</p>
+
+<p><strong>The disagreement, and why it sounds familiar.</strong> ViMo and MobileDreamer represent opposite ends of a representation axis, and each pays the natural price for its choice. ViMo preserves every visual affordance — unexpected modals, ads, novel icons, rendering quirks — but its text handling is a workaround rather than a fix; the diffusion model still cannot render glyphs, it has only learned to leave a hole where glyphs go. MobileDreamer is cheap, plannable over multi-step rollouts, and faithful to planning-relevant semantics — but it is bounded by its schema. Anything off-schema (a captcha, a toast notification, an image-only button, a decorative animation that affords interaction) is invisible to the model.</p>
+
+<p>This split is the same one Chapters 1 and 2 went through. Latent-dynamics models <a href="#ref-1" class="cite">[1]</a><a href="#ref-2" class="cite">[2]</a><a href="#ref-3" class="cite">[3]</a> predicted in a learned latent and decoded pixels through a Gaussian or categorical decoder that smoothed away small details; diffusion world models <a href="#ref-4" class="cite">[4]</a><a href="#ref-5" class="cite">[5]</a> predicted pixels directly and preserved them. The 2024 wave argued that pixel sharpness mattered for control; that argument is now being repeated in a new domain, and the resolution will most likely also be the same — not one or the other, but a hybrid.</p>
+
+<table>
+  <thead>
+    <tr><th>Axis</th><th>ViMo</th><th>MobileDreamer</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>State representation</td><td>Pixel screenshot (STR-ified during diffusion)</td><td>Set of <code>{label, text, bbox}</code> tuples</td></tr>
+    <tr><td>Generative backbone</td><td>Stable Diffusion (IP2P-style)</td><td>Qwen3-8B (LoRA)</td></tr>
+    <tr><td>Action conditioning</td><td>Natural-language instruction</td><td>Structured action → next set</td></tr>
+    <tr><td>Text handling</td><td>Bypassed: rectangles → LLM composites</td><td>First-class: tuple field</td></tr>
+    <tr><td>Training data</td><td>Android Control + AITW, 23.6K screenshots</td><td>Android Control + manual, 110.1K triples</td></tr>
+    <tr><td>Planning</td><td>Single-step rollout → agent scorer</td><td>Tree of prediction (multi-step)</td></tr>
+    <tr><td>Evaluation</td><td>DINO similarity, instructional accuracy, user study</td><td>Android World task success (+5.25%)</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="outlook">Outlook: an inflection point</h2>
+
+<p>Across the four chapters, the progression is short and the dates compress quickly toward the present:</p>
+
+<div class="figure-ascii">
+2018 ─── 2019 ─── 2023 ─── 2024 ───── 2024–25 ─────── 2025–26
+ │        │        │        │            │                │
+ Ha/Sch.  PlaNet   DrV3    DIAMOND      WMA              ViMo
+ VAE +    RSSM     symlog  GameNGen     WebDreamer       MobileDreamer
+ MDN-RNN  CEM      A-C     Genie        R-WoM
+ │        │        │        │            │                │
+ └─ physical / game ─┘        └── text digital ──┘   └── visual digital ──┘
+       VAE latents           diffusion pixels       LLM text rollouts       diffusion + sketch
+</div>
+
+<p>The notable thing about this diagram is that every architectural ingredient a Dreamer-class GUI world model would need is already present somewhere in it:</p>
+
+<ul>
+  <li>A <strong>diffusion canvas branch</strong> for widget geometry, layout, and imagery — DIAMOND <a href="#ref-4" class="cite">[4]</a>, GameNGen <a href="#ref-5" class="cite">[5]</a>, ViMo <a href="#ref-10" class="cite">[10]</a>.</li>
+  <li>A <strong>structured text branch</strong> for glyphs and DOM labels — MobileDreamer <a href="#ref-11" class="cite">[11]</a>, WMA <a href="#ref-7" class="cite">[7]</a>.</li>
+  <li><strong>Latent actions learned from unlabeled video</strong>, which would let a model learn a GUI's action vocabulary from screen recordings without click annotations — Genie <a href="#ref-6" class="cite">[6]</a>.</li>
+  <li><strong>Retrieval grounding</strong> to stabilize long-horizon rollouts — R-WoM <a href="#ref-9" class="cite">[9]</a>.</li>
+  <li>An <strong>RSSM-style recurrent latent</strong> to carry long context cheaply — PlaNet <a href="#ref-2" class="cite">[2]</a>, DreamerV3 <a href="#ref-3" class="cite">[3]</a>.</li>
+  <li><strong>Flow matching</strong> <a href="#ref-13" class="cite">[13]</a> or consistency models for 1–4 step sampling, which is what would make rollout trees in pixel space affordable.</li>
+</ul>
+
+<p>No single system has put these together. That is the inflection point this post has been building toward: 2026 for GUI world models looks structurally like 2019 for physical ones — the parts are here, the integration is not.</p>
+
+<h3>Open problems</h3>
+
+<ol>
+  <li><strong>The text-rendering bottleneck.</strong> STR bypasses diffusion's glyph problem rather than solving it. A proper fix — perhaps a dual-branch decoder that composites a pixel canvas with a structured text layer trained jointly — does not exist for GUIs.</li>
+  <li><strong>Long-horizon error accumulation.</strong> GameNGen's noise-augmented context and Genie's MaskGIT re-projection are per-frame local fixes. A principled treatment — perhaps an RSSM-style latent that constrains rollouts geometrically — has not been done for GUI world models.</li>
+  <li><strong>Action grounding.</strong> A click is a continuous $(x, y)$ coordinate whose semantics are defined by the rendered pixels the model itself produces — a self-referential grounding problem neither ViMo nor MobileDreamer fully resolves.</li>
+  <li><strong>Evaluation.</strong> What counts as a "plausible" predicted screenshot? ViMo triangulates three indirect automatic metrics plus a 70-participant user study; that is the state of the art and still unsatisfying.</li>
+  <li><strong>Affordable pixel sampling.</strong> Single-step or 2–4 step samplers (flow matching, consistency models) would put a ViMo-style predictor close to real-time and make deeper trees of prediction viable. The likely next axis of progress on the canvas branch.</li>
+  <li><strong>A world-model-centric benchmark.</strong> WebArena, VisualWebArena, OSWorld, and Android World measure agents, not world models. A benchmark that scores $N$-step predictions against ground-truth observations and downstream task success jointly would accelerate the field.</li>
+</ol>
+
+<h3>A concrete prediction</h3>
+
+<p>The system that first wins on OSWorld or Android World by a convincing margin will, I expect, look something like this:</p>
+
+<ul>
+  <li>A <strong>dual-branch generator</strong>: a flow-matching canvas branch operating in a deliberately text-free latent (widgets, imagery, layout), plus a transformer branch predicting element-level sketches (labels, strings, bboxes), composited by a joint decoder so layout and glyphs stay consistent.</li>
+  <li>A <strong>latent action model</strong> trained on unlabeled screen recordings, in Genie's style, decoupling raw $(x, y)$ coordinates from the model's internal "what changed" token.</li>
+  <li><strong>Retrieval-grounded memory</strong> over past trajectories for the same app — R-WoM's insight extended beyond static tutorials to live agent experience.</li>
+  <li><strong>Actor–critic in imagination</strong>, in DreamerV3's style, over sketch-level rollouts, with the pixel branch consulted only for disambiguation.</li>
+</ul>
+
+<p>Such an agent does not plan by enumerating actions in the real environment. It plans by imagining the next screen — in pixels and in structure — and choosing among those imaginations. That is what <em>dreaming in pixels</em> is for.</p>
+
+<hr>
+
+<h2 id="refs">References</h2>
+
+<ol class="refs">
+  <li id="ref-1">Ha, D. &amp; Schmidhuber, J. "World Models." <em>NeurIPS</em>, 2018. <a href="https://arxiv.org/abs/1803.10122">arXiv:1803.10122</a></li>
+  <li id="ref-2">Hafner, D. et al. "Learning Latent Dynamics for Planning from Pixels" (PlaNet). <em>ICML</em>, 2019. <a href="https://arxiv.org/abs/1811.04551">arXiv:1811.04551</a></li>
+  <li id="ref-3">Hafner, D. et al. "Mastering Diverse Domains through World Models" (DreamerV3). <em>Nature</em>, 2025. <a href="https://arxiv.org/abs/2301.04104">arXiv:2301.04104</a></li>
+  <li id="ref-4">Alonso, E. et al. "Diffusion for World Modeling: Visual Details Matter in Atari" (DIAMOND). <em>NeurIPS</em>, 2024. <a href="https://arxiv.org/abs/2405.12399">arXiv:2405.12399</a></li>
+  <li id="ref-5">Valevski, D. et al. "Diffusion Models Are Real-Time Game Engines" (GameNGen). 2024. <a href="https://arxiv.org/abs/2408.14837">arXiv:2408.14837</a></li>
+  <li id="ref-6">Bruce, J. et al. "Genie: Generative Interactive Environments." <em>ICML</em>, 2024. <a href="https://arxiv.org/abs/2402.15391">arXiv:2402.15391</a></li>
+  <li id="ref-7">Chae, H. et al. "Web Agents with World Models: Learning and Leveraging Environment Dynamics in Web Navigation" (WMA). <em>ICLR</em>, 2025. <a href="https://arxiv.org/abs/2410.13232">arXiv:2410.13232</a></li>
+  <li id="ref-8">Gu, Y. et al. "Is Your LLM Secretly a World Model of the Internet? Model-Based Planning for Web Agents" (WebDreamer). <em>TMLR</em>, 2025. <a href="https://arxiv.org/abs/2411.06559">arXiv:2411.06559</a></li>
+  <li id="ref-9">Mei, K. et al. "R-WoM: Retrieval-augmented World Model for Computer-use Agents." 2025. <a href="https://arxiv.org/abs/2510.11892">arXiv:2510.11892</a></li>
+  <li id="ref-10">Luo, D. et al. "ViMo: A Generative Visual GUI World Model for App Agents." 2025. <a href="https://arxiv.org/abs/2504.13936">arXiv:2504.13936</a></li>
+  <li id="ref-11">Cao, Y. et al. "MobileDreamer: Generative Sketch World Model for GUI Agent." 2026. <a href="https://arxiv.org/abs/2601.04035">arXiv:2601.04035</a></li>
+  <li id="ref-12">Karras, T. et al. "Elucidating the Design Space of Diffusion-Based Generative Models" (EDM). <em>NeurIPS</em>, 2022.</li>
+  <li id="ref-13">Lipman, Y. et al. "Flow Matching for Generative Modeling." <em>ICLR</em>, 2023.</li>
+</ol>
+
+<div class="sidenote" style="margin-top: 3rem;">
+  <span class="label">Accuracy caveats</span>
+  Some numerical details are at the level of "matches the paper's published version but cross-check before citing in a formal venue": DreamerV3 KL-balancing coefficients ($\beta_{\text{dyn}}{=}0.5$, $\beta_{\text{rep}}{=}0.1$, imagination horizon $H{\approx}15$); DIAMOND's exact context length ($L{=}4$ per appendix); MobileDreamer's tree-of-prediction selection rule (expand-only vs. full UCB is unclear from the available description).
+</div>
+
+<!-- ========== Presentation mode ========== -->
+<button id="open-pres" title="Start presentation">▶ Present</button>
+
+<div id="presentation" aria-hidden="true">
+  <div id="pres-progress" style="width: 0%;"></div>
+  <button id="close-pres" title="Exit (Esc)" aria-label="Close presentation">✕</button>
+
+  <!-- Slide 1: Title -->
+  <section class="slide">
+    <div class="center">
+      <h1>Dreaming in Pixels</h1>
+      <div class="subtitle">Generative World Models for Digital Agents</div>
+      <div class="byline">Bowen Wang &middot; DATA8018 Deep Generative Models &middot; Spring 2026</div>
+    </div>
+  </section>
+
+  <!-- Slide 2: What is a world model? -->
+  <section class="slide">
+    <h1>What is a world model?</h1>
+    <div class="body large">
+      <p>A learned distribution over the next observation, given the current observation and an action:</p>
+      <div class="math-display">$$ p_\theta(s_{t+1} \mid s_t, a_t) $$</div>
+      <p>With a sufficiently accurate $p_\theta$, an agent can plan, search, and improve a policy <em>inside the model</em>, not in the real environment.</p>
+      <p><strong>Substitute one expensive sample from the world with many cheap samples from a network.</strong></p>
+    </div>
+  </section>
+
+  <!-- Slide 3: The gap -->
+  <section class="slide">
+    <h1>The gap this post is about</h1>
+    <div class="body">
+      <p><strong>Where world models work today:</strong> games, continuous control. Dreamer, DIAMOND, GameNGen, etc. use far fewer environment samples than model-free baselines.</p>
+      <p><strong>Where they have barely arrived:</strong> browsers, mobile apps, operating systems &mdash; the environments contemporary <em>software agents</em> (web agents, computer-use agents, GUI agents) actually act in.</p>
+      <p><strong>Why digital is hard for generative modeling:</strong></p>
+      <ul>
+        <li>Transitions follow software logic, not physics.</li>
+        <li>State has <em>exact</em> symbolic content (URLs, prices, error strings).</li>
+        <li>Action space is unbounded and tied to the current screen.</li>
+        <li>Many actions are irreversible in ways pixels can't disambiguate.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Slide 4: Roadmap -->
+  <section class="slide">
+    <h1>Four chapters</h1>
+    <div class="body large">
+      <ol>
+        <li><strong>Latent-dynamics world models</strong> &mdash; 2018&ndash;2023 (Ha &amp; Schmidhuber, PlaNet, DreamerV3)</li>
+        <li><strong>Diffusion enters world modeling</strong> &mdash; 2024 (DIAMOND, GameNGen, Genie)</li>
+        <li><strong>LLMs as world models for the web</strong> &mdash; 2024&ndash;2025 (WMA, WebDreamer, R-WoM)</li>
+        <li><strong>Visual world models for GUIs</strong> &mdash; 2025&ndash;2026 (ViMo, MobileDreamer)</li>
+      </ol>
+      <p>Each chapter builds on the failure modes the previous one left open.</p>
+    </div>
+  </section>
+
+  <!-- Slide 5: Ch.1 intro -->
+  <section class="slide">
+    <h2>Chapter 1</h2>
+    <h1>Latent-dynamics world models</h1>
+    <div class="body large">
+      <p>One sentence: encode each observation into a low-dimensional latent $z_t$, learn a recurrent transition $p(z_{t+1} \mid z_t, a_t)$, and let the agent plan inside that latent simulator.</p>
+      <p>Three things had to be worked out before this became a reliable recipe.</p>
+    </div>
+  </section>
+
+  <!-- Slide 6: Ha & Schmidhuber -->
+  <section class="slide">
+    <h2>Q1: Does it work at all?</h2>
+    <h1>Ha &amp; Schmidhuber, 2018</h1>
+    <div class="body">
+      <div class="columns">
+        <div>
+          <p><strong>V</strong>ision (ConvVAE) + <strong>M</strong>emory (LSTM + MDN) + <strong>C</strong>ontroller (1k linear, CMA-ES).</p>
+          <p>Controller trained <em>entirely</em> on rollouts produced inside the learned model, then transferred back to VizDoom <em>Take Cover</em>.</p>
+          <p><strong>The lesson:</strong> an agent can be competent without ever being trained on real frames, once the model exists. The bottleneck is representation and dynamics, not policy.</p>
+        </div>
+        <div>
+          <img src="group6_figures/ha_schmidhuber/architecture.svg" alt="V-M-C architecture">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 7: PlaNet -->
+  <section class="slide">
+    <h2>Q2: Can we train V and M jointly without losing memory?</h2>
+    <h1>PlaNet (2019) &mdash; RSSM</h1>
+    <div class="body">
+      <div class="columns">
+        <div>
+          <p>Every timestep carries <strong>two states</strong>:</p>
+          <ul>
+            <li>Deterministic GRU $h_t$ &mdash; long-range memory</li>
+            <li>Stochastic latent $s_t$ &mdash; uncertainty</li>
+          </ul>
+          <p>Pure RNN: can't represent stochastic transitions.<br>Pure SSM: forgets quickly because every step resamples.<br>RSSM: keeps both, fit jointly with a single sequential ELBO.</p>
+          <p>CEM in latent space &rarr; matches D4PG/SAC with <strong>~50&times; fewer environment episodes</strong>.</p>
+        </div>
+        <div>
+          <img src="group6_figures/planet/rssm.png" alt="RSSM diagram">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 8: DreamerV3 -->
+  <section class="slide">
+    <h2>Q3: One config across many tasks?</h2>
+    <h1>DreamerV3 (2025)</h1>
+    <div class="body">
+      <ul>
+        <li><strong>Discrete latent</strong>: $32\times32$ categoricals (straight-through gradient, like VQ-VAE).</li>
+        <li><strong>Symlog</strong>: $\operatorname{symlog}(x) = \operatorname{sign}(x)\log(1+|x|)$ on rewards/pixels &mdash; bounded targets without per-task scaling.</li>
+        <li><strong>Two-hot critic</strong>: classification over symlog bins, not regression.</li>
+        <li><strong>KL balancing + free bits</strong>: split prior/posterior KL into two stop-gradient terms, clip at 1 nat &mdash; fights posterior collapse.</li>
+        <li><strong>Actor&ndash;critic in imagination</strong> replaces per-step CEM.</li>
+      </ul>
+      <p><strong>Result:</strong> <em>one</em> hyperparameter set beats domain-specific baselines on Atari, ProcGen, DMLab, Crafter, BSuite, DMC; first agent to mine a diamond from scratch in Minecraft.</p>
+    </div>
+  </section>
+
+  <!-- Slide 9: Ch.1 takeaway -->
+  <section class="slide">
+    <h2>Chapter 1 takeaway</h2>
+    <h1>Reliable, but the decoder still averages</h1>
+    <div class="body large">
+      <p>Latent-dynamics models are mature on games and proprioceptive control.</p>
+      <p>The reconstruction is still a learned <strong>Gaussian or categorical decoder</strong>. It collapses branching futures into the conditional mean.</p>
+      <p>When the relevant content lives in a few pixels &mdash; <em>the ball in Pong, an ammo counter, a thin sprite</em> &mdash; the mean is unusable: the object disappears.</p>
+      <p><strong>Diffusion is the natural next step because it does not collapse to a mean.</strong></p>
+    </div>
+  </section>
+
+  <!-- Slide 10: Ch.2 intro -->
+  <section class="slide">
+    <h2>Chapter 2</h2>
+    <h1>Diffusion enters world modeling (2024)</h1>
+    <div class="body large">
+      <p>Three lines of work in 2024 take the same swap seriously: replace the Gaussian/categorical decoder with a <strong>diffusion model</strong>.</p>
+      <p>They differ in scale, in where action labels come from, and in what they aim to demonstrate.</p>
+      <p><strong>DIAMOND</strong> &middot; <strong>GameNGen</strong> &middot; <strong>Genie</strong></p>
+    </div>
+  </section>
+
+  <!-- Slide 11: DIAMOND -->
+  <section class="slide">
+    <h2>DIAMOND</h2>
+    <h1>Replace the decoder, keep the recipe</h1>
+    <div class="body">
+      <div class="columns">
+        <div>
+          <p>"DreamerV3 with a diffusion decoder." EDM-framework U-Net denoiser on Atari trajectories. Context concatenated channel-wise; actions via AdaGN; noise level $\sigma(\tau)$ embedded.</p>
+          <p>Actor&ndash;critic trained entirely on rollouts from the denoiser.</p>
+          <p><strong>Atari 100k:</strong> mean human-normalized 1.46 (SOTA in-world-model at the time).</p>
+          <p><strong>Operating point:</strong> $n=3$ denoising steps per environment step. $n=1$ &rarr; blurry hedge. More steps stop helping.</p>
+        </div>
+        <div>
+          <img src="group6_figures/diamond/pong_comparison.png" alt="DIAMOND vs IRIS">
+          <p style="font-size: 0.85em; color: var(--muted); margin-top: 0.3rem;">IRIS (left) smears the ball; DIAMOND (right) keeps it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 12: GameNGen -->
+  <section class="slide">
+    <h2>GameNGen</h2>
+    <h1>Scaling up: long horizons fight back</h1>
+    <div class="body">
+      <p>Fine-tuned <strong>Stable Diffusion 1.4</strong> plays DOOM at <strong>20 FPS on a single TPU</strong>. Human raters pick the real engine over GameNGen at only ~58&ndash;60% accuracy on short clips.</p>
+      <p>Architectural changes: action-token cross-attention; $N{=}64$ frame latents as context; v-prediction with 4 DDIM steps.</p>
+      <p><strong>Real blocker:</strong> autoregressive drift &mdash; the model's outputs become its next-step inputs, errors compound, naive version drifts off-manifold within seconds.</p>
+      <p><strong>Fix &mdash; noise-augmented context conditioning:</strong> corrupt each training-time context frame by Gaussian noise at level $\alpha_i \sim \mathcal{U}(0, 0.7)$. At inference the model's own slightly-wrong rollouts <em>look like</em> exactly that distribution.</p>
+      <p>= the pixel-space counterpart of PlaNet's latent overshooting.</p>
+    </div>
+  </section>
+
+  <!-- Slide 13: Genie -->
+  <section class="slide">
+    <h2>Genie</h2>
+    <h1>Where do the actions come from?</h1>
+    <div class="body">
+      <div class="columns">
+        <div>
+          <p>30k hours of unfiltered YouTube gameplay. <strong>No button labels.</strong></p>
+          <p><strong>Latent Action Model (LAM):</strong> a small VQ-VAE with codebook size $|\mathcal{A}|=8$. Encoder sees $x_{1:t}$ <em>and</em> $x_{t+1}$, outputs $\tilde a_t$. Decoder must reconstruct $x_{t+1}$ from $x_{1:t}$ and $\tilde a_t$ alone.</p>
+          <p>The bottleneck forces $\tilde a_t$ to encode the one thing that changed &mdash; which on gameplay video is what a human controller pressed.</p>
+          <p>At inference, the 8 latent codes become a joystick. Same code &rarr; same effect across visually distinct generated worlds.</p>
+        </div>
+        <div>
+          <img src="group6_figures/genie/playable_worlds.png" alt="Playable platformer worlds">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 14: Ch.2 takeaway -->
+  <section class="slide">
+    <h2>Chapter 2 takeaway</h2>
+    <h1>What diffusion buys, and what it doesn't</h1>
+    <div class="body">
+      <p><strong>Buys:</strong></p>
+      <ul>
+        <li>Multimodal pixel detail that a Gaussian decoder collapses.</li>
+        <li>Sharp samples without GAN-style instability.</li>
+        <li>Heterogeneous conditioning (cross-attention / AdaGN / channel concat / σ embedding) without architectural changes.</li>
+      </ul>
+      <p><strong>Doesn't buy &mdash; the GUI failure modes:</strong></p>
+      <ul>
+        <li><strong>Text rendering.</strong> "Save" rendered as "Sove" is a <em>semantic</em> error. Not cosmetic.</li>
+        <li><strong>Exact symbolic state.</strong> Pixel diffusion has no representation of the underlying DOM.</li>
+        <li><strong>Compositional action spaces.</strong> Browser ≠ DOOM (~56 keys with fixed semantics).</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Slide 15: Ch.3 intro -->
+  <section class="slide">
+    <h2>Chapter 3</h2>
+    <h1>LLMs as world models for the web</h1>
+    <div class="body large">
+      <p>Browsers, apps, operating systems are <strong>predominantly text-shaped</strong> (DOM, a11y tree, IDs, labels, error strings). LLMs are also text-shaped and have been pretrained on a lot of the web.</p>
+      <p>Most direct attempt: hand an LLM the current page and an action, have it produce the next page in natural language.</p>
+      <p>Three papers, three obstacles &mdash; in the order they appeared.</p>
+    </div>
+  </section>
+
+  <!-- Slide 16: WMA -->
+  <section class="slide">
+    <h2>Obstacle 1: the next page is too long</h2>
+    <h1>WMA &mdash; predict only the diff</h1>
+    <div class="body">
+      <p>Asking an LLM to regenerate a full next page makes most of the supervision signal noise. WMA predicts only what changed.</p>
+      <p><strong>Pipeline:</strong> Hungarian matching aligns DOM elements between $o_t$ and $o_{t+1}$ &rarr; ADDED / UPDATED / DELETED &rarr; GPT-4o-mini compresses into a single NL diff:</p>
+      <p style="background: var(--code-bg); padding: 0.7rem 1rem; border-radius: 6px; font-size: 1.15rem;"><em>"a red banner was added saying 'Out of stock'; the Buy button was removed."</em></p>
+      <p>Llama-3.1-8B fine-tuned on ~14.2K (state, action, diff) triples. At inference: sample $k$ candidate actions, roll each through the world model, score, argmax.</p>
+      <p><strong>WebArena:</strong> GPT-4o 13.1% &rarr; +WMA 16.6%. Closes ~½ the gap to tree search at a fraction of the cost.</p>
+    </div>
+  </section>
+
+  <!-- Slide 17: WebDreamer -->
+  <section class="slide">
+    <h2>A different angle on the same problem</h2>
+    <h1>WebDreamer &mdash; maybe no specialized training is needed</h1>
+    <div class="body">
+      <p>If a frontier LLM has absorbed enough of the web's mechanics from pretraining, just <em>prompt</em> it as a world model.</p>
+      <p><strong>One-step MPC:</strong> enumerate top-$k$ actions &rarr; self-refine prune &rarr; ask the LLM "what would the page look like" &rarr; score on a 3-level scale (complete / on-track / incorrect) &rarr; argmax.</p>
+      <p>Same off-the-shelf GPT-4o serves as policy, world model, <em>and</em> scorer.</p>
+      <p><strong>Relative improvement over reactive baseline:</strong></p>
+      <ul>
+        <li>VisualWebArena: <strong>+34.1%</strong></li>
+        <li>Mind2Web-Live: <strong>+23.8%</strong></li>
+        <li>Online-Mind2Web: <strong>+42.3%</strong></li>
+        <li>~4&ndash;5&times; less compute than real-environment tree search</li>
+      </ul>
+      <p style="margin-top: 0.6rem;">Natural conclusion: <em>just use a strong enough LLM.</em></p>
+    </div>
+  </section>
+
+  <!-- Slide 18: R-WoM -->
+  <section class="slide">
+    <h2>The catch: local accuracy ≠ global reliability</h2>
+    <h1>R-WoM &mdash; retrieval saves long-horizon rollouts</h1>
+    <div class="body">
+      <div class="columns">
+        <div>
+          <p>LLM world models hit <strong>~86%</strong> on single-step prediction; full-procedure alignment falls to <strong>50&ndash;65%</strong> over multi-step trajectories.</p>
+          <p>Failure mode: <em>hallucinated UI elements compound</em>. Model invents a button, next step rolls forward as if it existed, trajectory diverges.</p>
+          <p><strong>Fix is grounding, not scale.</strong> Retrieve real procedural knowledge before each rollout: ~30K-chunk tutorial corpus (WikiHow + vendor docs), Qwen-3-Embedding-8B over FAISS.</p>
+          <p>Evidence injected into both the LongCoT state-prediction rollout and the listwise reward ranker.</p>
+        </div>
+        <div>
+          <img src="group6_figures/rwom/horizon.png" alt="R-WoM horizon analysis">
+          <p style="font-size: 0.85em; color: var(--muted); margin-top: 0.3rem;">Ungrounded plateaus at horizon 2; R-WoM keeps climbing through 3.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 19: Ch.3 takeaway -->
+  <section class="slide">
+    <h2>Chapter 3 takeaway</h2>
+    <h1>Even a perfect text world model misses the screen</h1>
+    <div class="body large">
+      <p>Reading an a11y tree is not seeing a screen. The cost:</p>
+      <ul>
+        <li><strong>Lost layout</strong> &mdash; "Confirm" next to "Delete" looks textually identical to one across the page.</li>
+        <li><strong>Icons and canvas content</strong> &mdash; Figma, Photoshop, games, video editors have no meaningful DOM.</li>
+        <li><strong>Mismatch with deployed agents</strong> &mdash; Claude Computer Use, OpenAI's operator, every screenshot-based GUI agent consumes <em>pixels</em>.</li>
+      </ul>
+      <p>To plan for those agents, the world model has to consume what they consume.</p>
+    </div>
+  </section>
+
+  <!-- Slide 20: Ch.4 intro -->
+  <section class="slide">
+    <h2>Chapter 4</h2>
+    <h1>Visual world models for GUIs (2025&ndash;2026)</h1>
+    <div class="body large">
+      <p>Two papers, published within nine months of each other, are the first attempts at a world model that consumes a <strong>screen</strong>, not a DOM.</p>
+      <p>They disagree on something fundamental: <strong>generate the pixels of the next screen, or skip them and predict structure?</strong></p>
+      <p>Each answer is a choice about which Chapter 2 failure mode is load-bearing.</p>
+    </div>
+  </section>
+
+  <!-- Slide 21: ViMo -->
+  <section class="slide">
+    <h2>ViMo &mdash; keep the pixels, route around text</h2>
+    <h1>Symbolic Text Representation (STR)</h1>
+    <div class="body">
+      <div class="columns">
+        <div>
+          <p>Replace every text region with a colored rectangular placeholder before training. Diffusion model (SD fine-tuned IP2P-style) predicts <strong>STR images</strong>, never raw screenshots.</p>
+          <p>An LLM compositor reads the predicted STR plus context and fills each placeholder with the right string.</p>
+          <p>Diffusion does layout / widget shape / icon. LLM does glyphs.</p>
+          <p><strong>Result:</strong> +14% step accuracy for downstream agents. But each rollout = full diffusion call + LLM compositor &mdash; deep tree search is out of reach.</p>
+        </div>
+        <div>
+          <img src="group6_figures/vimo/comparison.png" alt="ViMo vs baselines">
+          <p style="font-size: 0.85em; color: var(--muted); margin-top: 0.3rem;">Vanilla diffusion garbles timer digits. ViMo keeps them legible because diffusion never tried to render them.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 22: MobileDreamer -->
+  <section class="slide">
+    <h2>MobileDreamer &mdash; throw away the pixels</h2>
+    <h1>Predict structured sketches, plan over them</h1>
+    <div class="body">
+      <p>Most pixels in a GUI aren't planning-relevant. What an agent acts on: <em>which clickable element is where, what does it say.</em></p>
+      <p>State = set of tuples <code>{label, text, bbox}</code>. Textures, icons, gradients gone.</p>
+      <p><strong>Order-invariant set prediction:</strong> Qwen3-8B + LoRA, optimal-transport matching with bbox IoU + label classification + text-embedding similarity as per-match cost.</p>
+      <p><strong>Tree of prediction:</strong> sketches are cheap &rarr; multi-step rollouts become viable. Branch over candidate actions, expand to depth, feed imagined trajectories back to the agent.</p>
+      <p><strong>Android World:</strong> +5.25% across <strong>5 agent backbones</strong> (Qwen, GPT-4.1, GPT-4o, Gemini, Claude). The cross-backbone consistency matters more than the absolute number.</p>
+    </div>
+  </section>
+
+  <!-- Slide 23: Ch.4 takeaway -->
+  <section class="slide">
+    <h2>Chapter 4 takeaway</h2>
+    <h1>The same split, in a new domain</h1>
+    <div class="body large">
+      <p><strong>ViMo</strong>: pixel-faithful, but text is a workaround &mdash; the diffusion model still can't render glyphs, only learned to leave a hole.</p>
+      <p><strong>MobileDreamer</strong>: plannable + faithful to planning-relevant semantics, but bounded by its schema &mdash; off-schema content (captcha, toast, image-only button) is invisible.</p>
+      <p>This is the same split Chapters 1&ndash;2 went through. <strong>Latent-dynamics</strong> (Dreamer line) decoded pixels through a smoothing decoder; <strong>diffusion world models</strong> (DIAMOND, GameNGen) preserved them.</p>
+      <p>The 2024 wave argued sharpness mattered. The 2025&ndash;2026 GUI wave is repeating the argument, and the resolution will probably also be the same: <strong>not one or the other, but a hybrid.</strong></p>
+    </div>
+  </section>
+
+  <!-- Slide 24: Outlook -->
+  <section class="slide">
+    <h2>Outlook</h2>
+    <h1>Every ingredient already exists</h1>
+    <div class="body">
+      <div class="figure-ascii" style="margin-bottom: 1.2rem;">2018 ─── 2019 ─── 2023 ─── 2024 ───── 2024–25 ─────── 2025–26
+ │        │        │        │            │                │
+ Ha/Sch.  PlaNet   DrV3    DIAMOND      WMA              ViMo
+ VAE +    RSSM     symlog  GameNGen     WebDreamer       MobileDreamer
+ MDN-RNN  CEM      A-C     Genie        R-WoM</div>
+      <ul>
+        <li><strong>Diffusion canvas</strong> &mdash; DIAMOND, GameNGen, ViMo.</li>
+        <li><strong>Structured text branch</strong> &mdash; MobileDreamer, WMA.</li>
+        <li><strong>Latent actions from unlabeled video</strong> &mdash; Genie.</li>
+        <li><strong>Retrieval grounding</strong> &mdash; R-WoM.</li>
+        <li><strong>RSSM-style recurrent latent</strong> &mdash; PlaNet, DreamerV3.</li>
+        <li><strong>Flow matching / consistency</strong> for cheap sampling.</li>
+      </ul>
+      <p>No system has stitched these together. <strong>2026 for GUI world models looks structurally like 2019 for physical ones &mdash; the parts are here, the integration is not.</strong></p>
+    </div>
+  </section>
+
+  <!-- Slide 25: A concrete prediction -->
+  <section class="slide">
+    <h2>A concrete prediction</h2>
+    <h1>What the first system to win OSWorld will look like</h1>
+    <div class="body">
+      <ul>
+        <li><strong>Dual-branch generator</strong> &mdash; flow-matching canvas branch (text-free latent) + transformer branch predicting element-level sketches; joint decoder so layout and glyphs stay consistent.</li>
+        <li><strong>Latent action model from unlabeled screen recordings</strong>, in Genie's style, decoupling raw $(x, y)$ coordinates from the model's internal "what changed" token.</li>
+        <li><strong>Retrieval-grounded memory</strong> over the agent's own past trajectories &mdash; R-WoM's idea extended beyond static tutorials.</li>
+        <li><strong>Actor&ndash;critic in imagination</strong>, in DreamerV3's style, over sketch-level rollouts; the pixel branch consulted only for disambiguation.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Slide 26: Closing -->
+  <section class="slide">
+    <div class="center">
+      <h1>Dreaming in pixels</h1>
+      <div class="subtitle" style="max-width: 60ch; margin-top: 1.5rem;">
+        Such an agent does not plan by enumerating actions in the real environment. It plans by imagining the next screen &mdash; in pixels and in structure &mdash; and choosing among those imaginations.
+      </div>
+      <div class="byline">Thank you. &nbsp;|&nbsp; Questions?</div>
+    </div>
+  </section>
+
+  <div id="pres-controls">
+    <button id="prev-slide" title="Previous (←)" aria-label="Previous slide">&lsaquo;</button>
+    <span id="pres-counter">1 / 26</span>
+    <button id="next-slide" title="Next (→ or Space)" aria-label="Next slide">&rsaquo;</button>
+  </div>
+</div>
+
+<script>
+(function() {
+  const presEl = document.getElementById('presentation');
+  const openBtn = document.getElementById('open-pres');
+  const closeBtn = document.getElementById('close-pres');
+  const prevBtn = document.getElementById('prev-slide');
+  const nextBtn = document.getElementById('next-slide');
+  const counter = document.getElementById('pres-counter');
+  const progress = document.getElementById('pres-progress');
+  const slides = presEl.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  function show(i) {
+    if (i < 0 || i >= total) return;
+    slides[current].classList.remove('active');
+    current = i;
+    slides[current].classList.add('active');
+    counter.textContent = (current + 1) + ' / ' + total;
+    progress.style.width = (((current + 1) / total) * 100) + '%';
+    // re-typeset math on the new slide if MathJax is ready
+    if (window.MathJax && window.MathJax.typesetPromise) {
+      window.MathJax.typesetPromise([slides[current]]).catch(function() {});
+    }
+    // scroll slide content to top
+    slides[current].scrollTop = 0;
+  }
+
+  function open() {
+    presEl.classList.add('open');
+    presEl.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    show(0);
+    // try fullscreen (best-effort, will silently fail if blocked)
+    if (presEl.requestFullscreen) {
+      presEl.requestFullscreen().catch(function() {});
+    }
+  }
+
+  function close() {
+    presEl.classList.remove('open');
+    presEl.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(function() {});
+    }
+  }
+
+  openBtn.addEventListener('click', open);
+  closeBtn.addEventListener('click', close);
+  prevBtn.addEventListener('click', function() { show(current - 1); });
+  nextBtn.addEventListener('click', function() { show(current + 1); });
+
+  document.addEventListener('keydown', function(e) {
+    if (!presEl.classList.contains('open')) return;
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+      e.preventDefault(); show(current + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      e.preventDefault(); show(current - 1);
+    } else if (e.key === 'Escape') {
+      close();
+    } else if (e.key === 'Home') {
+      show(0);
+    } else if (e.key === 'End') {
+      show(total - 1);
+    } else if (e.key === 'f' || e.key === 'F') {
+      // toggle fullscreen
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(function() {});
+      } else if (presEl.requestFullscreen) {
+        presEl.requestFullscreen().catch(function() {});
+      }
+    }
+  });
+
+  // click left/right halves of slide area also navigate
+  presEl.addEventListener('click', function(e) {
+    // ignore clicks on controls, close button, and content interactions (links, buttons)
+    if (e.target.closest('#pres-controls') || e.target.closest('#close-pres')) return;
+    if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') return;
+    const x = e.clientX;
+    if (x > window.innerWidth / 2) show(current + 1); else show(current - 1);
+  });
+})();
+</script>
+
+</body>
+</html>

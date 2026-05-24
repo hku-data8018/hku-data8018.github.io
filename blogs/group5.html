@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Automated Fact-Checking in the Era of Deep Generative Models</title>
+  <meta
+    name="description"
+    content="An English survey article on automated fact-checking, evidence-based LLM systems, multi-agent debate, and justification-aware attacks."
+  >
+  <link rel="stylesheet" href="group5_assets/css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <header class="hero" id="top">
+    <div class="hero-copy">
+      <p class="eyebrow">Survey Article</p>
+      <h1>(Automated) Fact-Checking in the Era of Deep Generative Models</h1>
+      <div class="hero-meta">
+        <span>Haorui He</span>
+        <span>Xusen Xiao</span>
+        <span>DATA 8018 Final Project - The University of Hong Kong</span>
+        <span>April 2026</span>
+      </div>
+      <p class="hero-lede">
+        Trustworthy automated fact-checking now depends on more than raw accuracy. It depends on whether a
+        system can retrieve relevant evidence, reason transparently about that evidence, generalize across
+        heterogeneous sources, and remain robust when attackers learn to manipulate the same reasoning
+        pipeline.
+      </p>
+      <div class="hero-tags" aria-label="Survey themes">
+        <span>Pattern-based methods</span>
+        <span>Evidence-based LLM systems</span>
+        <span>Security and robustness</span>
+      </div>
+    </div>
+    <figure class="hero-figure">
+      <img src="group5_assets/figures/trustworthy-ai-illustration.png" alt="Illustration of people surrounding an AI symbol.">
+      <figcaption>Trustworthy fact-checking requires evidence quality, clear reasoning, and strong defenses.</figcaption>
+    </figure>
+  </header>
+
+  <div class="page-shell">
+    <aside class="sidebar">
+      <nav class="toc" aria-labelledby="toc-heading">
+        <h2 id="toc-heading">Contents</h2>
+        <ol>
+          <li><a href="#overview">Overview</a></li>
+          <li><a href="#why-genai">Why GenAI Became Necessary</a></li>
+          <li><a href="#rag-evolution">From Retrieval to LLM Agents</a></li>
+          <li><a href="#debatecv">DebateCV and DebateSFT</a></li>
+          <li><a href="#security-gap">The Security Frontier</a></li>
+          <li><a href="#fact2fiction">Fact2Fiction</a></li>
+          <li><a href="#synthesis">Synthesis and Future Questions</a></li>
+          <li><a href="#references">References</a></li>
+        </ol>
+      </nav>
+
+      <section class="sidebar-note">
+        <h2>Core Questions</h2>
+        <ul>
+          <li>Why did pattern-based fake-news detection stall?</li>
+          <li>How did evidence retrieval change the task?</li>
+          <li>Why can multi-agent debate help verification?</li>
+          <li>How do transparent justifications become an attack surface?</li>
+        </ul>
+      </section>
+    </aside>
+
+    <main class="content" id="main-content">
+      <section class="section-block intro-block" id="overview">
+        <div class="section-heading">
+          <p class="section-label">Overview</p>
+          <h2>Three Shifts Define the Current Landscape</h2>
+        </div>
+
+        <div class="intro-grid">
+          <article class="callout-card">
+            <h3>Shift 1: From patterns to evidence</h3>
+            <p>
+              Early fake-news detectors learned stylistic and behavioral patterns, but those cues generalized
+              poorly across platforms and rarely produced convincing explanations.
+            </p>
+          </article>
+          <article class="callout-card">
+            <h3>Shift 2: From single agents to deliberation</h3>
+            <p>
+              Retrieval-augmented LLM systems brought explicit evidence into the loop, and debate-based
+              verification showed how structured disagreement can improve adjudication.
+            </p>
+          </article>
+          <article class="callout-card">
+            <h3>Shift 3: From transparency to security</h3>
+            <p>
+              Once fact-checkers became more transparent and more agentic, attackers gained finer control over
+              how to poison evidence and steer verdicts.
+            </p>
+          </article>
+        </div>
+
+        <div class="summary-panel">
+          <p>
+            Read together, these shifts reveal a single theme: automated fact-checking becomes more useful
+            when it moves closer to evidence and reasoning, but every gain in interpretability also changes
+            the system's failure modes.
+          </p>
+        </div>
+      </section>
+
+      <section class="section-block" id="why-genai">
+        <div class="section-heading">
+          <p class="section-label">Problem Setting</p>
+          <h2>Why Pattern-Based Fact-Checking Reached a Limit</h2>
+        </div>
+
+        <div class="prose-block">
+          <p>
+            Automated fact-checking emerged because the scale of misinformation outgrew what human
+            fact-checkers could handle manually. In practice, the task is simple to state but difficult to do
+            well: take a claim or news item as input, determine whether it is supported or refuted, and then
+            provide an explanation strong enough to justify the verdict.
+          </p>
+        </div>
+
+        <div class="stat-grid">
+          <article class="stat-card">
+            <p class="stat-value">~86%</p>
+            <p class="stat-label">of global citizens are exposed to misinformation.</p>
+          </article>
+          <article class="stat-card">
+            <p class="stat-value">62%</p>
+            <p class="stat-label">of online content may be false in some environments, outpacing manual review.</p>
+          </article>
+          <article class="stat-card">
+            <p class="stat-value">High stakes</p>
+            <p class="stat-label">Economic losses, public harm, and trust erosion make reliable verification essential.</p>
+          </article>
+        </div>
+
+        <div class="definition-grid">
+          <article class="definition-card">
+            <h3>Input</h3>
+            <p>Claims, news reports, posts, or multimodal content that needs verification.</p>
+          </article>
+          <article class="definition-card">
+            <h3>Output</h3>
+            <p>A verdict plus a justification that explains how the evidence supports that verdict.</p>
+          </article>
+        </div>
+
+        <div class="figure-grid two-up">
+          <figure class="figure-card">
+            <img src="group5_assets/figures/misinformation-false-example.png" alt="Example of a false claim presented as a television screenshot.">
+            <figcaption>Misinformation can be visually striking, emotionally charged, and easy to share.</figcaption>
+          </figure>
+          <figure class="figure-card">
+            <img src="group5_assets/figures/misinformation-posts-grid.png" alt="Grid of online misinformation cards across multiple platforms.">
+            <figcaption>False claims travel through multiple platforms, formats, and social contexts.</figcaption>
+          </figure>
+        </div>
+
+        <div class="prose-block">
+          <p>
+            Before large language models became central, most systems followed a pattern-recognition pipeline.
+            Researchers extracted content features from text and images, or social-context features from user
+            behavior and diffusion structure, and then trained classifiers to separate fake and real content.
+            That approach was productive, but it remained fundamentally indirect: it inferred veracity from
+            cues rather than checking the claim against external evidence.
+          </p>
+        </div>
+
+        <div class="figure-grid two-up">
+          <figure class="figure-card">
+            <img src="group5_assets/figures/content-visual-cluster.png" alt="Visual examples used to compare image patterns in real and fake news.">
+            <figcaption>Content-based approaches often rely on linguistic and visual regularities inside the item itself.</figcaption>
+          </figure>
+          <figure class="figure-card">
+            <img src="group5_assets/figures/social-context-network.png" alt="Diagram of conflicting viewpoints and credibility networks.">
+            <figcaption>Social-context methods treat engagement behavior, stance, and propagation as auxiliary signals.</figcaption>
+          </figure>
+        </div>
+
+        <div class="figure-grid two-up">
+          <figure class="figure-card">
+            <div class="figure-media contrast-mat">
+              <img src="group5_assets/figures/platform-heterogeneity.png" alt="Examples of misinformation from Weibo, China Times, WeChat, and Douyin.">
+            </div>
+            <figcaption>Source heterogeneity is a central challenge: misinformation changes shape across platforms.</figcaption>
+          </figure>
+
+          <article class="data-card">
+            <h3>BERT-EMO and the generalization gap</h3>
+            <p>
+              A strong pattern-based classifier can score well in a familiar environment and still fail once
+              evaluation shifts to more diverse sources.
+            </p>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Evaluation source</th>
+                    <th>Macro F1</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Weibo-21</td>
+                    <td>0.943</td>
+                  </tr>
+                  <tr>
+                    <td>Weibo-20</td>
+                    <td>0.932</td>
+                  </tr>
+                  <tr>
+                    <td>Weibo-16</td>
+                    <td>0.908</td>
+                  </tr>
+                  <tr class="danger-row">
+                    <td>Diverse sources</td>
+                    <td>0.470</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="table-note">
+              The sharp cross-source drop shows why narrow pattern learning is not enough for trustworthy
+              fact-checking.
+            </p>
+          </article>
+        </div>
+
+        <div class="compare-grid">
+          <article class="compare-panel">
+            <div class="panel-media">
+              <img src="group5_assets/figures/pattern-heuristic-metaphor.png" alt="Illustration warning against judging based on appearances alone.">
+            </div>
+            <h3>Pattern-based inference</h3>
+            <p>
+              Pattern-driven systems can label suspicious content quickly, but they often operate like black
+              boxes. They correlate style, tone, or diffusion behavior with misinformation rather than
+              grounding a decision in verifiable evidence.
+            </p>
+          </article>
+
+          <article class="compare-panel">
+            <div class="source-stack">
+              <figure>
+                <img src="group5_assets/figures/human-factcheck-ruling.png" alt="Example of a written human fact-check ruling.">
+              </figure>
+              <figure>
+                <img src="group5_assets/figures/human-factcheck-sources.png" alt="Example of a source list used in a human fact-check.">
+              </figure>
+            </div>
+            <h3>Evidence-based verification</h3>
+            <p>
+              Human fact-checking is persuasive because it exposes the ruling, the reasoning, and the sources
+              behind the conclusion. That shift from patterns to evidence is what makes generative AI useful
+              in this space.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-block" id="rag-evolution">
+        <div class="section-heading">
+          <p class="section-label">Methodological Shift</p>
+          <h2>From Evidence Retrieval to LLM Agents</h2>
+        </div>
+
+        <div class="prose-block">
+          <p>
+            Retrieval-augmented fact-checking changes the task from pattern matching to evidence-centered
+            reasoning. Instead of deciding from cues inside the content alone, the system first gathers
+            potentially relevant evidence and then asks an LLM to adjudicate the claim in light of that
+            evidence. This creates a more interpretable workflow, but it also exposes a new bottleneck: the
+            final verifier still has to choose which evidence matters most.
+          </p>
+        </div>
+
+        <div class="pipeline-card">
+          <div class="pipeline">
+            <article class="pipeline-step">
+              <img src="group5_assets/figures/claim-icon.png" alt="Claim icon.">
+              <h3>Claim</h3>
+              <p>Start from the statement or item that needs verification.</p>
+            </article>
+            <div class="pipeline-arrow" aria-hidden="true"></div>
+            <article class="pipeline-step">
+              <img src="group5_assets/figures/evidence-icon.png" alt="Evidence icon.">
+              <h3>Retrieve</h3>
+              <p>Collect web or knowledge-base evidence that may support or refute the claim.</p>
+            </article>
+            <div class="pipeline-arrow" aria-hidden="true"></div>
+            <article class="pipeline-step">
+              <img src="group5_assets/figures/ai-agent-icon.png" alt="Agent icon.">
+              <h3>Reason</h3>
+              <p>Interpret, compare, and weigh conflicting evidence with an LLM-based verifier.</p>
+            </article>
+            <div class="pipeline-arrow" aria-hidden="true"></div>
+            <article class="pipeline-step">
+              <img src="group5_assets/figures/verdict-icon.png" alt="Verdict icon.">
+              <h3>Justify</h3>
+              <p>Return a verdict together with an explanation that readers can inspect.</p>
+            </article>
+          </div>
+        </div>
+
+        <div class="figure-grid two-up">
+          <figure class="figure-card">
+            <img src="group5_assets/figures/averitec-system-table.png" alt="Table of system components used by AVeriTeC participants.">
+            <figcaption>Evidence retrieval and LLM-based verification became the dominant recipe in AVeriTeC systems.</figcaption>
+          </figure>
+
+          <article class="case-study">
+            <h3>Why single-agent verification can fail</h3>
+            <p>
+              Retrieved evidence is often noisy. When old, partial, or distracting evidence appears beside
+              relevant evidence, a single verifier can still lock onto the wrong signal.
+            </p>
+            <div class="claim-box">
+              <h4>Example claim</h4>
+              <p>"52% of Nigeria's current population lives in urban areas."</p>
+            </div>
+            <div class="evidence-list">
+              <div class="evidence-item stale">
+                <strong>Outdated evidence</strong>
+                <span>36% urban population in 2008</span>
+              </div>
+              <div class="evidence-item current">
+                <strong>Current evidence</strong>
+                <span>52% urban population in 2025</span>
+              </div>
+            </div>
+            <p class="case-note">
+              If the model overweights the outdated figure, retrieval was not the problem by itself. The
+              adjudication step was.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-block" id="debatecv">
+        <div class="section-heading">
+          <p class="section-label">Debate-based Verification</p>
+          <h2>DebateCV and DebateSFT</h2>
+        </div>
+
+        <div class="prose-block">
+          <p>
+            One natural response to verifier brittleness is to stop treating claim verification as a
+            one-shot decision. Professional fact-checking already relies on internal deliberation, so the same
+            intuition can be transferred to LLM systems: let multiple agents argue from opposing positions,
+            then let a moderator decide when the debate has converged and what verdict it supports.
+          </p>
+        </div>
+
+        <div class="figure-grid two-up">
+          <article class="quote-card">
+            <h3>Why debate is a useful analogy</h3>
+            <p class="quote-text">
+              Editorial verification is often strongest when competing interpretations are forced into the
+              open before a ruling is finalized.
+            </p>
+            <ul class="bullet-list">
+              <li>Weak arguments are easier to challenge.</li>
+              <li>Important evidence is less likely to be overlooked.</li>
+              <li>Final judgments become less dependent on a single viewpoint.</li>
+            </ul>
+            <div class="quote-foot">
+              <img src="group5_assets/figures/debate-icon.png" alt="Debate icon.">
+              <span>Structured disagreement becomes a verification tool.</span>
+            </div>
+          </article>
+
+          <figure class="figure-card">
+            <img src="group5_assets/figures/politifact-homepage.png" alt="Homepage screenshot of PolitiFact.">
+            <figcaption>Professional fact-checking practice provides a natural model for deliberative verification.</figcaption>
+          </figure>
+        </div>
+
+        <div class="figure-grid two-up">
+          <figure class="figure-card">
+            <div class="figure-media contrast-mat">
+              <img src="group5_assets/figures/debatecv-diagram.png" alt="Diagram showing affirmative and negative debaters with a moderator.">
+            </div>
+            <figcaption>DebateCV assigns explicit roles to affirmative and negative debaters, then asks a moderator to adjudicate.</figcaption>
+          </figure>
+
+          <article class="result-panel">
+            <h3>What DebateCV changes</h3>
+            <div class="mini-card-grid">
+              <article class="mini-card">
+                <h4>Cross-examination</h4>
+                <p>Opposing debaters expose evidence conflicts that a single model might ignore.</p>
+              </article>
+              <article class="mini-card">
+                <h4>Convergence control</h4>
+                <p>The moderator decides whether another round is necessary or whether the debate is already sufficient.</p>
+              </article>
+              <article class="mini-card">
+                <h4>Adjudication</h4>
+                <p>The final verdict depends on the quality of moderation, not only on argument generation.</p>
+              </article>
+            </div>
+            <p>
+              This also exposes the method's hardest problem. LLMs are often strong debaters but weaker
+              judges, especially when debates grow longer or when the moderator falls into neutral defaults
+              despite sufficient evidence.
+            </p>
+          </article>
+        </div>
+
+        <div class="figure-grid two-up">
+          <figure class="figure-card">
+            <div class="figure-media contrast-mat">
+              <img src="group5_assets/figures/debatesft-pipeline.png" alt="Pipeline turning debate recordings into post-training data.">
+            </div>
+            <figcaption>DebateSFT specializes the moderator by turning debate recordings into supervision.</figcaption>
+          </figure>
+          <figure class="figure-card">
+            <img src="group5_assets/figures/debatecv-main-results-table.png" alt="Table comparing DebateCV with single-agent and multi-agent baselines.">
+            <figcaption>Debate-based verification improves over single-agent and simpler multi-agent baselines across evidence settings.</figcaption>
+          </figure>
+        </div>
+
+        <div class="result-highlight-grid">
+          <article class="highlight-card">
+            <p class="highlight-value">72.8</p>
+            <p class="highlight-label">Accuracy for DebateCV in the strongest reported retrieved-evidence setup.</p>
+          </article>
+          <article class="highlight-card">
+            <p class="highlight-value">54.4</p>
+            <p class="highlight-label">AVeriTeC score in the same setup, showing stronger evidence-grounded verification.</p>
+          </article>
+          <article class="highlight-card">
+            <p class="highlight-value">0.4% / 1.1%</p>
+            <p class="highlight-label">False positive rates after moderator post-training on neutral-heavy evaluation slices.</p>
+          </article>
+          <article class="highlight-card">
+            <p class="highlight-value">3.67 / 3.07 / 3.59</p>
+            <p class="highlight-label">Human ratings on evidence use, uncertainty, and reasoning pathway.</p>
+          </article>
+        </div>
+
+        <div class="figure-grid two-up">
+          <figure class="figure-card">
+            <img src="group5_assets/figures/debatesft-rounds-chart.png" alt="Chart showing correct and wrong claims by debate rounds.">
+            <figcaption>Moderator post-training shifts more claims into correct outcomes and reduces drift across debate rounds.</figcaption>
+          </figure>
+          <figure class="figure-card">
+            <img src="group5_assets/figures/justification-quality-table.png" alt="Table of human expert evaluation on justification quality.">
+            <figcaption>Human raters prefer debate-based justifications on evidence use, uncertainty handling, and reasoning clarity.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="section-block" id="security-gap">
+        <div class="section-heading">
+          <p class="section-label">Security Frontier</p>
+          <h2>Agentic Fact-Checking Changes the Attack Surface</h2>
+        </div>
+
+        <div class="prose-block">
+          <p>
+            Accuracy and transparency do not exhaust the problem. As fact-checking systems become more
+            agentic, they begin to decompose claims into sub-questions, retrieve evidence per sub-question,
+            and aggregate the partial results into a final verdict. That architecture improves reasoning
+            structure, but it also changes how attacks must be designed.
+          </p>
+        </div>
+
+        <div class="method-grid">
+          <article class="method-card">
+            <img src="group5_assets/figures/defame-diagram.png" alt="Diagram of the DEFAME system.">
+            <h3>DEFAME</h3>
+            <p>Dynamic tool use keeps retrieval and reasoning tightly coupled during verification.</p>
+          </article>
+          <article class="method-card">
+            <img src="group5_assets/figures/infact-diagram.png" alt="Diagram of the InFact system.">
+            <h3>InFact</h3>
+            <p>Explicit decomposition organizes verification around multiple sub-questions and partial answers.</p>
+          </article>
+          <article class="method-card">
+            <img src="group5_assets/figures/claim-decomposition-figure.png" alt="Claim decomposition figure with literal and implied questions.">
+            <h3>Claim decomposition</h3>
+            <p>Breaking a claim into parts improves retrieval quality and exposes where evidence actually matters.</p>
+          </article>
+        </div>
+
+        <div class="prose-block">
+          <p>
+            That structure explains why broad poisoning strategies weaken against agentic systems. If one
+            malicious document only distorts one fragment of a larger verification chain, the final
+            aggregation can still recover. The next generation of attacks therefore has to become more
+            targeted and more justification-aware.
+          </p>
+        </div>
+
+        <div class="compare-grid">
+          <article class="compare-panel">
+            <h3>General poisoning</h3>
+            <p>
+              Craft broad evidence for the top-level claim and hope that retrieval repeats the same mistake
+              often enough to sway the final verdict.
+            </p>
+            <p class="panel-emphasis bad">This becomes less reliable once verification is decomposed.</p>
+          </article>
+
+          <article class="compare-panel">
+            <h3>Why transparency becomes risky</h3>
+            <p>
+              A detailed justification tells readers what evidence mattered, but it also tells attackers where
+              to intervene. Once sub-claims and evidence chains are visible, poisoning can become precise.
+            </p>
+            <figure class="mini-figure">
+              <img src="group5_assets/figures/justification-example.png" alt="Example of a detailed justification produced during fact-checking.">
+              <figcaption>Reasoning traces reveal which claims and sources carry the most weight.</figcaption>
+            </figure>
+          </article>
+        </div>
+
+        <div class="figure-grid two-up">
+          <figure class="figure-card">
+            <img src="group5_assets/figures/double-edged-sword.png" alt="Illustration of a sword.">
+            <figcaption>Transparency is both a strength and a vulnerability.</figcaption>
+          </figure>
+
+          <article class="blessing-curse">
+            <div class="blessing">
+              <h3>The blessing</h3>
+              <p>Clear explanations help readers trust, inspect, and contest fact-checks.</p>
+            </div>
+            <div class="curse">
+              <h3>The curse</h3>
+              <p>The same explanations can become step-by-step guidance for targeted evidence poisoning.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-block" id="fact2fiction">
+        <div class="section-heading">
+          <p class="section-label">Attack Analysis</p>
+          <h2>Fact2Fiction and Justification-Aware Poisoning</h2>
+        </div>
+
+        <div class="prose-block">
+          <p>
+            Fact2Fiction responds directly to agentic fact-checking. Instead of poisoning retrieval with a
+            generic false narrative, it decomposes the target claim, studies the victim's own justification,
+            identifies which sub-claims and evidence items matter most, and then injects malicious evidence
+            strategically where the verifier is most exposed.
+          </p>
+        </div>
+
+        <figure class="wide-figure">
+          <img src="group5_assets/figures/fact2fiction-pipeline.png" alt="Diagram of the Fact2Fiction planner and executor pipeline.">
+          <figcaption>Fact2Fiction uses a planner and an executor to align malicious evidence with the victim system's reasoning structure.</figcaption>
+        </figure>
+
+        <div class="insight-grid">
+          <article class="insight-card">
+            <h3>Answer planning</h3>
+            <p>Plan adversarial answers that directly contradict the key evidence highlighted by the verifier.</p>
+          </article>
+          <article class="insight-card">
+            <h3>Budget planning</h3>
+            <p>Allocate poisoning effort unevenly so the most influential sub-claims receive the strongest attack.</p>
+          </article>
+          <article class="insight-card">
+            <h3>Query planning</h3>
+            <p>Predict retrieval behavior so malicious evidence is more likely to appear exactly where it is needed.</p>
+          </article>
+        </div>
+
+        <div class="result-highlight-grid">
+          <article class="highlight-card">
+            <p class="highlight-value">42.4%</p>
+            <p class="highlight-label">Attack success rate on DEFAME at a 1% poisoning rate.</p>
+          </article>
+          <article class="highlight-card">
+            <p class="highlight-value">46.0%</p>
+            <p class="highlight-label">Attack success rate on InFact at the same 1% poisoning rate.</p>
+          </article>
+          <article class="highlight-card">
+            <p class="highlight-value">6x</p>
+            <p class="highlight-label">Less budget needed on DEFAME to reach comparable attack effectiveness.</p>
+          </article>
+          <article class="highlight-card">
+            <p class="highlight-value">8x</p>
+            <p class="highlight-label">Less budget needed on InFact to reach comparable attack effectiveness.</p>
+          </article>
+        </div>
+
+        <div class="figure-grid two-up">
+          <figure class="figure-card">
+            <img src="group5_assets/figures/fact2fiction-main-results-table.png" alt="Table comparing Fact2Fiction with baseline attacks.">
+            <figcaption>Across poisoning rates and victim systems, targeted justification-aware poisoning outperforms prior baselines.</figcaption>
+          </figure>
+          <figure class="figure-card">
+            <img src="group5_assets/figures/poison-rate-plot.png" alt="Plot of attack success rate against poisoning budget.">
+            <figcaption>Attack success grows efficiently with budget, and the gap over prior attacks remains large.</figcaption>
+          </figure>
+        </div>
+
+        <div class="prose-block">
+          <p>
+            Current defenses remain weak against this threat model. Paraphrasing can change the surface form
+            of the claim, clustering-based detection can try to isolate malicious evidence in embedding space,
+            and perplexity-based filters can look for unnatural phrasing. Yet none of these defenses fully
+            neutralize targeted poisoning once the attacker is aligned with the verifier's own structure.
+          </p>
+        </div>
+
+        <div class="definition-grid">
+          <article class="definition-card">
+            <h3>Paraphrasing</h3>
+            <p>Test whether the attacker still succeeds when the system fact-checks a reworded version of the claim.</p>
+          </article>
+          <article class="definition-card">
+            <h3>Malicious detection</h3>
+            <p>Use clustering signals in embedding space to separate clean evidence from suspicious evidence.</p>
+          </article>
+          <article class="definition-card">
+            <h3>PPL-based filtering</h3>
+            <p>Flag documents whose phrasing looks unnatural or instruction-like under a language model.</p>
+          </article>
+        </div>
+
+        <div class="figure-grid two-up">
+          <figure class="figure-card">
+            <img src="group5_assets/figures/defense-comparison-table.png" alt="Table comparing defenses against Fact2Fiction and PoisonedRAG.">
+            <figcaption>Even under defense, strong attack performance remains on both agentic and simpler systems.</figcaption>
+          </figure>
+          <figure class="figure-card">
+            <img src="group5_assets/figures/perplexity-density-plot.png" alt="Density plot of perplexity for clean and malicious evidence.">
+            <figcaption>Detection signals exist, but they are not yet strong enough to close the robustness gap.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="section-block" id="synthesis">
+        <div class="section-heading">
+          <p class="section-label">Synthesis</p>
+          <h2>Where the Field Stands Now</h2>
+        </div>
+
+        <div class="prose-block">
+          <p>
+            Automated fact-checking has progressed from pattern recognition to evidence-centered reasoning and
+            then to agentic verification. Each step improved the system's ability to explain itself, but each
+            step also exposed a new weakness. The current frontier is therefore not simply higher accuracy.
+            It is the joint problem of evidence quality, reasoning quality, and attack resilience.
+          </p>
+        </div>
+
+        <div class="matrix-card">
+          <table class="evolution-table">
+            <thead>
+              <tr>
+                <th>Stage</th>
+                <th>Dominant strategy</th>
+                <th>Main gain</th>
+                <th>Main weakness</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Pattern-based detection</td>
+                <td>Learn cues from content and social context</td>
+                <td>Efficient classification from existing signals</td>
+                <td>Poor generalization and weak explainability</td>
+              </tr>
+              <tr>
+                <td>RAG-based verification</td>
+                <td>Retrieve evidence, then reason over it</td>
+                <td>Evidence-grounded verdicts and clearer explanations</td>
+                <td>Brittle single-agent adjudication under noisy retrieval</td>
+              </tr>
+              <tr>
+                <td>Debate and agentic systems</td>
+                <td>Use decomposition, role specialization, and deliberation</td>
+                <td>Better structure, stronger justifications, improved robustness</td>
+                <td>Higher system cost and new moderation challenges</td>
+              </tr>
+              <tr>
+                <td>Security-aware fact-checking</td>
+                <td>Model targeted poisoning and defense explicitly</td>
+                <td>More realistic view of deployment risk</td>
+                <td>Defenses still lag behind attack sophistication</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="future-grid">
+          <article class="future-card">
+            <h3>How can retrieval become more robust?</h3>
+            <p>Better evidence ranking and filtering still matter before even the best verifier can succeed consistently.</p>
+          </article>
+          <article class="future-card">
+            <h3>How should moderator agents be trained?</h3>
+            <p>Debate-based verification only works well if the moderator role becomes a first-class learning target.</p>
+          </article>
+          <article class="future-card">
+            <h3>Can transparency be preserved safely?</h3>
+            <p>Readers still need clear justifications, but those justifications must not double as attack manuals.</p>
+          </article>
+          <article class="future-card">
+            <h3>What defenses work against targeted poisoning?</h3>
+            <p>Current paraphrasing and detection heuristics are not enough for justification-aware attacks.</p>
+          </article>
+          <article class="future-card">
+            <h3>How should trustworthiness be measured?</h3>
+            <p>Accuracy, evidence sufficiency, explanation quality, cost, and security need to be evaluated together.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-block" id="references">
+        <div class="section-heading">
+          <p class="section-label">References</p>
+          <h2>Selected Works and Source Examples</h2>
+        </div>
+
+        <p class="reference-note">
+          The references below cover the main papers and illustrative source examples discussed throughout the
+          article.
+        </p>
+
+        <ol class="reference-list">
+          <li>K. Shu, A. Sliva, S. Wang, J. Tang, and H. Liu. 2017. <em>Fake News Detection on Social Media: A Data Mining Perspective</em>. SIGKDD Explorations.</li>
+          <li>Y. Chen, N. J. Conroy, and V. L. Rubin. 2015. <em>Misleading Online Content: Recognizing Clickbait as False News</em>. ACM Workshop on Multimodal Deception Detection.</li>
+          <li>Z. Jin, J. Cao, Y. Zhang, J. Zhou, and Q. Tian. 2017. <em>Novel Visual and Statistical Image Features for Microblogs News Verification</em>. IEEE Transactions on Multimedia.</li>
+          <li>W. Luo. 2016. <em>News Verification by Exploiting Conflicting Social Viewpoints in Microblogs</em>. AAAI.</li>
+          <li>Q. Zhang. 2014. <em>News Credibility Evaluation on Microblog with a Hierarchical Propagation Model</em>. ICDM.</li>
+          <li>Y. Li, H. He, J. Bai, and D. Wen. 2024. <em>MCFEND: A Multi-source Benchmark Dataset for Chinese Fake News Detection</em>. WWW.</li>
+          <li>X. Zhang, J. Cao, X. Li, Q. Sheng, L. Zhong, and K. Shu. 2021. <em>Mining Dual Emotion for Fake News Detection</em>. WWW.</li>
+          <li>Q. Nan, J. Cao, Y. Zhu, Y. Wang, and J. Li. 2021. <em>MDFEND: Multi-domain Fake News Detection</em>. CIKM.</li>
+          <li>Y. Yoon, J. Jung, S. Yoon, and K. Park. 2024. <em>HerO at AVeriTeC: The Herd of Open Large Language Models for Verifying Real-World Claims</em>. FEVER.</li>
+          <li>G. Warren, I. Shklovski, and I. Augenstein. 2025. <em>Show Me the Work: Fact-Checkers' Requirements for Explainable Automated Fact-Checking</em>. CHI.</li>
+          <li>H. He, Y. Li, D. Wen, Y. Chen, R. Cheng, D. Chen, and F. C. M. Lau. 2026. <em>Debating Truth: Debate-driven Claim Verification with Multiple Large Language Model Agents</em>. WWW.</li>
+          <li>M. Schlichtkrull, Z. Guo, and A. Vlachos. 2023. <em>AVeriTeC: A Dataset for Real-World Claim Verification with Evidence from the Web</em>. NeurIPS.</li>
+          <li>M. Rothermel, T. Braun, M. Rohrbach, and A. Rohrbach. 2024. <em>InFact: A Strong Baseline for Automated Fact-checking</em>. FEVER.</li>
+          <li>T. Braun, M. Rothermel, M. Rohrbach, and A. Rohrbach. 2025. <em>DEFAME: Dynamic Evidence-based Fact-checking with Multimodal Experts</em>. ICML.</li>
+          <li>Y. Liu, Y. Jia, R. Geng, J. Jia, and N. Z. Gong. 2024. <em>Formalizing and Benchmarking Prompt Injection Attacks and Defenses</em>. USENIX Security.</li>
+          <li>W. Zou, R. Geng, B. Wang, and J. Jia. 2025. <em>PoisonedRAG: Knowledge Corruption Attacks to Retrieval-augmented Generation of Large Language Models</em>. USENIX Security.</li>
+          <li>H. Zhou, K.-H. Lee, Z. Zhan, Y. Chen, Z. Li, Z. Wang, H. Haddadi, and E. Yilmaz. 2026. <em>TrustRAG: Enhancing Robustness and Trustworthiness in RAG</em>. AAAI Workshop on Trust and Control in Agentic AI.</li>
+          <li>G. Alon and M. Kamfonas. 2023. <em>Detecting Language Model Attacks with Perplexity</em>. arXiv.</li>
+          <li>H. He, Y. Li, B. Zhu, D. Wen, R. Cheng, and F. C. M. Lau. 2026. <em>Fact2Fiction: Targeted Poisoning Attack to Agentic Fact-Checking Systems</em>. AAAI.</li>
+          <li><a href="https://www.demandsage.com/fake-news-statistics/">DemandSage fake news statistics</a>.</li>
+          <li><a href="https://medium.com/@madtarget44/looks-can-be-deceiving-the-true-value-of-a-person-b512687b5f80">Looks can be deceiving: the true value of a person</a>.</li>
+          <li><a href="https://www.politifact.com/factchecks/2026/jan/26/social-media/exploding-trees-extreme-cold/">PolitiFact fact-check on exploding trees</a>.</li>
+        </ol>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

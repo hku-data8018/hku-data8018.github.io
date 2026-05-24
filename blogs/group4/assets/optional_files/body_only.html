@@ -1,0 +1,423 @@
+
+<main class="survey-page">
+  <aside class="toc" aria-label="Table of contents">
+    <div class="toc-title">Contents</div>
+    <a href="#overview">Overview</a>
+    <a href="#problem">Problem Definition</a>
+    <a href="#why">Why It Matters</a>
+    <a href="#challenges">Core Challenges</a>
+    <a href="#representations">Representations</a>
+    <a href="#timeline">Timeline</a>
+    <a href="#datasets">Datasets</a>
+    <a href="#learning">Learning-based Methods</a>
+    <a href="#llm">LLM/VLM-based Methods</a>
+    <a href="#comparison">Comparison</a>
+    <a href="#future">Future Questions</a>
+    <a href="#references">References</a>
+  </aside>
+
+  <article class="content">
+    <header class="hero">
+      <div class="eyebrow">Group Project Survey · HTML Page</div>
+      <h1>Text-to-3D Scene Generation</h1>
+      <p class="subtitle">From natural language to structured, editable, and physically plausible 3D environments</p>
+      <div class="meta">
+        <span>Xingjian Ran · Jianyu Zhang</span>
+        <span>HKU IDS</span>
+        <span>April 2026</span>
+      </div>
+    </header>
+
+    <section id="overview" class="section">
+      <h2>1. Executive Summary</h2>
+      <p>
+        Text-to-3D scene generation studies how to convert natural-language prompts into complete 3D environments.
+        Unlike text-to-3D object generation, which usually focuses on one isolated asset, scene generation must determine
+        <strong>what objects should appear</strong>, <strong>where they should be placed</strong>, <strong>how they relate to each other</strong>,
+        and <strong>whether the resulting environment is physically and functionally plausible</strong>.
+      </p>
+      <p>
+        The central trend is a shift from dataset-driven layout synthesis to language-guided planning and hybrid optimization.
+        Early methods model indoor scenes as object sets or sequences. Diffusion methods improve global layout diversity.
+        Instruction-driven, LLM-based, and VLM-based systems add open-vocabulary control, user interaction, and commonsense reasoning.
+        However, exact metric geometry, physical validity, long-tail object categories, and large-scale scene consistency remain unsolved.
+      </p>
+
+      <figure>
+        <img src="images/fig1.png" alt="Pipeline from text prompt to 3D scene">
+        <figcaption>Figure 1. A high-level pipeline for transforming text into structured 3D scenes.</figcaption>
+      </figure>
+    </section>
+
+    <section id="problem" class="section">
+      <h2>2. Problem Definition</h2>
+      <div class="definition-card">
+        <p>
+          <strong>Text-to-3D scene generation</strong> maps an unstructured text prompt into a structured 3D environment.
+          A generated scene usually contains object categories, object attributes, spatial positions, orientations, sizes,
+          mesh or asset identities, material information, and sometimes explicit relational or physical constraints.
+        </p>
+      </div>
+
+      <div class="two-col">
+        <div class="panel">
+          <h3>3D Object Generation</h3>
+          <p>Generates a single asset, such as a chair, table, or vase. The main problem is object geometry, texture, and shape fidelity.</p>
+        </div>
+        <div class="panel">
+          <h3>3D Scene Generation</h3>
+          <p>Generates a multi-object environment. The main problem is object composition, spatial layout, scene-level consistency, and editability.</p>
+        </div>
+      </div>
+
+      <p>
+        This distinction matters because a scene is not a simple collection of independent objects. A bedroom, kitchen, or office is a
+        coordinated system. Objects must satisfy functional relations, such as “chair near table,” physical relations, such as “lamp supported
+        by desk,” and style-level relations, such as “modern furniture with consistent materials.”
+      </p>
+    </section>
+
+    <section id="why" class="section">
+      <h2>3. Why This Field Matters</h2>
+      <div class="card-grid three">
+        <div class="card">
+          <h3>Embodied AI</h3>
+          <p>Robots and agents need large numbers of diverse simulated environments for navigation, manipulation, and instruction following.</p>
+        </div>
+        <div class="card">
+          <h3>Gaming and Metaverse</h3>
+          <p>Text-driven scene generation reduces the cost of building virtual worlds and makes environment creation accessible to non-experts.</p>
+        </div>
+        <div class="card">
+          <h3>Interior and Industrial Design</h3>
+          <p>Designers can rapidly prototype layouts, compare alternatives, and iteratively edit spaces through natural language.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="challenges" class="section">
+      <h2>4. Core Challenges</h2>
+      <div class="numbered">
+        <div>
+          <span>01</span>
+          <h3>Semantic Gap</h3>
+          <p>A short prompt may imply many hidden requirements. For example, “a cozy study room” encodes object choice, lighting, layout, material, and style.</p>
+        </div>
+        <div>
+          <span>02</span>
+          <h3>Data Scarcity</h3>
+          <p>High-quality 3D scene datasets are much smaller than 2D image-text datasets. Manual annotation of 3D layout, geometry, and relations is expensive.</p>
+        </div>
+        <div>
+          <span>03</span>
+          <h3>Layout Complexity</h3>
+          <p>As the number of objects grows, the number of possible pairwise and higher-order relations grows quickly. Collisions and support constraints must be controlled.</p>
+        </div>
+        <div>
+          <span>04</span>
+          <h3>Evaluation Difficulty</h3>
+          <p>Visual quality, text alignment, physical plausibility, object diversity, and human preference are not captured by a single metric.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="representations" class="section">
+      <h2>5. Scene Representations</h2>
+      <p>
+        Representation determines the search space of generation. It also defines what the model can learn, edit, and validate.
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Representation</th>
+            <th>Core Form</th>
+            <th>Strength</th>
+            <th>Limitation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Object-centric layout</td>
+            <td>Object category, position, orientation, bounding-box size</td>
+            <td>Compact and efficient for learning and optimization</td>
+            <td>Weak semantic and functional relations</td>
+          </tr>
+          <tr>
+            <td>Scene graph</td>
+            <td>Nodes as objects, edges as relations</td>
+            <td>Explicitly represents relations such as on, near, left of, inside</td>
+            <td>Must be translated into precise geometry</td>
+          </tr>
+          <tr>
+            <td>Procedural or hierarchical form</td>
+            <td>Room → area → furniture group → decoration</td>
+            <td>Scales better and follows human design logic</td>
+            <td>Requires strong decomposition and rule design</td>
+          </tr>
+          <tr>
+            <td>Hybrid symbolic-geometric form</td>
+            <td>Text plan, constraints, object poses, differentiable losses</td>
+            <td>Combines reasoning with physical validation</td>
+            <td>System complexity is higher</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="timeline" class="section">
+      <h2>6. Timeline and Paradigm Shift</h2>
+      <p>
+        The development of text-to-3D scene generation can be summarized as a movement from <strong>distribution learning</strong> to
+        <strong>semantic reasoning</strong> and then to <strong>hybrid optimization</strong>. The field no longer only asks whether a model
+        can imitate training layouts. It increasingly asks whether the model can follow detailed instructions, handle new concepts,
+        and generate scenes that are physically valid and editable.
+      </p>
+
+      <figure>
+        <img src="images/fig2.png" alt="Timeline of text-to-3D scene generation methods">
+        <figcaption>Figure 2. Representative milestones and method families in text-to-3D scene generation.</figcaption>
+      </figure>
+    </section>
+
+    <section id="datasets" class="section">
+      <h2>7. Dataset Landscape</h2>
+      <p>
+        Datasets define what learning-based methods can model. Synthetic datasets provide cleaner object poses and richer layout labels.
+        Real scanned datasets provide more realistic geometry and sensor noise. The gap between them is a major reason why generalization
+        remains difficult.
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Dataset</th>
+            <th>Type</th>
+            <th>Typical Use</th>
+            <th>Main Issue</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>3D-FRONT</td>
+            <td>Synthetic indoor scenes</td>
+            <td>Training and evaluating indoor layout synthesis</td>
+            <td>Synthetic-to-real domain gap</td>
+          </tr>
+          <tr>
+            <td>ScanNet</td>
+            <td>Real RGB-D scans</td>
+            <td>Semantic segmentation, reconstruction, scene understanding</td>
+            <td>Noisy scans and incomplete geometry</td>
+          </tr>
+          <tr>
+            <td>Objaverse-style asset collections</td>
+            <td>Large 3D object repositories</td>
+            <td>Asset retrieval and scene population</td>
+            <td>Uneven quality and inconsistent metadata</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="learning" class="section">
+      <h2>8. Learning-based Methods</h2>
+      <p>
+        Learning-based methods estimate plausible scenes from training data. Their strength is that they can learn common object co-occurrence
+        and layout statistics. Their limitation is that they are bounded by dataset coverage and can struggle with rare or unusually specific prompts.
+      </p>
+
+      <div class="method">
+        <h3>ATISS: Autoregressive Transformers for Indoor Scene Synthesis</h3>
+        <p>
+          ATISS uses a transformer-based autoregressive framework for indoor scene synthesis. It predicts object attributes such as category,
+          size, position, and orientation while conditioning on an existing partial scene. It is important because it showed that transformer
+          architectures can generate coherent indoor layouts with object-set structure rather than a rigid object sequence.
+        </p>
+        <p class="takeaway"><strong>Takeaway:</strong> strong baseline for layout-level scene generation; efficient and coherent, but still limited by sequential generation and training-set coverage.</p>
+      </div>
+
+      <div class="method">
+        <h3>DiffuScene: Diffusion for Generative Indoor Scene Synthesis</h3>
+        <p>
+          DiffuScene formulates scene synthesis as denoising in scene-configuration space. Instead of placing objects one by one, it denoises
+          a noisy set of object properties into a complete scene. This reduces sequential error accumulation and can better model global multi-object
+          dependencies.
+        </p>
+        <p class="takeaway"><strong>Takeaway:</strong> diffusion gives a stronger generative prior for diverse and globally consistent layouts.</p>
+      </div>
+
+      <div class="method">
+        <h3>InstructScene: Instruction-driven Scene Synthesis</h3>
+        <p>
+          InstructScene shifts the task from one-shot generation to instruction-following generation. It combines semantic graph priors with
+          layout decoding, allowing text commands to guide scene synthesis and editing.
+        </p>
+        <p class="takeaway"><strong>Takeaway:</strong> controllability becomes a central criterion, not only visual plausibility.</p>
+      </div>
+
+      <div class="method">
+        <h3>LayoutVLM and FactoredScenes</h3>
+        <p>
+          More recent methods use vision-language models, differentiable optimization, or reusable program libraries to close the gap between
+          language-level planning and geometric validity. LayoutVLM uses VLM knowledge with optimization to improve physical plausibility.
+          FactoredScenes models reusable placement habits or programmatic substructures.
+        </p>
+        <p class="takeaway"><strong>Takeaway:</strong> the field is moving toward interpretable, modular, and constraint-aware generation.</p>
+      </div>
+    </section>
+
+    <section id="llm" class="section">
+      <h2>9. LLM/VLM-based and Interactive Methods</h2>
+      <p>
+        Large language models introduce world knowledge, commonsense reasoning, and open-vocabulary control. They are useful for planning object
+        lists, generating scene graphs, writing structured layouts, and supporting interactive design. However, they often need geometric solvers
+        or differentiable constraints because language models alone do not guarantee collision-free or physically valid 3D coordinates.
+      </p>
+
+      <div class="card-grid two">
+        <div class="card">
+          <h3>LayoutGPT and GALA3D</h3>
+          <p>
+            LayoutGPT uses LLMs as visual planners that output structured layouts. GALA3D combines layout-guided control with 3D Gaussian
+            representations for complex text-to-3D generation.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Holodeck</h3>
+          <p>
+            Holodeck targets language-guided generation of embodied AI environments. It uses LLM-driven commonsense planning and object assets
+            to create diverse simulated spaces.
+          </p>
+        </div>
+        <div class="card">
+          <h3>I-Design</h3>
+          <p>
+            I-Design treats interior design as a conversational process. It uses LLM agents to convert natural-language requirements into scene
+            graph designs and relative object relationships.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Hierarchical Scene Models</h3>
+          <p>
+            Hierarchical methods decompose large scenes into global structure, major furniture, and fine details. This helps control complexity
+            and improves scalability.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="comparison" class="section">
+      <h2>10. Method Comparison</h2>
+      <figure>
+        <img src="images/fig3.png" alt="Comparison of learning-based, LLM-based, and hybrid systems">
+        <figcaption>Figure 3. Main strengths and limitations of learning-based, LLM/VLM-guided, and hybrid scene generation systems.</figcaption>
+      </figure>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Criterion</th>
+            <th>Learning-based</th>
+            <th>LLM/VLM-based</th>
+            <th>Hybrid</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Text flexibility</td>
+            <td>Moderate</td>
+            <td>High</td>
+            <td>High</td>
+          </tr>
+          <tr>
+            <td>Metric geometry</td>
+            <td>Relatively strong</td>
+            <td>Weak without constraints</td>
+            <td>Strong if optimized</td>
+          </tr>
+          <tr>
+            <td>Open vocabulary</td>
+            <td>Limited by categories</td>
+            <td>Strong</td>
+            <td>Strong</td>
+          </tr>
+          <tr>
+            <td>Physical plausibility</td>
+            <td>Learned implicitly</td>
+            <td>Often unreliable</td>
+            <td>Can be explicit</td>
+          </tr>
+          <tr>
+            <td>Scalability</td>
+            <td>Good for constrained rooms</td>
+            <td>Good for planning, weaker for coordinates</td>
+            <td>Promising but complex</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="future" class="section">
+      <h2>11. Future Research Questions</h2>
+      <p>
+        A high-quality survey should not only describe existing papers. It should also infer what problems remain open and which directions are
+        likely to define the next stage of the field. The following questions summarize the most important future directions.
+      </p>
+
+      <ol class="research-list">
+        <li>
+          <strong>How can scene generators combine exact geometry with open-ended language?</strong>
+          Current LLMs reason well about function and style, but they are weak at precise metric layout. Future systems may need explicit
+          geometric solvers, differentiable collision constraints, and physically grounded representations.
+        </li>
+        <li>
+          <strong>How can models handle long-tail, fine-grained, personalized prompts?</strong>
+          A useful system should not only generate a generic bedroom. It should handle requirements such as hobbies, age, accessibility,
+          cultural style, and object-level preferences.
+        </li>
+        <li>
+          <strong>How can generation scale from one room to buildings or city blocks?</strong>
+          Large environments require memory, hierarchy, global consistency, and efficient long-range relation modeling.
+        </li>
+        <li>
+          <strong>How should physical common sense be evaluated?</strong>
+          Visual plausibility is not enough. Objects must be supported, reachable, non-overlapping, and consistent with material and functional constraints.
+        </li>
+        <li>
+          <strong>Can interactive systems learn from user corrections?</strong>
+          Real design is iterative. The next generation of systems should adapt to edits and feedback rather than treating each prompt independently.
+        </li>
+      </ol>
+    </section>
+
+    <section class="section">
+      <h2>12. Conclusion</h2>
+      <p>
+        Text-to-3D scene generation has evolved from layout synthesis into a broader problem of language-guided world construction.
+        Learning-based methods provide data-driven realism and efficient layout priors. LLM/VLM-based methods provide flexible semantic reasoning
+        and interactive control. The most promising direction is a hybrid system: language models plan, generative models synthesize, and geometric
+        or physical optimizers validate the result.
+      </p>
+      <p>
+        The field is therefore moving toward editable, scalable, and physically plausible world generation. The core challenge is no longer only
+        “Can a model generate a scene?” but “Can it generate the right scene, for the right instruction, under real spatial constraints?”
+      </p>
+    </section>
+
+    <section id="references" class="section references">
+      <h2>References and Reading List</h2>
+      <ul>
+        <li><a href="https://arxiv.org/abs/2110.03675" target="_blank" rel="noreferrer">ATISS: Autoregressive Transformers for Indoor Scene Synthesis</a></li>
+        <li><a href="https://openaccess.thecvf.com/content/CVPR2024/html/Tang_DiffuScene_Denoising_Diffusion_Models_for_Generative_Indoor_Scene_Synthesis_CVPR_2024_paper.html" target="_blank" rel="noreferrer">DiffuScene: Denoising Diffusion Models for Generative Indoor Scene Synthesis</a></li>
+        <li><a href="https://arxiv.org/abs/2402.04717" target="_blank" rel="noreferrer">InstructScene: Instruction-Driven 3D Indoor Scene Synthesis with Semantic Graph Prior</a></li>
+        <li><a href="https://arxiv.org/abs/2305.15393" target="_blank" rel="noreferrer">LayoutGPT: Compositional Visual Planning and Generation with Large Language Models</a></li>
+        <li><a href="https://gala3d.github.io/" target="_blank" rel="noreferrer">GALA3D: Towards Text-to-3D Complex Scene Generation via Layout-guided Control</a></li>
+        <li><a href="https://arxiv.org/abs/2312.09067" target="_blank" rel="noreferrer">Holodeck: Language Guided Generation of 3D Embodied AI Environments</a></li>
+        <li><a href="https://arxiv.org/html/2404.02838v1" target="_blank" rel="noreferrer">I-Design: Personalized LLM Interior Designer</a></li>
+        <li><a href="https://openaccess.thecvf.com/content/CVPR2025/html/Sun_LayoutVLM_Differentiable_Optimization_of_3D_Layout_via_Vision-Language_Models_CVPR_2025_paper.html" target="_blank" rel="noreferrer">LayoutVLM: Differentiable Optimization of 3D Layout via Vision-Language Models</a></li>
+        <li><a href="https://openreview.net/forum?id=Ew8bJkSt3g" target="_blank" rel="noreferrer">FactoredScenes: From Programs to Poses</a></li>
+      </ul>
+    </section>
+  </article>
+</main>

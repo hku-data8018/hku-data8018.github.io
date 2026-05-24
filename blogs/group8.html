@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Native Latent 3D Generation: A Survey</title>
+
+    <!-- Google Fonts: Noto Sans + Google Sans Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Google+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        /* ========== CSS Custom Properties ========== */
+        :root,
+        [data-theme="light"] {
+            --bg: #fdfdfd;
+            --fg: #282728;
+            --accent: #006cac;
+            --muted: #f0f0f0;
+            --border: #ece9e9;
+
+            --font-sans: 'Noto Sans', system-ui, sans-serif;
+            --font-serif: 'XCharter', 'Charter', 'Georgia', serif;
+            --font-mono: 'Google Sans Mono', 'Fira Code', monospace;
+            --content-width: 48rem;
+        }
+
+        [data-theme="dark"] {
+            --bg: #212737;
+            --fg: #eaedf3;
+            --accent: #ff6b01;
+            --muted: #343f60;
+            --border: #ab4b08;
+        }
+
+        /* ========== Base Reset & Body ========== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-serif);
+            font-size: 1.1rem;
+            background: var(--bg);
+            color: var(--fg);
+            line-height: 1.7;
+            transition: color 0.3s, background 0.3s;
+        }
+
+        ::selection {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        /* ========== Scroll Progress Bar ========== */
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: var(--accent);
+            z-index: 100;
+        }
+
+        /* ========== Theme Toggle ========== */
+        .theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99;
+            transition: background 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--muted);
+        }
+
+        /* ========== Site Header ========== */
+        .site-header {
+            text-align: center;
+            padding: 4rem 1.5rem 2rem;
+        }
+
+        .site-header h1 {
+            font-family: var(--font-sans);
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: #1a94bc;
+            margin-bottom: 0.5rem;
+        }
+
+        .site-header .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.7;
+            margin-bottom: 0.3rem;
+        }
+
+        .site-header .meta {
+            font-size: 1.1rem;
+            opacity: 0.5;
+        }
+
+        /* ========== Page Wrapper ========== */
+        .page-wrapper {
+            display: flex;
+            max-width: calc(var(--content-width) + 16rem);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            gap: 2rem;
+        }
+
+        /* ========== Content Area ========== */
+        .content {
+            flex: 1;
+            max-width: var(--content-width);
+            min-width: 0;
+        }
+
+        /* ========== ToC Sidebar ========== */
+        .toc-sidebar {
+            width: 14rem;
+            flex-shrink: 0;
+            position: sticky;
+            top: 2rem;
+            align-self: flex-start;
+            border-left: 1px solid var(--border);
+            padding-left: 1rem;
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            max-height: calc(100vh - 4rem);
+            overflow-y: auto;
+        }
+
+        .toc-sidebar a {
+            display: block;
+            color: var(--fg);
+            text-decoration: none;
+            padding: 0.25rem 0;
+            opacity: 0.65;
+            transition: opacity 0.2s, color 0.2s;
+        }
+
+        .toc-sidebar a:hover {
+            opacity: 1;
+            color: var(--accent);
+        }
+
+        .toc-sidebar a.active {
+            opacity: 1;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .toc-sidebar .toc-h3 {
+            padding-left: 1rem;
+        }
+
+        /* ========== Typography ========== */
+        .content h2 {
+            font-family: var(--font-sans);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #497568;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 0.3rem;
+            margin-top: 3.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .content h3 {
+            font-family: var(--font-sans);
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #497568;
+            margin-top: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .content h4 {
+            font-family: var(--font-sans);
+            font-size: 1.15rem;
+            font-weight: 500;
+            font-style: italic;
+            color: #497568;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .content p {
+            margin-bottom: 1.25rem;
+        }
+
+        .content a {
+            color: var(--accent);
+            text-decoration: underline;
+            text-decoration-style: dashed;
+            text-underline-offset: 4px;
+        }
+
+        .content a:hover {
+            text-decoration-style: solid;
+        }
+
+        .content strong {
+            color: #bc84a8;
+        }
+
+        .content ul,
+        .content ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .content ul {
+            list-style-type: disc;
+        }
+
+        .content ul ::marker,
+        .content ol ::marker {
+            color: var(--accent);
+        }
+
+        .content li {
+            margin-bottom: 0.35rem;
+        }
+
+        /* ========== Info Block ========== */
+        .info-block {
+            border-left: 4px solid var(--accent);
+            background: var(--muted);
+            padding: 1.25rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.25rem;
+        }
+
+        .info-block p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* ========== Tables ========== */
+        .content table {
+            width: 100%;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+        }
+
+        .content thead th {
+            border-bottom: 2px solid var(--accent);
+            text-align: left;
+            padding: 0.6rem 0.75rem;
+            font-weight: 600;
+        }
+
+        .content tbody td {
+            border-bottom: 1px solid var(--border);
+            padding: 0.5rem 0.75rem;
+        }
+
+        .content tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* ========== Figures ========== */
+        .content figure {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .content figure img {
+            max-width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+        }
+
+        .content figcaption {
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+        }
+
+        /* ========== Image Placeholder ========== */
+        .image-placeholder {
+            background: var(--muted);
+            border: 2px dashed var(--border);
+            padding: 2rem;
+            text-align: center;
+            opacity: 0.6;
+            border-radius: 4px;
+        }
+
+        /* ========== Inline Code ========== */
+        .content code {
+            font-family: var(--font-mono);
+            background: var(--muted);
+            padding: 0.15em 0.4em;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+
+        /* ========== Footer ========== */
+        footer {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            opacity: 0.5;
+            border-top: 1px solid var(--border);
+            margin-top: 4rem;
+        }
+
+        /* ========== References ========== */
+        ol.references {
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            padding-left: 2rem;
+        }
+        ol.references li {
+            margin-bottom: 0.75rem;
+            padding-left: 0.25rem;
+        }
+
+        /* ========== KaTeX Overrides ========== */
+        .katex {
+            font-size: 1.05em;
+        }
+
+        .katex-display {
+            margin: 1.5rem 0;
+            overflow-x: visible;
+            overflow-y: visible;
+        }
+
+        /* ========== Responsive ========== */
+        @media (max-width: 1024px) {
+            .toc-sidebar {
+                display: none;
+            }
+
+            .content {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="progress-bar"></div>
+    <button class="theme-toggle" id="theme-toggle">&#9728;&#65039;</button>
+
+    <header class="site-header">
+        <h1>Native Latent 3D Generation: A Survey</h1>
+        <p class="meta">Shensi Li &amp; Xuelin Chen &nbsp;|&nbsp; April 2026</p>
+    </header>
+
+    <div class="page-wrapper">
+        <article class="content" id="article">
+
+            <!-- ====== Section 1: The 3D Generation Frontier ====== -->
+            <section>
+                <h2 id="the-3d-generation-frontier">1. The 3D Generation Frontier</h2>
+
+                <p>Generative AI has achieved remarkable fidelity in 2D image synthesis, yet the leap to 3D content creation remains one of the most compelling open problems in machine learning. The challenge is not simply about adding a depth axis to existing pipelines &mdash; it demands modeling the underlying geometric and structural consistency that defines our physical world.</p>
+
+                <figure>
+                    <img src="group8_images/Fig1.png" alt="Overview of the 3D generation task">
+                    <figcaption><strong>Fig. 1.</strong> Overview of the 3D generation task: from sparse inputs (text or images) to complete 3D assets. <em>(Generated by ChatGPT Images 2.0)</em></figcaption>
+                </figure>
+
+                <h3 id="defining-the-task">1.1 Defining the Task</h3>
+
+                <p>At its core, <strong>3D generation</strong> is the problem of mapping a sparse input &mdash; a text prompt such as <em>"a corgi wearing a top hat"</em> or a single 2D photograph &mdash; into a complete, navigable 3D asset (a textured mesh, a NeRF volume, or another representation that can be rendered from any viewpoint).</p>
+
+                <p>What makes this so difficult is the "black box" nature of the mapping. A single image captures only one viewpoint of an object. The generative model must <em>hallucinate</em> every hidden surface, unseen texture, and occluded internal structure. A photograph of a coffee mug shows you a handle and a logo, but the model must invent a plausible back, bottom, and interior &mdash; all while maintaining geometric consistency with the observed view. This is fundamentally an ill-posed inverse problem: infinitely many 3D shapes could explain the same 2D observation, and the model must learn strong priors to select a plausible one.</p>
+
+                <h3 id="why-it-matters">1.2 Why It Matters</h3>
+
+                <p>The ability to generate 3D content automatically would transform at least three major domains:</p>
+
+                <ul>
+                    <li><strong>Entertainment and Creative Media.</strong> AAA game studios and VR/AR developers currently rely on months of manual modeling to populate virtual worlds. A reliable text-to-3D or image-to-3D system could compress asset creation from weeks to seconds, democratizing content creation for indie developers and enabling rapid iteration for large studios.</li>
+                    <li><strong>Robotics and Autonomous Systems.</strong> Training embodied agents in simulation (the "sim-to-real" paradigm) requires vast libraries of diverse 3D environments. Generative 3D models can synthesize the object variety and scene complexity needed to bridge the gap between simulated training and real-world deployment.</li>
+                    <li><strong>Industrial Design and Architecture.</strong> Digital twins &mdash; virtual replicas of physical products or buildings &mdash; are central to modern manufacturing and architecture workflows. Rapid 3D prototyping powered by generative models can accelerate the design-to-fabrication loop, enabling engineers to explore more concepts before committing to physical production or 3D printing.</li>
+                </ul>
+
+                <p>The common thread across these applications is a shift from <em>modeling</em> to <em>generating</em> &mdash; scaling 3D content creation far beyond what manual workflows can sustain.</p>
+
+                <h3 id="the-data-gap">1.3 The Data Gap</h3>
+
+                <p>In 2D vision, we are spoiled by the abundance of the internet. Web-scale datasets like LAION-5B provide upwards of <strong>5 billion</strong> image-text pairs, and this data abundance is a primary driver behind the success of models like Stable Diffusion and DALL-E. The 3D world tells a starkly different story. Even the largest publicly available 3D repositories &mdash; Objaverse and ShapeNet combined &mdash; contain roughly <strong>10 million</strong> models, yielding an approximate <strong>500:1 ratio</strong> of 2D to 3D data.</p>
+
+                <p>This scarcity has profound consequences. Standard supervised learning, the recipe that powers 2D generation (train a large model on a large dataset), simply does not transfer to 3D. The dataset is too small, and the representation landscape is far more fragmented: unlike 2D pixels, which live on a uniform grid, 3D data comes in many forms &mdash; meshes with varying topology, point clouds of different densities, voxel grids at different resolutions, implicit neural fields. There is no single, universal "pixel" for 3D.</p>
+
+                <p>This data gap forces the field to get creative. As we will see in the next section, the first wave of breakthroughs came not from training on 3D data at all, but from cleverly repurposing the vast knowledge already encoded in 2D generative models.</p>
+            </section>
+
+            <!-- ====== Section 2: Leveraging 2D Priors ====== -->
+            <section>
+                <h2 id="leveraging-2d-priors">2. Leveraging 2D Priors</h2>
+
+                <p>If we cannot train powerful 3D generators from scratch due to data scarcity, can we instead <em>borrow</em> the intelligence of pre-trained 2D models? This is the central insight behind the family of methods known as <strong>2D-to-3D lifting</strong>. These approaches exploit the fact that a diffusion model trained on billions of images has implicitly learned a great deal about 3D structure &mdash; it knows what objects look like from many angles, how lighting interacts with surfaces, and what geometries are physically plausible.</p>
+
+                <h3 id="score-distillation-sampling">2.1 Optimization-based Lifting: Score Distillation Sampling</h3>
+
+                <p>The landmark work <strong>DreamFusion</strong> (Poole et al., 2022) introduced a principled way to distill this 2D knowledge into a 3D representation. The approach requires <em>no 3D training data whatsoever</em> &mdash; only a frozen, pre-trained text-to-image diffusion model and a differentiable 3D renderer.</p>
+
+                <p>The workflow proceeds in four steps, iterated until convergence:</p>
+
+                <ol>
+                    <li><strong>Initialize</strong> a 3D representation &mdash; typically a Neural Radiance Field (NeRF) &mdash; with random parameters $\theta$.</li>
+                    <li><strong>Render</strong> the current NeRF from a randomly sampled camera viewpoint, producing a 2D image $\mathbf{x} = g(\theta)$ via the differentiable renderer $g$.</li>
+                    <li><strong>Critique</strong> the rendered image by passing it to the frozen 2D diffusion model (the "teacher"). The teacher evaluates how realistic the image looks given the text prompt $y$, effectively asking: <em>"Does this 2D rendering look like a plausible photograph of the described object?"</em></li>
+                    <li><strong>Update</strong> the 3D parameters $\theta$ by backpropagating the teacher's feedback through the renderer.</li>
+                </ol>
+
+                <figure>
+                    <!-- TODO: convert Fig2.pdf to Fig2.png -->
+                    <img src="group8_images/Fig2.png" alt="SDS feedback loop diagram">
+                    <figcaption><strong>Fig. 2.</strong> DreamFusion's SDS pipeline: a NeRF is rendered from a random viewpoint, noise is added, and the frozen Imagen model predicts the noise — the difference between predicted and actual noise provides the gradient to update the NeRF weights.</figcaption>
+                </figure>
+
+                <p>The mathematical engine driving this loop is <strong>Score Distillation Sampling (SDS)</strong>. Rather than backpropagating through the full diffusion model (which is computationally prohibitive and numerically unstable), SDS provides an efficient gradient estimate by comparing the noise predicted by the diffusion teacher $\hat{\epsilon}_\phi$ against the actual noise $\epsilon$ that was added:</p>
+
+                $$\nabla_\theta \mathcal{L}_{\text{SDS}} = \mathbb{E}_{t,\epsilon}\left[ w(t) \left( \hat{\epsilon}_\phi(z_t; y, t) - \epsilon \right) \frac{\partial g(\theta)}{\partial \theta} \right]$$
+
+                <p>Here $z_t$ is the rendered image $g(\theta)$ with noise added at diffusion timestep $t$, $w(t)$ is a timestep-dependent weighting, and $\hat{\epsilon}_\phi(z_t; y, t)$ is the noise predicted by the frozen diffusion model conditioned on text prompt $y$. The term $\frac{\partial g(\theta)}{\partial \theta}$ is the Jacobian of the differentiable renderer, which propagates the 2D signal back into 3D parameter space.</p>
+
+                <p>Intuitively, SDS computes a <em>direction of improvement</em>: the difference $(\hat{\epsilon}_\phi - \epsilon)$ tells us which way to push the rendered image so that it moves toward the high-density region of the diffusion model's learned distribution &mdash; that is, toward images that look more realistic and more consistent with the text prompt. This gradient is then backpropagated through the renderer to update the underlying 3D geometry and appearance. In essence, the 2D diffusion model acts as a frozen critic that never needs to be updated, while the 3D representation is iteratively sculpted to satisfy the critic from every viewpoint.</p>
+
+                <p>This is a remarkable "cheat code": we sidestep the 3D data bottleneck entirely by leveraging the implicit 3D understanding embedded in billions of 2D photographs.</p>
+
+                <h3 id="critical-failures-of-lifting-methods">2.2 Critical Failures of Lifting Methods</h3>
+
+                <p>Despite its elegance, optimization-based lifting suffers from three fundamental limitations that prevent it from being production-ready:</p>
+
+                <p><strong>The Janus Problem.</strong> Because the 2D diffusion teacher evaluates one rendered view at a time, it has <em>no global awareness of 3D consistency</em>. Each viewpoint is judged independently, which can lead to a pathological failure: the optimizer may place a face on every side of a head, or duplicate salient features across multiple views, because doing so locally satisfies each 2D critique. The result is <strong>multi-faced, geometrically incoherent objects</strong> &mdash; a defect named after the Roman god Janus, who is depicted with two faces. This artifact is particularly common for objects with a clearly defined "front" (faces, animals, vehicles).</p>
+
+                <figure>
+                    <img src="group8_images/Fig3.png" alt="The Janus Problem">
+                    <figcaption><strong>Fig. 3.</strong> The Janus Problem, named after the two-faced Roman god. When a 2D teacher judges each view independently, the optimizer may place duplicate features on multiple sides, producing geometrically incoherent objects.</figcaption>
+                </figure>
+
+                <p><strong>Optimization Latency.</strong> Because DreamFusion and its variants <em>optimize</em> each asset from scratch through hundreds or thousands of rendering-critique-update iterations, generating a single 3D object typically requires <strong>30 to 60 minutes of GPU time</strong>. This per-asset cost makes real-time or interactive applications impractical and rules out workflows that require generating thousands of assets at scale.</p>
+
+                <p><strong>The SDS Trade-off.</strong> The mode-seeking nature of SDS tends to produce results that are <strong>over-saturated and cartoonish</strong>. To simultaneously satisfy the diffusion critic across all viewpoints, the optimization often converges to an "averaged" appearance that sacrifices fine textures and subtle details. Colors become unnaturally vivid, surfaces lose high-frequency detail, and the outputs lack the photorealism achievable in 2D generation.</p>
+
+                <p>The root cause of all three problems is the same: 2D models are fundamentally <em>blind</em> to 3D space. They can judge one 2D slice at a time, but they cannot reason about volumetric consistency, occlusion relationships, or global geometry. Overcoming these limitations requires moving beyond 2D priors toward models that natively understand three dimensions.</p>
+
+                <h3 id="multi-view-generation">2.3 Multi-view Generation: A Middle Ground</h3>
+
+                <p>Before abandoning 2D priors entirely, researchers explored a compelling intermediate strategy: <strong>generate consistent multi-view images first, then reconstruct 3D from those views</strong>. This paradigm retains the power of 2D diffusion models while introducing explicit mechanisms for cross-view consistency.</p>
+
+                <p><strong>One-2-3-45++</strong> (Liu et al., 2024) exemplifies this approach with a pipeline that transforms a single input image into a detailed textured mesh in under one minute:</p>
+
+                <ol>
+                    <li><strong>Consistent Multi-view Generation.</strong> A fine-tuned 2D diffusion model (based on Stable Diffusion) generates six views of the object simultaneously. Rather than predicting each view independently, the model tiles all six views into a single composite image, allowing the diffusion process to enforce inter-view consistency through shared attention. The input image provides both local conditioning (via reference attention) and global conditioning (via CLIP features).</li>
+                    <li><strong>Multi-view Conditioned 3D Diffusion.</strong> The generated multi-view images are fed to a pair of 3D-native diffusion networks operating in a coarse-to-fine manner. First, a 3D convolutional UNet denoises a low-resolution ($64^3$) occupancy volume to capture the overall shape. This coarse volume is then subdivided, and a second diffusion network using 3D sparse convolution refines the shape into a high-resolution ($128^3$) sparse volume with SDF and color predictions. Multi-view features (extracted via DINOv2 and back-projected into 3D) guide both stages, providing rich local conditioning.</li>
+                    <li><strong>Texture Refinement.</strong> A lightweight optimization pass refines the mesh texture by leveraging the consistent multi-view images as supervision, producing the final textured 3D output.</li>
+                </ol>
+
+                <figure>
+                    <img src="group8_images/Fig4.png" alt="One-2-3-45++ pipeline">
+                    <figcaption><strong>Fig. 4.</strong> The One-2-3-45++ pipeline: single image to multi-view generation to 3D-native diffusion and mesh extraction.</figcaption>
+                </figure>
+
+                <p>This approach offers substantial improvements over pure SDS-based lifting:</p>
+
+                <ul>
+                    <li><strong>Speed:</strong> The entire pipeline completes in roughly <strong>one minute</strong> on a single A100 GPU, compared to 30&ndash;60 minutes for DreamFusion-style methods.</li>
+                    <li><strong>View Consistency:</strong> By generating all views jointly in a single diffusion pass, the multi-face Janus problem is significantly mitigated.</li>
+                    <li><strong>Quality:</strong> The 3D-native diffusion stages, trained on actual 3D data from Objaverse, produce geometrically coherent volumes rather than relying on per-view optimization.</li>
+                </ul>
+
+                <p>However, multi-view methods still inherit limitations from their 2D backbone. The quality of the final 3D asset is bounded by the consistency of the generated multi-view images &mdash; any remaining cross-view discrepancies propagate into geometric artifacts during reconstruction. The 2D diffusion model, while fine-tuned for this task, was not originally designed to reason about 3D geometry, and its implicit 3D understanding has limits.</p>
+
+                <p>Still, the multi-view paradigm represents an important conceptual bridge. By introducing 3D-native diffusion networks in the reconstruction stage, One-2-3-45++ demonstrates that the field is already moving toward models that operate directly in 3D space. The natural next question is: <strong>can we cut out the 2D middleman entirely and generate 3D content natively?</strong> This is the frontier we explore in the remainder of this survey.</p>
+            </section>
+
+            <!-- ====== Section 3: Transitioning to Native 3D Generation ====== -->
+            <section>
+                <h2 id="transitioning-to-native-3d-generation">3. Transitioning to Native 3D Generation</h2>
+
+                <p>The limitations of 2D-to-3D lifting &mdash; the Janus problem, optimization latency, and the inherent blindness of 2D priors to volumetric structure &mdash; point to a clear conclusion: if we want 3D models that are fast, consistent, and geometrically coherent, we must train them <em>directly on 3D data</em>. This realization gave rise to the <strong>native 3D generation</strong> paradigm: models that learn from explicit 3D geometric datasets, produce outputs through feed-forward inference rather than iterative optimization, and reason in three dimensions from the ground up. No rendering-critique loops, no per-asset optimization &mdash; just a single forward pass from input to 3D output.</p>
+
+                <h3 id="what-makes-a-model-native">3.1 What Makes a Model "Native"?</h3>
+
+                <p>The distinction between 2D-lifting and native 3D generation is not merely architectural &mdash; it reflects a fundamentally different philosophy about where 3D knowledge should come from. The following table summarizes the key differences:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>2D-Lifting (Optimization)</th>
+                            <th>Native 3D (Inference)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Knowledge Source</td>
+                            <td>2D Image Priors (Implicit)</td>
+                            <td>3D Geometric Datasets (Explicit)</td>
+                        </tr>
+                        <tr>
+                            <td>Process</td>
+                            <td>Iterative Optimization</td>
+                            <td>Feed-forward Inference</td>
+                        </tr>
+                        <tr>
+                            <td>Speed</td>
+                            <td>Minutes to Hours</td>
+                            <td>Milliseconds to Seconds</td>
+                        </tr>
+                        <tr>
+                            <td>Consistency</td>
+                            <td>Heuristic (Janus-prone)</td>
+                            <td>Inherently 3D Consistent</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>In a 2D-lifting approach like DreamFusion, the model never sees actual 3D geometry during training &mdash; it relies on the <em>implicit</em> 3D understanding embedded in billions of 2D photographs. A native 3D model, by contrast, is trained on <em>explicit</em> 3D supervision: meshes, point clouds, voxel grids, or neural fields drawn from datasets like Objaverse and ShapeNet. This shift from implicit to explicit 3D knowledge is what eliminates the Janus problem at its root and enables generation in milliseconds rather than minutes.</p>
+
+                <p>But before we can train generative models on 3D data, we need to decide how to represent that data. Unlike 2D images, which live on a uniform pixel grid, the 3D world offers no single canonical representation &mdash; and the choice of representation profoundly shapes what a generative model can learn, how efficiently it can operate, and what artifacts it will produce.</p>
+
+                <h3 id="early-representations">3.2 Early Representations: The Building Blocks</h3>
+
+                <p>The landscape of 3D representations can be broadly divided into <strong>discrete</strong> (explicit) and <strong>continuous</strong> (implicit) families. Each makes different trade-offs between memory efficiency, geometric fidelity, and compatibility with generative modeling.</p>
+
+                <p><strong>Voxels</strong> are the most direct 3D analogue of pixels: a regular grid of volume elements, where each cell stores an occupancy value (or color, density, etc.). The appeal is conceptual simplicity &mdash; voxels inherit the spatial regularity that makes 2D convolutions so effective, and standard 3D CNNs can operate on them directly. The fatal limitation is <strong>cubic memory scaling</strong>: a voxel grid of resolution $N$ requires $O(N^3)$ storage. At $64^3$ this is manageable (~260K voxels), but at $512^3$ the grid contains over 134 million cells &mdash; far beyond the memory budget of consumer GPUs. In practice, voxel-based methods are confined to low resolutions, producing characteristically blocky outputs that lack fine geometric detail.</p>
+
+                <p><strong>Point clouds</strong> take a radically different approach: instead of filling all of space, they represent a shape as a set of discrete $(x, y, z)$ coordinates sampled on the object's surface (often with associated colors or normals). Memory scales as $O(N)$ in the number of points, making point clouds vastly more efficient than voxels for a given level of surface detail. However, point clouds are fundamentally <strong>unstructured</strong>: they carry no information about surface connectivity, topology, or the space between points. A point cloud of a coffee mug is just a cloud of dots &mdash; it cannot tell you which points form the handle versus the rim, and converting it to a watertight mesh is a non-trivial reconstruction problem that often introduces artifacts.</p>
+
+                <figure>
+                    <img src="group8_images/Fig5.png" alt="Voxel grid and point cloud comparison">
+                    <figcaption><strong>Fig. 5.</strong> Discrete 3D representations: voxel grids (left) vs. point clouds (right). <em>(Generated by ChatGPT Images 2.0)</em></figcaption>
+                </figure>
+
+                <p><strong>Signed Distance Functions (SDFs)</strong> belong to the continuous representation family. An SDF is a function $f: \mathbb{R}^3 \to \mathbb{R}$ that maps any point in space to the signed distance to the nearest surface: negative values indicate the interior of the object, positive values indicate the exterior, and the <strong>zero-crossing</strong> $\{x : f(x) = 0\}$ defines the surface itself. In practice, $f$ is parameterized by a neural network (often an MLP), making the representation <strong>resolution-independent</strong> &mdash; the surface can be queried at arbitrary precision without increasing memory. SDFs naturally produce smooth, watertight surfaces, and meshes can be extracted via algorithms like Marching Cubes. The challenge for generative modeling is that each shape is encoded as the <em>weights of a neural network</em>, and generating a new set of MLP weights from scratch is a fundamentally harder problem than generating a grid of values.</p>
+
+                <figure>
+                    <img src="group8_images/Fig6.png" alt="SDF visualization">
+                    <figcaption><strong>Fig. 6.</strong> Signed Distance Function (SDF): the zero-crossing of the distance field defines the object surface. <em>(Generated by ChatGPT Images 2.0)</em></figcaption>
+                </figure>
+
+                <p><strong>Neural Radiance Fields (NeRFs)</strong> extend the continuous representation idea to include appearance. A NeRF represents a 3D scene as a function $F_\Theta: (\mathbf{x}, \mathbf{d}) \mapsto (\mathbf{c}, \sigma)$ that maps a spatial coordinate $\mathbf{x}$ and viewing direction $\mathbf{d}$ to an RGB color $\mathbf{c}$ and volumetric density $\sigma$. Novel views are rendered by casting rays through the volume and integrating color and density along each ray via volume rendering. NeRFs achieve photorealistic quality and are resolution-independent, but they share the same generative challenge as SDFs: each scene is a separate neural network, and producing <em>new</em> NeRFs requires either per-scene optimization or learning to generate network parameters directly.</p>
+
+                <figure>
+                    <!-- TODO: convert Fig7.pdf to Fig7.png -->
+                    <img src="group8_images/Fig7.png" alt="NeRF rendering example">
+                    <figcaption><strong>Fig. 7.</strong> Neural Radiance Fields (NeRFs): a network $F_\Theta$ maps 5D input (position + direction) to color and density. Novel views are synthesized by volume rendering along camera rays, supervised by photometric loss against ground-truth images.</figcaption>
+                </figure>
+
+                <p>In summary, the representation landscape presents a dilemma. Discrete representations (voxels, point clouds) are easy to generate but lack either resolution or structure. Continuous representations (SDFs, NeRFs) offer unlimited resolution and photorealism but are hard to produce with feed-forward generative models. The earliest native 3D generators navigated this tension by working with the most generation-friendly representations &mdash; point clouds &mdash; and accepting the resulting quality trade-offs.</p>
+
+                <h3 id="point-e">3.3 Point-E: Fast but Coarse</h3>
+
+                <p><strong>Point-E</strong> (Nichol et al., 2022) was one of the first systems to demonstrate that text-to-3D generation could be made practical by operating directly on 3D data rather than optimizing through 2D priors. The key insight was architectural simplicity: rather than solving the full text-to-3D problem in a single model, Point-E decomposes it into two well-understood sub-problems connected in a pipeline.</p>
+
+                <p><strong>Stage 1: Text to Synthetic View.</strong> A text prompt (e.g., <em>"a corgi"</em>) is fed to a fine-tuned version of GLIDE, a 3-billion-parameter text-to-image diffusion model trained on rendered views of 3D assets. GLIDE produces a single synthetic image that serves as a visual bridge between language and geometry.</p>
+
+                <p><strong>Stage 2: Image to Point Cloud.</strong> The synthetic image conditions a stack of point cloud diffusion models built on a Transformer architecture. A base model first generates a coarse point cloud of 1,024 points, and an upsampler refines it to 4,096 points with associated RGB colors. Each point is represented as a 6-dimensional vector $(x, y, z, r, g, b)$, and the diffusion process operates directly on this $K \times 6$ tensor &mdash; starting from Gaussian noise and iteratively denoising into a coherent colored point cloud. Crucially, the model is <strong>permutation-invariant</strong>: it uses no positional encodings, treating the point cloud as an unordered set.</p>
+
+                <figure>
+                    <img src="group8_images/Fig8.png" alt="Point-E pipeline">
+                    <figcaption><strong>Fig. 8.</strong> The Point-E pipeline: text-to-image via GLIDE, then image-conditioned point cloud diffusion. <em>(Combined from two figures in the original paper using ChatGPT Images 2.0)</em></figcaption>
+                </figure>
+
+                <p>The practical impact was striking. Point-E produces a 3D object in approximately <strong>1&ndash;2 V100-minutes</strong> (with the text-to-image step; the point cloud diffusion alone takes roughly 16 V100-seconds), compared to the 12+ V100-hours required by DreamFusion. This represents a speedup of one to two orders of magnitude. On the CLIP R-Precision benchmark (which measures alignment between generated 3D objects and text prompts), Point-E achieved 45.6% (ViT-L/14, 300M model) &mdash; below optimization-based methods like DreamFusion (79.7%) but at a fraction of the compute cost.</p>
+
+                <p>However, the limitations of the point cloud representation quickly became apparent. With only 4,096 points, the geometric detail is inherently coarse &mdash; fine features like thin handles, intricate textures, or small appendages are poorly captured. The point cloud-to-mesh conversion step (which fits an SDF via regression and applies Marching Cubes) introduces further information loss. And the two-stage pipeline means errors compound: if GLIDE produces a misleading synthetic view, the point cloud model has no mechanism to recover. The authors themselves acknowledged that Point-E "still falls short of the state-of-the-art in terms of sample quality," positioning it as a practical trade-off rather than a quality frontier.</p>
+
+                <h3 id="why-direct-generation-isnt-enough">3.4 Why Direct Generation Isn't Enough</h3>
+
+                <p>Point-E proved that native 3D generation is viable and fast, but it also exposed three fundamental bottlenecks that limit direct generation approaches:</p>
+
+                <p><strong>The Dimensionality Constraint.</strong> Any representation that discretizes 3D space on a regular grid faces cubic scaling: $O(N^3)$ memory and compute for resolution $N$. A $64^3$ voxel grid is tractable; a $256^3$ grid is expensive; a $512^3$ grid &mdash; the resolution needed for production-quality assets &mdash; exceeds the memory of most GPUs. Even point clouds, which scale linearly, require tens of thousands of points to capture fine detail, pushing against the sequence-length limits of Transformer architectures. The dimensionality of raw 3D data is simply too high for direct generative modeling at the resolutions that downstream applications demand.</p>
+
+                <p><strong>Geometric Discontinuity.</strong> Point clouds lack surface connectivity, making them ill-suited for applications that require watertight meshes, physics simulation, or UV mapping. Converting point clouds to meshes is a lossy, error-prone post-processing step. Meshes themselves are non-differentiable (vertex positions and face connectivity are discrete), making them difficult to optimize with gradient-based methods. SDFs and NeRFs are smooth and differentiable but encode each shape as a separate neural network, complicating generation. No single raw representation is simultaneously generation-friendly, high-resolution, and application-ready.</p>
+
+                <p><strong>The Diversity Gap.</strong> Training a single generative model to produce diverse 3D objects across thousands of categories (chairs, animals, vehicles, buildings) with a unified architecture is remarkably unstable when operating directly in raw 3D space. The geometric variation across categories is enormous &mdash; the topology of a donut is fundamentally different from that of a tree &mdash; and direct methods often require category-specific templates or architectures to achieve acceptable quality. Open-vocabulary, cross-category generation remains elusive for models that operate in raw representation space.</p>
+
+                <div class="info-block">
+                    <p>The conclusion is clear: high-resolution, diverse, and application-ready 3D generation cannot be achieved by scaling up direct methods alone. What is needed is a way to <strong>compress</strong> the high-dimensional 3D data into a compact, structured <strong>latent space</strong> &mdash; one that tames the dimensionality curse, abstracts away representation-specific discontinuities, and enables a single generative model to operate across diverse categories. This is precisely the insight that drives the latent 3D generation paradigm.</p>
+                </div>
+            </section>
+
+            <!-- ====== Section 4: Latent 3D Generation ====== -->
+            <section>
+                <h2 id="latent-3d-generation">4. Latent 3D Generation</h2>
+
+                <p>The bottlenecks of direct 3D generation &mdash; cubic dimensionality, geometric discontinuity, and cross-category diversity &mdash; all share a common root: the generative model is forced to operate in a raw, high-dimensional representation space that was never designed for generation. The same realization catalyzed the transition from pixel-space to latent-space diffusion in 2D imaging, and it now drives the most significant advances in 3D.</p>
+
+                <h3 id="why-latent-space">4.1 Why Latent Space?</h3>
+
+                <p>The 2D success story is instructive. Stable Diffusion does not denoise in pixel space. Instead, a pre-trained VAE compresses each $H \times W$ image into a much smaller $h \times w$ latent grid, the diffusion model operates entirely in that compressed space, and a decoder maps the denoised latent back to pixels. This division of labor is crucial: the VAE absorbs the burden of high-frequency detail and perceptual fidelity, freeing the diffusion model to focus on semantic structure and global coherence in a space that is orders of magnitude smaller.</p>
+
+                <p>The same insight applies to 3D. Rather than asking a diffusion model to generate millions of voxel values, tens of thousands of point coordinates, or the weights of an implicit neural field, we can first learn an <strong>encoder</strong> that compresses 3D data into a compact latent representation, train a <strong>diffusion (or flow) model</strong> to generate new samples in that latent space, and then use a <strong>decoder</strong> to map the generated latent back to a full 3D output. The general pipeline is:</p>
+
+                $$\text{3D Data} \xrightarrow{\text{Encoder}} \mathbf{z} \in \text{Latent Space} \xrightarrow{\text{Diffusion / Flow}} \hat{\mathbf{z}} \xrightarrow{\text{Decoder}} \text{3D Output}$$
+
+                <p>This factorization offers three immediate benefits. First, the latent space is far lower-dimensional than the raw 3D representation, making the generative modeling problem tractable. Second, the encoder and decoder can be tailored to a specific 3D representation (meshes, SDFs, radiance fields) while the generative model sees only a uniform latent interface, enabling cross-representation flexibility. Third, the compressed latent can be aligned with other modalities &mdash; images, text &mdash; via contrastive or other alignment losses, enabling conditional generation from diverse inputs.</p>
+
+                <p>But as we will see, not all latent spaces are created equal. The <strong>design</strong> of the 3D latent space &mdash; its structure, compactness, and localizability &mdash; turns out to be the central factor that separates early, blurry results from the high-fidelity generation we see today.</p>
+
+                <h3 id="michelangelo">4.2 Michelangelo: The First Latent 3D Pipeline</h3>
+
+                <p><strong>Michelangelo</strong> (Zhao et al., 2023) was among the first works to instantiate the latent 3D generation paradigm end-to-end. Its core idea is <em>alignment before generation</em>: align the 3D shape latent space with the image and text modalities first, then train a diffusion model to generate in the aligned space. The framework comprises three stages:</p>
+
+                <p><strong>Stage 1 &mdash; SITA-VAE (Shape-Image-Text-Aligned Variational Auto-Encoder).</strong> A perceiver-based 3D shape encoder ingests a point cloud sampled from the object surface and compresses it into a sequence of shape latent embeddings $\mathbf{E}_s$ via cross-attention with a set of learnable query tokens. Crucially, the encoder is trained not only with a reconstruction loss and KL divergence but also with <strong>contrastive losses</strong> that pull the shape embeddings close to the corresponding CLIP image and text embeddings in a shared feature space. This multi-modal alignment bridges the distribution gap between 3D shapes and the 2D image/text domains, enabling the downstream diffusion model to condition effectively on either modality. A transformer-based decoder reconstructs the occupancy field from the shape embeddings: given a query 3D point $\mathbf{x}$, it computes iterative cross-attention against $\mathbf{E}_s$ to predict the occupancy value $\mathcal{O}(\mathbf{x})$.</p>
+
+                <p><strong>Stage 2 &mdash; ASLDM (Aligned Shape Latent Diffusion Model).</strong> With the SITA-VAE frozen, an aligned shape latent diffusion model is trained to denoise in the learned latent space. The ASLDM uses a UNet-like skip-connection-based transformer architecture conditioned on CLIP image or text features. It learns the probabilistic mapping from image or text inputs to shape latent embeddings, generating new shape embeddings that are semantically consistent with the conditioning input.</p>
+
+                <p><strong>Stage 3 &mdash; Decoding to Mesh.</strong> The generated shape embeddings are passed to the frozen SITA-VAE decoder, which predicts an occupancy field. The occupancy field is then converted to an explicit mesh via Marching Cubes.</p>
+
+                <figure>
+                    <!-- TODO: convert Fig10.pdf to Fig10.png -->
+                    <img src="group8_images/Fig10.png" alt="Michelangelo pipeline">
+                    <figcaption><strong>Fig. 9.</strong> Michelangelo architecture: (a) SITA-VAE encodes a point cloud into shape latent embeddings aligned with CLIP image/text features via contrastive losses, then decodes to an occupancy field; (b) ASLDM denoises in the aligned latent space to generate new shapes.</figcaption>
+                </figure>
+
+                <figure>
+                    <!-- TODO: convert miche_result.pdf to miche_result.png -->
+                    <img src="group8_images/miche_result.png" alt="Michelangelo generation results">
+                    <figcaption><strong>Fig. 10.</strong> Michelangelo image-conditioned generation results compared to baselines (3DILG, 3DS2V). Shapes are recognizable but lack fine geometric detail, with surfaces appearing over-smoothed.</figcaption>
+                </figure>
+
+                <p>Michelangelo successfully validated the latent 3D generation concept: it could produce 3D shapes from text or image inputs in a single forward pass, with outputs that were semantically aligned to the conditioning signal. However, the results were notably <strong>blurry and low-resolution</strong> &mdash; shapes were recognizable but lacked fine geometric detail, with surfaces appearing over-smoothed and small features washed out.</p>
+
+                <p>What went wrong? Part of the answer is the familiar VAE compression bottleneck: any lossy encoding sacrifices some detail, and the reconstruction quality of the VAE sets an upper bound on generation quality. But this alone does not explain the gap. After all, 2D latent diffusion models also use VAE compression and still produce strikingly detailed images. The deeper issue lies in a structural difference between 2D and 3D latent spaces &mdash; one that Michelangelo's design did not address.</p>
+
+                <h3 id="structured-vs-unstructured-latents">4.3 The Core Insight: Structured vs. Unstructured Latents</h3>
+
+                <p>To understand why early 3D latent diffusion models lagged so far behind their 2D counterparts, we need to examine what makes a latent space "easy" for a generative model to work with.</p>
+
+                <p>In 2D latent diffusion, the latent space is <strong>highly structured</strong>. The VAE encoder compresses an $H \times W$ image into an $h \times w$ grid of latent codes, where each code corresponds to a specific spatial patch of the original image. This grid structure is inherited directly from the pixel grid: the latent code at position $(i, j)$ always describes the content of the same image region. As a result, the diffusion model never has to learn <em>where</em> things go &mdash; spatial layout is baked into the grid. It only needs to learn <em>what</em> to generate at each location. This decomposition makes the generation task dramatically simpler.</p>
+
+                <figure>
+                    <img src="group8_images/Fig11.png" alt="2D vs 3D latent space comparison">
+                    <figcaption><strong>Fig. 11.</strong> Structured 2D latents (grid-aligned) vs. unstructured 3D latents (learnable queries with no spatial anchoring). <em>(Generated by ChatGPT Images 2.0)</em></figcaption>
+                </figure>
+
+                <p>In contrast, the 3D latent space used by Michelangelo (and similar early methods) is <strong>unstructured</strong>. The encoder produces a set of latent tokens through learnable queries, but these tokens have no fixed correspondence to spatial regions of the 3D shape. Each token captures some global mixture of shape information, with little localizability &mdash; you cannot point to a token and say "this one describes the handle of the mug." The diffusion model must therefore jointly learn both <strong>where</strong> to place structure in 3D space and <strong>what</strong> content to generate at each location. This joint learning problem is fundamentally harder: the model must simultaneously discover the spatial layout of the shape and fill in its fine details, navigating a much larger and more ambiguous search space.</p>
+
+                <p>This is the core insight that separates the first generation of 3D latent methods from the current state of the art:</p>
+
+                <div class="info-block">
+                    <p><strong>Jointly learning structure and content makes 3D generation unnecessarily hard. The key to better 3D generation is designing a latent space that is both compact <em>and</em> structured &mdash; one that separates the "where" from the "what."</strong></p>
+                </div>
+
+                <p>Two leading paradigms have emerged in pursuit of this goal: <strong>VecSet</strong>, which compresses 3D shapes into compact token sets with implicit spatial correlation, and <strong>Sparse Voxel</strong>, which anchors latent codes to explicit 3D grid positions. More recently, a third paradigm &mdash; <strong>VoxSet</strong> &mdash; combines the best properties of both. We examine each in turn.</p>
+
+                <h3 id="vecset">4.4 VecSet: From Radial Basis Functions to Latent Tokens</h3>
+
+                <p>The VecSet representation, introduced by <strong>3DShape2VecSet</strong> (Zhang et al., 2023), takes a principled approach to designing a compact 3D latent space. Rather than inventing a representation from scratch, the authors trace an elegant derivation that starts from classical radial basis functions and arrives at a modern, attention-based latent set through three progressive upgrades.</p>
+
+                <p><strong>Step 1: Classical RBF.</strong> A continuous function (such as an occupancy field) can be approximated by a weighted sum of radial basis functions centered at a set of anchor points:</p>
+
+                $$\hat{\mathcal{O}}_{\text{RBF}}(\mathbf{x}) = \sum_{i=1}^{M} \lambda_i \cdot \varphi(\|\mathbf{x} - \mathbf{x}_i\|)$$
+
+                <p>Here $\varphi$ is a handcrafted radial kernel that measures similarity between the query point $\mathbf{x}$ and each anchor $\mathbf{x}_i$, and $\lambda_i \in \mathbb{R}$ is a scalar weight. The representation of a shape is the set $\{\lambda_i \in \mathbb{R},\, \mathbf{x}_i \in \mathbb{R}^3\}_{i=1}^M$. This is conceptually clean but practically limited: because each anchor carries only a scalar weight, a very large number of points ($M$ on the order of tens of thousands) is needed to capture fine detail.</p>
+
+                <p><strong>Step 2: Neural Field Upgrade.</strong> The first improvement replaces the scalar weights $\lambda_i$ with learned <strong>feature vectors</strong> $\mathbf{f}_i \in \mathbb{R}^C$, and decodes via an MLP rather than direct summation:</p>
+
+                $$\hat{\mathcal{O}}(\mathbf{x}) = \text{MLP}(\mathbf{f}_{\mathbf{x}}), \quad \mathbf{f}_{\mathbf{x}} = \sum_{i=1}^{M} \mathbf{f}_i \cdot \frac{\varphi(\mathbf{x}, \mathbf{x}_i)}{Z(\mathbf{x}, \{\mathbf{x}_i\}_{i=1}^M)}$$
+
+                <p>where $Z$ is a normalizing factor. The representation becomes $\{\mathbf{f}_i \in \mathbb{R}^C,\, \mathbf{x}_i \in \mathbb{R}^3\}_{i=1}^M$. Because each anchor now carries a rich, high-dimensional feature rather than a single scalar, significantly fewer anchors are needed to represent the same level of detail. However, the kernel $\varphi$ is still handcrafted, and the explicit coordinates $\mathbf{x}_i$ must be stored.</p>
+
+                <p><strong>Step 3: Attention Replaces Kernels.</strong> The final step replaces the handcrafted kernel $\varphi$ with <strong>cross-attention</strong>, and drops the requirement for explicit anchor coordinates:</p>
+
+                $$\hat{\mathcal{O}}(\mathbf{x}) = \text{FC}(\mathbf{f}_{\mathbf{x}}), \quad \mathbf{f}_{\mathbf{x}} = \text{CrossAttn}(\mathbf{x},\, \mathbf{f})$$
+
+                <p>The cross-attention mechanism learns to compute the interpolation weights directly from the query coordinate and the latent features, subsuming the role of the radial kernel. The explicit coordinates $\{\mathbf{x}_i\}$ are no longer needed &mdash; the representation reduces to a pure set of latent vectors:</p>
+
+                $$\text{VecSet}: \quad \{\mathbf{f}_i \in \mathbb{R}^C\}_{i=1}^M$$
+
+                <p>This is the VecSet representation: a 3D shape is encoded as a fixed-length array of $M$ latent vectors, each of dimension $C$. The decoder recovers the occupancy (or SDF) value at any query point $\mathbf{x}$ by cross-attending against this latent set and passing the result through a fully connected layer.</p>
+
+                <figure>
+                    <img src="group8_images/Fig12.png" alt="VecSet evolution from RBF to cross-attention">
+                    <figcaption><strong>Fig. 12.</strong> The VecSet auto-encoder pipeline: a point cloud is surface-sampled, encoded into latent vectors via cross-attention with KL regularization, then decoded back to an isosurface via cross-attention at query points.</figcaption>
+                </figure>
+
+                <p><strong>Encoder Design: Learnable vs. Point Queries.</strong> To encode a point cloud into a VecSet, 3DShape2VecSet proposes two strategies. The first uses <strong>learnable queries</strong> &mdash; a fixed set of learned embeddings that cross-attend into the input point cloud (this is the approach Michelangelo adopted). The second uses <strong>point queries</strong> &mdash; a subset of points sampled from the input point cloud itself (via farthest point sampling), whose positional embeddings serve as the query set.</p>
+
+                <p>Ablation studies in the original paper show that point queries consistently outperform learnable queries. The reasons are twofold. First, point queries are <strong>input-dependent</strong>: each query is tied to an actual surface location, so the resulting latent tokens are naturally correlated with specific spatial regions of the shape. This means that even though the VecSet representation discards explicit coordinates, each latent token <em>implicitly</em> encodes positional information &mdash; it "secretly" knows which region of the shape it describes. Second, point queries enable <strong>flexible token counts</strong>: the number of queries can be varied at encoding and decoding time (e.g., starting from 1,024 during training and scaling to 3,072 at test time for better quality), whereas learnable queries are fixed at training time.</p>
+
+                <figure>
+                    <img src="group8_images/vecset_encoder.png" alt="VecSet encoder: learnable queries vs point queries">
+                    <figcaption><strong>Fig. 13.</strong> VecSet encoder design: (a) learnable queries use fixed embeddings, (b) point queries subsample from the input point cloud, yielding input-dependent, spatially correlated tokens.</figcaption>
+                </figure>
+
+                <p><strong>Strengths.</strong> VecSet is remarkably compact and efficient &mdash; as few as 512 latent vectors of dimension 512 can represent a full 3D shape with high fidelity. The representation is naturally compatible with Transformer architectures (it is just a set of tokens), and its flexible token count enables progressive training strategies that reduce cost.</p>
+
+                <p><strong>Limitations.</strong> Despite the implicit positional information encoded by point queries, VecSet <strong>lacks explicit spatial structure</strong>. The positional information is hidden inside the latent features and cannot be directly accessed or utilized during generation. The generative model still faces the joint learning problem: it must simultaneously discover the spatial arrangement of the shape and fill in geometric detail. This makes training harder and limits the quality ceiling, particularly for shapes with complex topology or fine surface detail.</p>
+
+                <p>VecSet has nonetheless proven to be a highly influential representation. Follow-up works including <strong>CLAY</strong>, <strong>Hunyuan3D 2.0</strong>, <strong>TripoSG</strong>, and <strong>Step1X-3D</strong> all build on the VecSet paradigm, achieving progressively better results through larger datasets, improved training recipes, and architectural refinements &mdash; but all inherit the fundamental limitation of implicit structure.</p>
+
+                <h3 id="sparse-voxel">4.5 Sparse Voxel: Structure Meets Efficiency</h3>
+
+                <p>If VecSet sacrifices structure for compactness, can we go the other direction &mdash; build a latent space that is explicitly structured, like the 2D pixel grid, without drowning in the $O(N^3)$ cost of dense voxels?</p>
+
+                <p>The answer comes from a simple geometric observation: 3D shapes are <strong>sparse</strong>. A typical object occupies only a small fraction of its bounding volume &mdash; most of the space is empty air. A dense $64^3$ voxel grid contains over 260,000 cells, but only about 20,000 of them (on average) intersect the object's surface. The remaining 93% are wasted storage. By keeping only the <strong>active voxels</strong> &mdash; those that are occupied or near the surface &mdash; we can retain the structural benefits of a 3D grid while dramatically reducing memory and compute.</p>
+
+                <p>This idea, introduced in <strong>XCube</strong> and brought to prominence by <strong>Trellis</strong> (Xiang et al., CVPR 2025), yields the <strong>Structured LATent (SLAT)</strong> representation:</p>
+
+                $$\mathbf{z} = \{(\mathbf{z}_i, \mathbf{p}_i)\}_{i=1}^L, \quad \mathbf{z}_i \in \mathbb{R}^C, \quad \mathbf{p}_i \in \{0, 1, \ldots, N-1\}^3$$
+
+                <p>Here $\mathbf{p}_i$ is the positional index of an active voxel in the 3D grid, $\mathbf{z}_i$ is a local latent vector attached to that voxel, $N$ is the spatial resolution of the grid, and $L$ is the total number of active voxels. The critical point is that $L \ll N^3$: for a grid with $N = 64$, the average number of active voxels is approximately $L \approx 20\text{K}$, compared to $N^3 \approx 262\text{K}$ for the full dense grid.</p>
+
+                <p>The SLAT representation cleanly separates the "where" from the "what":</p>
+
+                <ul>
+                    <li>The <strong>positions</strong> $\{\mathbf{p}_i\}$ outline the coarse structure of the 3D asset &mdash; where the object exists in space.</li>
+                    <li>The <strong>latents</strong> $\{\mathbf{z}_i\}$ capture the fine-grained details of geometry and appearance &mdash; what the surface looks like at each location.</li>
+                </ul>
+
+                <p>This is almost exactly the same decomposition that makes 2D latent spaces so effective: the grid positions provide structure for free, and the latent codes carry content. The only difference from the 2D case is that we discard the empty cells.</p>
+
+                <p><strong>Encoding.</strong> Trellis constructs the SLAT representation without requiring any pre-fitted 3D data. For each 3D asset, the system first voxelizes the shape to determine the set of active voxels $\{\mathbf{p}_i\}$. To populate the local latents $\{\mathbf{z}_i\}$ with rich information, Trellis leverages the powerful <strong>DINOv2</strong> vision foundation model: it renders dense multi-view images of the 3D asset, extracts feature maps using DINOv2, and back-projects these features onto the active voxels by averaging across views. The resulting voxelized features are then compressed through a Sparse VAE (using a transformer-based encoder-decoder with shifted window attention adapted for 3D sparse tensors) to produce the final structured latents.</p>
+
+                <figure>
+                    <!-- TODO: convert slat_vae.pdf to slat_vae.png -->
+                    <img src="group8_images/slat_vae.png" alt="SLAT Sparse VAE architecture">
+                    <figcaption><strong>Fig. 14.</strong> Structured latent representation learning in Trellis: 3D assets are voxelized, multi-view DINOv2 features are averaged and combined with structural information, then compressed through a Sparse VAE encoder into structured latents and decoded into 3DGS, radiance fields, or meshes.</figcaption>
+                </figure>
+
+                <p><strong>Decoding.</strong> The SLAT representation supports decoding into multiple output formats through separate decoder heads &mdash; <strong>3D Gaussians</strong> for real-time rendering, <strong>Radiance Fields</strong> for photorealistic novel views, and <strong>Meshes</strong> (via FlexiCubes) for downstream applications. Each decoder shares the same transformer architecture but uses format-specific output layers and reconstruction losses.</p>
+
+                <p><strong>Two-Stage Generation.</strong> With the "where" and "what" cleanly separated, Trellis adopts a two-stage generation pipeline that directly exploits this decomposition:</p>
+
+                <ol>
+                    <li><strong>Structure Generation.</strong> A rectified flow transformer $\mathcal{G}_S$ generates the sparse structure $\{\mathbf{p}_i\}_{i=1}^L$ &mdash; the binary occupancy grid indicating which voxels are active. This determines the coarse shape of the object.</li>
+                    <li><strong>Latent Generation.</strong> Given the generated structure, a second rectified flow transformer $\mathcal{G}_L$ (designed for sparse data) generates the local latents $\{\mathbf{z}_i\}_{i=1}^L$ conditioned on the sparse structure and the input text/image.</li>
+                </ol>
+
+                <p>This <strong>decoupled</strong> pipeline is fundamentally easier to train than joint generation. Each model focuses on one sub-problem: the first model only learns spatial layout (where things go), and the second model only learns local content (what things look like), conditioned on the layout. This mirrors the decomposition that makes 2D latent diffusion so effective, and it yields substantially better results than joint approaches.</p>
+
+                <figure>
+                    <!-- TODO: convert Fig13.pdf to Fig13.png -->
+                    <img src="group8_images/Fig13.png" alt="Trellis SLAT overview">
+                    <figcaption><strong>Fig. 15.</strong> The two-stage generation pipeline of Trellis: a flow transformer $\mathcal{G}_S$ generates sparse structures from text/image input, then a sparse flow transformer $\mathcal{G}_L$ generates structured latents, which are decoded into 3DGS, radiance fields, or meshes.</figcaption>
+                </figure>
+
+                <figure>
+                    <!-- TODO: convert trellis_result.pdf to trellis_result.png -->
+                    <img src="group8_images/trellis_result.png" alt="Trellis generation results">
+                    <figcaption><strong>Fig. 16.</strong> Trellis generation results: text-conditioned (top two rows) and image-conditioned (bottom row) 3D assets, showing detailed geometry and textures across diverse categories.</figcaption>
+                </figure>
+
+                <p><strong>Strengths.</strong> The SLAT representation is <strong>highly structured</strong> &mdash; every latent code has an explicit 3D position that can be directly used during generation and downstream tasks like local editing. The decoupled training pipeline is <strong>easier to optimize</strong> than joint approaches, and the locality of the representation enables flexible editing (e.g., modifying only the voxels within a bounding box). Despite the sparsity, the representation remains <strong>relatively compact</strong> compared to dense voxels: $L \ll N^3$ by a large margin.</p>
+
+                <p><strong>Limitations.</strong> Even with sparsity, the active voxel count (~20K) is significantly larger than a typical VecSet (512&ndash;3,072 tokens), making Sparse Voxel representations <strong>less compact</strong> and more computationally expensive for training and inference. The reliance on <strong>sparse convolutions</strong> and specialized sparse tensor libraries adds system complexity that standard Transformer pipelines do not require.</p>
+
+                <p>Follow-up works building on the Sparse Voxel paradigm include <strong>Hi3DGen</strong>, <strong>SparseFlex</strong>, and <strong>Sparc3D</strong>, each pushing the quality and efficiency boundaries further while retaining the core insight of structured sparsity.</p>
+
+                <h3 id="voxset">4.6 VoxSet: The Best of Both Worlds</h3>
+
+                <p>VecSet is compact and Transformer-friendly but lacks explicit structure. Sparse Voxel is richly structured but less compact and system-complex. A natural question arises: can we combine the compactness of VecSet with the explicit structure of Sparse Voxel?</p>
+
+                <p><strong>LATTICE</strong> (Lai et al., 2025) answers this question affirmatively by introducing <strong>VoxSet</strong>, a semi-structured latent representation that merges the two paradigms. The key modification is deceptively simple: replace the <em>point queries</em> used in the VecSet encoder with <strong>voxel queries</strong> &mdash; queries anchored at the centers of active voxels on a coarse 3D grid, rather than at sampled surface points.</p>
+
+                <figure>
+                    <!-- TODO: convert Fig14.pdf to Fig14.png -->
+                    <img src="group8_images/Fig14.png" alt="Lattice VoxSet pipeline">
+                    <figcaption><strong>Fig. 17.</strong> The LATTICE pipeline: a structure generation stage produces a coarse mesh that is voxelized, then the VoxSet VAE and DiT with RoPE-based positional guidance generate detailed geometry, decoded into the final mesh via Marching Cubes.</figcaption>
+                </figure>
+
+                <p>This seemingly minor change has profound consequences. Recall that in VecSet with point queries, each latent token implicitly encodes positional information because it was computed from a specific surface point &mdash; but this information is hidden and inaccessible at generation time, since the point positions are unknown when generating from scratch. Voxel queries solve this problem: because each query is anchored to a voxel on a known grid, the position of every latent token is <strong>explicit and available</strong> during generation. The positions can be obtained at test time by voxelizing the output of any off-the-shelf coarse geometry generator (e.g., Hunyuan3D-2 or Trellis).</p>
+
+                <p>LATTICE adopts a <strong>two-stage pipeline</strong> that leverages this explicit structure:</p>
+
+                <ol>
+                    <li><strong>Structure Generation.</strong> A first-stage model (which can be any existing 3D generator) produces a coarse mesh from the input image. This mesh is voxelized to obtain the sparse set of active voxel positions.</li>
+                    <li><strong>Detailed Geometry Generation.</strong> A rectified flow transformer generates VoxSet latents conditioned on the input image, using the voxel positions from the first stage as <strong>localizable guidance</strong> via Rotary Positional Embedding (RoPE). The generated latents are decoded through the VoxSet VAE to produce a high-resolution SDF, from which the final mesh is extracted via Marching Cubes.</li>
+                </ol>
+
+                <p>The use of RoPE is critical. By injecting the 3D voxel coordinates as positional embeddings into the Transformer, the model can directly exploit spatial structure during the denoising process &mdash; each latent token "knows" where it sits in 3D space. This decouples structure from content in the same spirit as Sparse Voxel methods, but within a pure Transformer framework that avoids sparse convolutions entirely.</p>
+
+                <div class="info-block">
+                    <p><strong>Core Finding.</strong> The authors of LATTICE articulate what is perhaps the most important insight to emerge from the structured latent literature: <strong>localizable guidance is what truly matters for detailed geometry generation.</strong> It is not the latent representation itself (VecSet vs. Sparse Voxel) that determines quality, but whether the generative model has access to explicit spatial information that can decouple the "where" from the "what." VoxSet achieves this by anchoring VecSet tokens to voxel positions and feeding those positions to the Transformer via RoPE.</p>
+                </div>
+
+                <p><strong>Scaling.</strong> LATTICE demonstrates strong scaling behavior in both model size (from 0.6B to 4.5B parameters) and, remarkably, at <strong>test time</strong>: a model trained with 6,144 tokens can be directly evaluated with 12,288 or even 24,576 tokens, yielding consistent quality improvements without retraining. This test-time scaling property stems from the flexibility of the VecSet architecture and the resolution-independence of voxel queries with jittering.</p>
+
+                <h3 id="comparing-structured-3d-latents">4.7 Comparing Structured 3D Latents</h3>
+
+                <p>The three latent representations &mdash; VecSet, Sparse Voxel, and VoxSet &mdash; represent a progression toward latent spaces that are simultaneously compact, structured, and generation-friendly. The following table summarizes their key properties:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Property</th>
+                            <th>VecSet</th>
+                            <th>Sparse Voxel</th>
+                            <th>VoxSet</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Compactness</strong></td>
+                            <td>High</td>
+                            <td>Medium</td>
+                            <td>High</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Structure</strong></td>
+                            <td>Implicit</td>
+                            <td>Explicit</td>
+                            <td>Explicit</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Localizability</strong></td>
+                            <td>Hidden</td>
+                            <td>Direct</td>
+                            <td>Direct</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Training</strong></td>
+                            <td>Joint (harder)</td>
+                            <td>Decoupled</td>
+                            <td>Decoupled</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Backbone</strong></td>
+                            <td>Transformer</td>
+                            <td>Transformer + Sparse Conv</td>
+                            <td>Transformer</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>The progression tells a clear story. VecSet demonstrated that compact latent sets can represent 3D shapes effectively, but its implicit structure forces the generative model into difficult joint learning. Sparse Voxel introduced explicit spatial structure that cleanly decouples the "where" from the "what," making generation easier and output quality substantially higher &mdash; but at the cost of increased latent size and system complexity. VoxSet combines the best of both: it retains VecSet's compactness and Transformer compatibility while adding the explicit, localizable structure that enables decoupled generation and strong scaling.</p>
+
+                <div class="info-block">
+                    <p>The central lesson from this evolution is that <strong>latent space design is the bottleneck of 3D generation</strong>. The same generative architectures (diffusion models, rectified flow transformers) that produce stunning 2D images will underperform in 3D if the latent space forces them to jointly reason about spatial structure and local content. Conversely, a well-designed latent space that provides explicit spatial guidance can dramatically simplify the generation task, closing the gap between 2D and 3D generation quality. How best to represent 3D latents &mdash; balancing compactness, structure, localizability, and compatibility with modern architectures &mdash; remains the "dark cloud" over the field, and the most active frontier of current research.</p>
+                </div>
+            </section>
+
+            <!-- ====== Section 5: Current Trend ====== -->
+            <section>
+                <h2 id="current-trend">5. Current Trend: Combining Generation and Reconstruction</h2>
+
+                <p>While the latent space question remains open, the field is simultaneously expanding the <em>scope</em> of what 3D generation can achieve. One of the most compelling current trends is the unification of <strong>3D generation</strong> and <strong>3D reconstruction</strong> into a single framework &mdash; a direction that mirrors a fundamental human capability and holds particular promise for embodied AI.</p>
+
+                <h3 id="perception-meets-imagination">5.1 Motivation: Perception Meets Imagination</h3>
+
+                <p>Consider a simple everyday act: you see a coffee mug on a table, photographed from the front. You can immediately identify the cat illustration printed on its surface, estimate that you are viewing it from roughly head-on, and &mdash; without any additional observation &mdash; confidently infer that a handle protrudes from the back. You could reach around, grasp the handle, and pour coffee, all from a single glance. This effortless fusion of <strong>perception</strong> (recognizing what is visible) and <strong>imagination</strong> (hallucinating what is hidden) is something humans do constantly, yet it remains remarkably difficult for machines.</p>
+
+                <figure>
+                    <img src="group8_images/cat_mug.png" alt="Coffee mug: perception meets imagination">
+                    <figcaption><strong>Fig. 18.</strong> A single photograph of a coffee mug. Humans can immediately read the printed illustration, estimate the viewing angle, and infer unseen structure — the handle on the back, the bottom, the interior — all from this one view. <em>(Generated by Google Nano Banana 2)</em></figcaption>
+                </figure>
+
+                <p>The difficulty arises because perception and imagination pull in opposite directions:</p>
+
+                <ul>
+                    <li><strong>Reconstruction</strong> demands <em>faithfulness</em> to the input observation: the recovered 3D shape must be consistent with the visible surfaces, preserve fine details like the cat illustration, and accurately estimate the camera and object pose. The key metrics are consistency, fidelity, and accuracy.</li>
+                    <li><strong>Generation</strong> demands <em>plausibility</em> of the unseen parts: the model must hallucinate a reasonable handle, invent a plausible back surface, and complete the interior geometry. The key metrics are diversity, creativity, and physical plausibility.</li>
+                </ul>
+
+                <p>These goals are <strong>inherently contradictory</strong>. A pure reconstruction method, when confronted with occluded regions, tends to produce conservative, blurry completions because it has no mechanism for creative hallucination. A pure generation method, when conditioned on an image, may produce a plausible mug but drift from the input &mdash; generating a dog logo instead of the cat, or changing the mug's proportions. Directly applying one paradigm to the other's task often fails.</p>
+
+                <p>The tension can be stated precisely in mathematical terms. An image $I$ is a <strong>lossy projection</strong> of the 3D scene:</p>
+
+                $$I = P(\mathcal{O}, \theta)$$
+
+                <p>where $\mathcal{O}$ represents the 3D object (shape, texture, and other properties) and $\theta$ is the camera pose. Because projection discards information, the inverse problem is fundamentally underdetermined:</p>
+
+                $$p(\mathcal{O}, \theta \mid I) \quad \text{s.t.} \quad P(\mathcal{O}, \theta) \approx I$$
+
+                <p>A model that solves this must simultaneously <strong>reconstruct</strong> the visible parts of $\mathcal{O}$ with high fidelity and <strong>generate</strong> the hidden parts with high plausibility &mdash; all while recovering the camera pose $\theta$ that explains the observation. This is exactly the combined generation-and-reconstruction problem.</p>
+
+                <p>Recent works have begun to tackle this unified challenge head-on, building on the structured latent representations discussed in Section 4. We highlight two representative methods: SAM3D, which targets scene-level reconstruction with layout estimation, and CUPID, which introduces pose-grounded generative reconstruction with object-centric camera poses.</p>
+
+                <h3 id="sam3d">5.2 SAM3D: Scene-Level Generative Reconstruction</h3>
+
+                <p><strong>SAM 3D</strong> (SAM 3D Team, Meta, 2025) is a generative model for <strong>visually grounded</strong> 3D object reconstruction from a single image. Unlike prior methods that operate on isolated objects with clean backgrounds, SAM 3D is designed for natural images where occlusion and scene clutter are common &mdash; the kind of images you actually take with a phone camera.</p>
+
+                <p>The model frames reconstruction as sampling from a joint conditional distribution:</p>
+
+                $$p(S, T, R, \mathbf{t}, s \mid I, M)$$
+
+                <p>where $S$ is the 3D shape, $T$ is the texture, $R \in \mathbb{R}^6$ is the 6D rotation, $\mathbf{t} \in \mathbb{R}^3$ is the translation, $s \in \mathbb{R}^3$ is the scale, $I$ is the input image, and $M$ is a segmentation mask specifying the target object. By modeling all of these variables jointly, SAM 3D can not only reconstruct the object's geometry and appearance but also estimate its spatial layout relative to the camera.</p>
+
+                <p><strong>Architecture.</strong> SAM 3D builds on the Trellis two-stage latent flow matching framework. The <strong>Geometry Model</strong> is a 1.2B-parameter flow transformer that uses a <strong>Mixture of Transformers (MoT)</strong> architecture &mdash; a two-stream design where <strong>shape tokens</strong> and <strong>layout tokens</strong> attend to each other through multi-modal self-attention, then pass through separate feed-forward and cross-attention layers. This allows the model to jointly reason about object geometry and spatial layout without conflating the two types of information. A layout decoder reads the layout tokens to predict rotation, translation, and scale, while a shape decoder produces the coarse voxel structure. The <strong>Texture and Refinement Model</strong>, a 600M-parameter sparse latent flow transformer, then refines geometric details and synthesizes texture conditioned on the coarse shape and the input image. The final output can be decoded to either meshes or 3D Gaussian splats via the Trellis VAE decoders.</p>
+
+                <p><strong>Training.</strong> SAM 3D adopts a multi-stage training recipe inspired by the LLM playbook: <em>synthetic pretraining</em> on rendered 3D assets builds a rich shape vocabulary, <em>semi-synthetic mid-training</em> with rendered objects pasted into natural images teaches occlusion robustness, and <em>real-world post-training</em> using a novel Model-in-the-Loop (MITL) data pipeline aligns the model to real photographs and human preferences via supervised fine-tuning and direct preference optimization (DPO). This progressive exposure to increasingly complex and realistic data is key to breaking the 3D "data barrier."</p>
+
+                <p><strong>Scene-Level Reconstruction.</strong> The layout estimation capability makes SAM 3D particularly powerful for scene-level understanding. Given a photograph of a cluttered room, one can segment each object (e.g., via SAM), run SAM 3D on each segment independently, and compose the results into a coherent 3D scene using the predicted per-object rotations, translations, and scales. The result is a full <strong>composable 3D scene</strong> from a single photograph &mdash; not just isolated objects but a spatially consistent arrangement. In human preference tests on real-world images, SAM 3D achieves at least a 5:1 win rate over recent methods.</p>
+
+                <figure>
+                    <img src="group8_images/Fig15.png" alt="SAM3D scene-level reconstruction">
+                    <figcaption><strong>Fig. 19.</strong> The SAM 3D architecture: a geometry model uses a Mixture of Transformers with shape and layout tokens to generate voxel geometry and spatial layout, followed by a texture and refinement model that produces meshes and Gaussian splats.</figcaption>
+                </figure>
+
+                <h3 id="cupid">5.3 CUPID: Pose-Grounded Generative Reconstruction</h3>
+
+                <p>While SAM 3D focuses on scene composition, <strong>CUPID</strong> (Huang et al., HKU, 2025) addresses a different facet of the generation-reconstruction gap: the problem of <strong>pose grounding</strong>. CUPID identifies pose as the key bridge between generation and reconstruction &mdash; to explain a single image, a model must recover dense 3D-to-2D correspondences between the generated object and the input viewpoint.</p>
+
+                <p><strong>Key Insights.</strong> CUPID is built on three observations. First, since an image $I = P(\mathcal{O}, \theta)$ is a projection, it encodes information about <em>both</em> the 3D object $\mathcal{O}$ and the camera pose $\theta$ &mdash; yet most generation methods discard the pose information entirely, producing 3D outputs in an arbitrary orientation. Second, humans perceive objects in <strong>canonical poses</strong> &mdash; we expect a cup to open upward, a chair to face forward &mdash; and this canonical frame can be learned as a prior from data. Third, estimating camera pose relative to the canonical object frame makes the estimated poses <strong>meaningful and reusable</strong> for downstream tasks like robotic manipulation, where knowing that "the camera is 30 degrees to the left of the mug's front" is actionable information.</p>
+
+                <p><strong>Pipeline.</strong> CUPID formulates pose-grounded reconstruction as estimating the joint posterior $p(\mathcal{O}, \theta \mid I)$ under the observation constraint $P(\mathcal{O}, \theta) \approx I$. Built on the Trellis two-stage framework, CUPID extends it with a novel pose estimation and conditioning mechanism:</p>
+
+                <ol>
+                    <li><strong>Occupancy and UV Cube Generation.</strong> In the first stage, a flow model generates both an occupancy cube (indicating active voxels) and a <strong>UV cube</strong> &mdash; a 3D volume where each active voxel stores its corresponding 2D pixel coordinate $(u, v)$ in the input image. Intuitively, the UV cube establishes <strong>dense 3D-to-2D correspondences</strong>: it tells us, for each point on the generated 3D surface, where that point projects in the input photograph. This is a reparameterization of camera pose as a spatially distributed quantity defined on the 3D occupancy grid, rather than a compact extrinsic matrix.</li>
+                    <li><strong>Camera Pose via PnP.</strong> Given the 3D voxel positions and their corresponding 2D pixel coordinates from the UV cube, the camera pose $\mathbf{P}^*$ is recovered by solving a <strong>Perspective-n-Point (PnP)</strong> problem &mdash; a classical geometric computation that finds the camera matrix minimizing reprojection error across all correspondences. This yields an accurate, object-centric camera pose without requiring any external pose estimator.</li>
+                    <li><strong>Pose-Aligned Feature Back-Projection.</strong> With the camera pose in hand, CUPID extracts pixel-aligned features from the input image (via DINOv2 and a lightweight convolutional head) and <strong>back-projects</strong> them onto the active voxels. Each voxel receives features sampled from the specific image location it projects to, providing dense, locally-attended conditioning rather than the global image features used by standard generators like Trellis. This local conditioning is what enables input-consistent reconstruction: the cat illustration on the front of the mug is preserved because the corresponding voxels receive the exact pixel features depicting that logo.</li>
+                    <li><strong>Pose-Conditioned Geometry and Appearance Generation.</strong> A second-stage flow transformer generates the detailed structured latents $\{\mathbf{f}_i\}_{i=1}^L$ conditioned on the pose-aligned features, producing geometry and texture that are both geometrically accurate and texturally faithful to the input.</li>
+                </ol>
+
+                <figure>
+                    <!-- TODO: convert Fig16.pdf to Fig16.png -->
+                    <img src="group8_images/Fig16.png" alt="CUPID pipeline">
+                    <figcaption><strong>Fig. 20.</strong> The CUPID pipeline: DINOv2 features condition a two-stage process — first generating occupancy and a UV cube for PnP pose estimation, then using the recovered pose to align features for geometry and appearance generation, decoded into meshes and Gaussian splats.</figcaption>
+                </figure>
+
+                <p><strong>Results.</strong> CUPID outperforms leading 3D reconstruction methods by over 3 dB PSNR and over 10% Chamfer Distance reduction, while matching monocular pose estimators on pose accuracy. Compared to Trellis (its architectural backbone), CUPID produces substantially more input-consistent outputs &mdash; reducing the color drift, texture mismatch, and geometric inconsistencies that arise when a generator relies only on global image features without explicit pose grounding.</p>
+
+                <figure>
+                    <!-- TODO: convert cupid_result.pdf to cupid_result.png -->
+                    <img src="group8_images/cupid_result.png" alt="CUPID reconstruction results">
+                    <figcaption><strong>Fig. 21.</strong> CUPID results: from a single input image (left), the model recovers a canonical 3D object with estimated camera pose (center), which re-renders consistently with the input view (right).</figcaption>
+                </figure>
+
+
+
+                <p>The broader lesson from both SAM 3D and CUPID is that the structured latent representations developed for generation (Section 4) provide a natural foundation for reconstruction as well. The sparse voxel grid, originally designed to decouple "where" from "what" in generation, turns out to be equally useful for anchoring generated content to observed images &mdash; whether through layout tokens (SAM 3D) or pose-aligned back-projection (CUPID). The unification of generation and reconstruction is not just a new task but a stress test for latent space design, and the methods that succeed are those whose latent representations are rich enough to support both faithful reconstruction and creative hallucination simultaneously.</p>
+            </section>
+
+            <!-- ====== Section 6: Future Directions ====== -->
+            <section>
+                <h2 id="future-directions">6. Future Directions</h2>
+
+                <p>The native latent 3D generation paradigm has matured rapidly &mdash; from blurry Michelangelo outputs to the high-fidelity, pose-grounded reconstructions of SAM 3D and CUPID in just two years. Yet the field remains far from the level of reliability, versatility, and controllability that downstream applications demand. Here we outline several frontiers where significant progress is needed.</p>
+
+                <h3 id="part-level-generation">6.1 Part-Level Generation</h3>
+
+                <p>Current methods generate objects as <strong>monolithic wholes</strong>: a single latent representation produces an entire chair, car, or mug as one fused shape. Many applications, however, require modeling an object's compositional structure &mdash; decomposing it into semantically meaningful, individually manipulable <strong>parts</strong>. A chair should consist of a seat, backrest, and four legs; a laptop should separate into screen and keyboard. Part-level generation would enable fine-grained editing (swap the legs of a chair while keeping the seat), physics-aware simulation (each part has its own material properties and collision geometry), and controllable design (specify the style of each component independently). The challenge is learning to segment and generate parts without explicit part annotations, which are scarce in existing 3D datasets.</p>
+
+                <h3 id="articulated-objects">6.2 Articulated Objects</h3>
+
+                <p>Beyond static parts, many real-world objects have <strong>articulated structures</strong> &mdash; joints, hinges, sliders, and other degrees of freedom that define how parts move relative to each other. A cabinet has doors that swing open; a pair of scissors has a pivot joint; a robotic arm has revolute joints with specific ranges of motion. Generating articulated objects requires producing not just the geometry of each part but also the <strong>articulation parameters</strong>: joint types, axes of rotation, limits of motion, and attachment points. This capability is critical for robotics, where a generated cabinet must have doors that actually open in simulation, and for animation, where rigged characters need joints that deform plausibly. Current generative models have no mechanism for predicting articulation, making this an important open problem.</p>
+
+                <h3 id="scene-level-generation">6.3 Scene-Level Generation</h3>
+
+                <p>The methods surveyed in this work operate primarily at the <strong>single-object level</strong>. SAM 3D takes a step toward scene understanding by reconstructing multiple objects with layout estimation, but true scene-level generation &mdash; synthesizing coherent multi-object environments from scratch &mdash; remains largely unsolved. A generated living room should contain furniture arranged in plausible spatial relationships, with consistent scale, realistic occlusion patterns, and meaningful object interactions (a book resting on a table, a lamp plugged into a wall). Scene generation requires reasoning about inter-object relationships, global spatial coherence, and physical constraints at a scale far beyond what current object-centric pipelines can handle.</p>
+
+                <h3 id="topology-aware-generation">6.4 Topology-Aware Generation</h3>
+
+                <p>Current mesh extraction methods (Marching Cubes, FlexiCubes) produce meshes with <strong>poor topology</strong>: non-manifold edges, excessive triangle counts, irregular face distributions, and incorrect genus (e.g., a handle that should form a closed loop but is instead a solid blob). While these meshes may <em>look</em> correct when rendered, their topology makes them unusable for many downstream applications.</p>
+
+                <figure>
+                    <img src="group8_images/topology.png" alt="Topology issues in 3D generation">
+                    <figcaption><strong>Fig. 22.</strong> Two cylinders with identical geometry but different mesh topology. Left (blue): clean, axis-aligned rectangular faces with horizontal edge loops suitable for rigging and animation. Right (red): tilted parallelogram faces that produce spiraling edge flow — geometrically identical when rendered, but problematic for downstream tasks. <em>(Generated by Google Nano Banana 2)</em></figcaption>
+                </figure>
+
+                <p>Fig. 22 illustrates this problem on the simplest possible shape: a cylinder. The blue mesh on the left has clean, regular <strong>edge loops</strong> &mdash; horizontal rings of edges that flow smoothly around the surface, connected by near-vertical edges forming axis-aligned rectangular faces (each rectangle composed of two triangles). This is the kind of topology that downstream applications demand: an animator can select any horizontal ring as a deformation loop, a UV unwrap follows the natural seams, and a subdivision surface refines predictably. The red mesh on the right represents the <em>same geometry</em> &mdash; identical silhouette, identical curvature &mdash; but its faces are <strong>tilted parallelograms</strong> rather than upright rectangles. Each quad is still composed of two triangles, yet the greater skew means that edges no longer form clean horizontal loops; instead they <strong>spiral</strong> around the surface. This seemingly minor difference has cascading consequences: loop selection breaks because no single edge ring closes horizontally, UV unwrapping introduces diagonal distortion, and deformation under rigging spreads unevenly across the skewed faces. A shaded render of the two cylinders would look indistinguishable, but their behavior under any downstream operation diverges dramatically.</p>
+
+                <p>This gap between <strong>visual correctness</strong> and <strong>structural correctness</strong> is the core of the topology problem. Rigging and animation require clean edge loops around joints; physics simulation requires watertight, manifold surfaces; 3D printing requires correct genus and wall thickness; game engines require low-poly meshes with efficient UV layouts. Yet current generative pipelines &mdash; which extract meshes from implicit fields via isosurface algorithms &mdash; have no mechanism for controlling edge flow, face regularity, or global connectivity. Topology is inherently <strong>discrete and global</strong>: it cannot be improved by local smoothing or subdivision, and it is fundamentally difficult to optimize with the gradient-based methods that drive current generative models. Developing generation methods that produce topologically correct meshes, or post-processing pipelines that can repair topology while preserving geometry, remains an important open challenge.</p>
+
+                <p>One promising direction for addressing the topology problem is to abandon implicit-field-then-extract pipelines altogether and instead <strong>generate mesh elements directly in sequence</strong>. If a model outputs vertices and faces one at a time, it can learn to produce clean edge loops, regular face distributions, and correct connectivity by construction &mdash; much like how autoregressive language models produce grammatically correct sentences token by token. This insight motivates the autoregressive approach to 3D generation.</p>
+
+                <h3 id="autoregressive-3d-generation">6.5 Autoregressive 3D Generation</h3>
+
+                <p>The spectacular success of autoregressive models in language (GPT) and 2D imagery suggests that <strong>token-by-token 3D generation</strong> could unlock similar scaling benefits. Rather than generating all latent codes simultaneously via diffusion or flow matching, an autoregressive model would produce 3D tokens sequentially, each conditioned on all previously generated tokens. This paradigm could leverage the scaling laws that have driven progress in language and vision, and it naturally supports variable-length outputs (objects of different complexity require different numbers of tokens). The central open question is <strong>tokenization</strong>: what discrete vocabulary best captures 3D structure? Unlike text (which has a natural vocabulary of words) or images (which can be quantized into patch tokens), 3D geometry has no established tokenization scheme. Candidates include quantized voxels, mesh face sequences, and learned codebook entries, but the optimal representation &mdash; one that balances geometric fidelity, compactness, and sequential coherence &mdash; remains unknown.</p>
+
+                <h3 id="closing-thoughts">6.6 Closing Thoughts</h3>
+
+                <p>3D generation is an important and rapidly advancing research area. The progression traced in this survey &mdash; from optimization-based lifting, through early native models like Point-E and Michelangelo, to structured latent approaches like TRELLIS and LATTICE &mdash; demonstrates remarkable progress in a short span. Yet many open challenges remain: compositional part-level generation, articulated objects, scene-scale synthesis, topology-aware meshing, and effective 3D tokenization for autoregressive models are all active frontiers.</p>
+
+                <p>Across these frontiers, a common thread emerges: <strong>latent space design remains the fundamental question</strong>. Part-level generation needs latents that respect compositional boundaries. Articulated objects need latents that encode joint parameters alongside geometry. Scene-level generation needs latents that capture inter-object relationships. Topology-aware methods need latents that encode connectivity, not just occupancy. Autoregressive approaches need latents that admit a natural sequential ordering. The convergence toward structured, localizable latents with decoupled generation &mdash; the progression from VecSet through Sparse Voxel to VoxSet &mdash; is a promising trajectory, but is far from settled.</p>
+
+                <p>Perhaps most importantly, <strong>future research should be driven by real applications, not just visual quality</strong>. The field has largely evaluated progress through rendered images: does the generated object <em>look</em> correct from a handful of viewpoints? But as Section 6.4 illustrates, a mesh that renders beautifully may be entirely unusable for rigging, animation, physics simulation, or 3D printing. The true measure of a generative 3D model is not whether its outputs pass visual inspection, but whether they can be directly inserted into real production pipelines &mdash; game engines, robotics simulators, CAD workflows, AR/VR applications &mdash; without manual cleanup. This means evaluating not just geometric fidelity but also mesh topology, part decomposability, articulation support, material quality, and compatibility with standard interchange formats. Shifting the evaluation paradigm from "does it look right?" to "can it be used?" will be essential for bridging the gap between research demonstrations and practical 3D content creation.</p>
+            </section>
+
+            <section>
+                <h2 id="references">References</h2>
+                <ol class="references">
+                    <li id="ref-dreamfusion">Poole, B., Jain, A., Barron, J.T., &amp; Mildenhall, B. (2022). Dreamfusion: Text-to-3D using 2D Diffusion. <em>arXiv preprint arXiv:2209.14988</em>.</li>
+                    <li id="ref-one2345pp">Liu, M., Shi, R., Chen, L., Zhang, Z., Xu, C., Wei, X., Chen, H., Zeng, C., Gu, J., &amp; Su, H. (2024). One-2-3-45++: Fast Single Image to 3D Objects with Consistent Multi-View Generation and 3D Diffusion. <em>Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</em>, pp. 10072&ndash;10083.</li>
+                    <li id="ref-pointe">Nichol, A., Jun, H., Dhariwal, P., Mishkin, P., &amp; Chen, M. (2022). Point-E: A System for Generating 3D Point Clouds from Complex Prompts. <em>arXiv preprint arXiv:2212.08751</em>.</li>
+                    <li id="ref-shape">Jun, H. &amp; Nichol, A. (2023). Shap-E: Generating Conditional 3D Implicit Functions. <em>arXiv preprint arXiv:2305.02463</em>.</li>
+                    <li id="ref-michelangelo">Zhao, Z., Liu, W., Chen, X., Zeng, X., Wang, R., Cheng, P., Fu, B., Chen, T., Yu, G., &amp; Gao, S. (2023). Michelangelo: Conditional 3D Shape Generation based on Shape-Image-Text Aligned Latent Representation. <em>Advances in Neural Information Processing Systems</em>, 36, pp. 73969&ndash;73982.</li>
+                    <li id="ref-3dshape2vecset">Zhang, B., Tang, J., Niessner, M., &amp; Wonka, P. (2023). 3DShape2VecSet: A 3D Shape Representation for Neural Fields and Generative Diffusion Models. <em>ACM Transactions on Graphics (TOG)</em>, 42(4), pp. 1&ndash;16.</li>
+                    <li id="ref-trellis">Xiang, J., Lv, Z., Xu, S., Deng, Y., Wang, R., Zhang, B., Chen, D., Tong, X., &amp; Yang, J. (2025). Structured 3D Latents for Scalable and Versatile 3D Generation. <em>Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</em>, pp. 21469&ndash;21480.</li>
+                    <li id="ref-lattice">Lai, Z., Zhao, Y., Zhao, Z., Liu, H., Lin, Q., Huang, J., Guo, C., &amp; Yue, X. (2025). LATTICE: Democratize High-Fidelity 3D Generation at Scale. <em>arXiv preprint arXiv:2512.03052</em>.</li>
+                    <li id="ref-sam3d">Chen, X., Chu, F.-J., Gleize, P., Liang, K.J., Sax, A., Tang, H., Wang, W., Guo, M., Hardin, T., Li, X., et al. (2025). SAM 3D: 3Dfy Anything in Images. <em>arXiv preprint arXiv:2511.16624</em>.</li>
+                    <li id="ref-cupid">Huang, B., Duan, H., Zhao, Y., Zhao, Z., Ma, Y., &amp; Gao, S. (2025). CUPID: Pose-Grounded Generative 3D Reconstruction from a Single Image. <em>arXiv e-prints, arXiv:2510</em>.</li>
+                </ol>
+            </section>
+
+        </article>
+        <nav class="toc-sidebar" id="toc">
+            <a href="#the-3d-generation-frontier">1. The 3D Generation Frontier</a>
+            <a href="#defining-the-task" class="toc-h3">Defining the Task</a>
+            <a href="#why-it-matters" class="toc-h3">Why It Matters</a>
+            <a href="#the-data-gap" class="toc-h3">The Data Gap</a>
+
+            <a href="#leveraging-2d-priors">2. Leveraging 2D Priors</a>
+            <a href="#score-distillation-sampling" class="toc-h3">Score Distillation Sampling</a>
+            <a href="#critical-failures-of-lifting-methods" class="toc-h3">Critical Failures of Lifting</a>
+            <a href="#multi-view-generation" class="toc-h3">Multi-view Generation</a>
+
+            <a href="#transitioning-to-native-3d-generation">3. Native 3D Generation</a>
+            <a href="#what-makes-a-model-native" class="toc-h3">What Makes a Model "Native"?</a>
+            <a href="#early-representations" class="toc-h3">Early Representations</a>
+            <a href="#point-e" class="toc-h3">Point-E</a>
+            <a href="#why-direct-generation-isnt-enough" class="toc-h3">Why Direct Generation Isn't Enough</a>
+
+            <a href="#latent-3d-generation">4. Latent 3D Generation</a>
+            <a href="#why-latent-space" class="toc-h3">Why Latent Space?</a>
+            <a href="#michelangelo" class="toc-h3">Michelangelo</a>
+            <a href="#structured-vs-unstructured-latents" class="toc-h3">Structured vs. Unstructured Latents</a>
+            <a href="#vecset" class="toc-h3">VecSet</a>
+            <a href="#sparse-voxel" class="toc-h3">Sparse Voxel</a>
+            <a href="#voxset" class="toc-h3">VoxSet</a>
+            <a href="#comparing-structured-3d-latents" class="toc-h3">Comparing Structured 3D Latents</a>
+
+            <a href="#current-trend">5. Generation &amp; Reconstruction</a>
+            <a href="#perception-meets-imagination" class="toc-h3">Perception Meets Imagination</a>
+            <a href="#sam3d" class="toc-h3">SAM3D</a>
+            <a href="#cupid" class="toc-h3">CUPID</a>
+
+            <a href="#future-directions">6. Future Directions</a>
+            <a href="#part-level-generation" class="toc-h3">Part-Level Generation</a>
+            <a href="#articulated-objects" class="toc-h3">Articulated Objects</a>
+            <a href="#scene-level-generation" class="toc-h3">Scene-Level Generation</a>
+            <a href="#topology-aware-generation" class="toc-h3">Topology-Aware Generation</a>
+            <a href="#autoregressive-3d-generation" class="toc-h3">Autoregressive 3D Generation</a>
+            <a href="#closing-thoughts" class="toc-h3">Closing Thoughts</a>
+
+            <a href="#references">References</a>
+        </nav>
+    </div>
+
+    <footer>
+        <p>DATA8018 &mdash; The University of Hong Kong</p>
+    </footer>
+
+    <script>
+    // === KaTeX Auto-Render ===
+    window.addEventListener('load', function() {
+        if (typeof renderMathInElement !== 'undefined') {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false}
+                ],
+                throwOnError: false
+            });
+        }
+    });
+
+    // === Feature 1: Dark Mode Toggle ===
+    const toggle = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+
+    const stored = localStorage.getItem('theme');
+    if (stored) {
+        html.setAttribute('data-theme', stored);
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        html.setAttribute('data-theme', 'dark');
+    }
+    updateIcon();
+
+    toggle.addEventListener('click', () => {
+        const current = html.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        updateIcon();
+    });
+
+    function updateIcon() {
+        toggle.textContent = html.getAttribute('data-theme') === 'dark' ? '🌙' : '☀️';
+    }
+
+    // === Feature 2: Scroll Progress Bar ===
+    window.addEventListener('scroll', () => {
+        const scrollTop = document.documentElement.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const progress = (scrollTop / scrollHeight) * 100;
+        document.getElementById('progress-bar').style.width = progress + '%';
+    });
+
+    // === Feature 3: Sticky ToC Highlight ===
+    const tocLinks = document.querySelectorAll('.toc-sidebar a');
+    const headings = [];
+
+    tocLinks.forEach(link => {
+        const id = link.getAttribute('href').slice(1);
+        const heading = document.getElementById(id);
+        if (heading) headings.push({ el: heading, link: link });
+    });
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                tocLinks.forEach(l => l.classList.remove('active'));
+                const match = headings.find(h => h.el === entry.target);
+                if (match) match.link.classList.add('active');
+            }
+        });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+
+    headings.forEach(h => observer.observe(h.el));
+    </script>
+</body>
+</html>
